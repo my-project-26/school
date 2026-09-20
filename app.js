@@ -6,6 +6,33 @@ if ('serviceWorker' in navigator) {
 
 let score = parseInt(localStorage.getItem('school_app_score') || '0');
 
+// GLOBALE HYBRID SPEECH ENGINE (Web Speech API + MP3 Fallback)
+function speakTextOrMP3(text, mp3Path) {
+    // 1. Versuche MP3 abzuspielen (falls lokal vorhanden)
+    if (mp3Path) {
+        const audio = new Audio(mp3Path);
+        audio.play().then(() => {
+            return; // MP3 erfolgreich gestartet
+        }).catch(() => {
+            // MP3 existiert nicht oder blockiert -> Fallback auf Web Speech API
+            triggerWebSpeech(text);
+        });
+    } else {
+        triggerWebSpeech(text);
+    }
+}
+
+function triggerWebSpeech(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Vorherige Sprache stoppen
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        utterance.rate = 0.85; // Leicht verlangsamte, deutliche Aussprache für Grundschule
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
 let dynamicContent = null;
 fetch('./content.json')
     .then(res => res.json())
@@ -78,13 +105,6 @@ document.querySelectorAll('.drawer-btn').forEach(btn => {
     });
 });
 
-let currentAudio = null;
-function playAudioFile(path) {
-    if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-    currentAudio = new Audio(path);
-    currentAudio.play().catch(e => console.log("Audio blockiert:", e));
-}
-
 // KLASSE 1: ANLAUTE
 let taskDataK1 = [
     { word: 'Apfel', letter: 'A', emoji: '🍎', audio: 'audio/Apfel.mp3' },
@@ -118,7 +138,11 @@ const btnPlayAudio = document.getElementById('btn-play-audio');
 const wordEmoji = document.getElementById('word-emoji');
 const letterOptionsContainer = document.getElementById('letter-options');
 
-btnStart.addEventListener('click', () => { startOverlay.style.display = 'none'; loadTaskK1(indexK1); });
+btnStart.addEventListener('click', () => { 
+    startOverlay.style.display = 'none'; 
+    triggerWebSpeech("Willkommen im Lernstudio!"); // Autoplay Lock in Safari entsperren
+    loadTaskK1(indexK1); 
+});
 
 function loadTaskK1(index) {
     const task = taskDataK1[index % taskDataK1.length];
@@ -132,7 +156,7 @@ function loadTaskK1(index) {
         btn.addEventListener('click', () => handleChoiceK1(letter, task.letter));
         letterOptionsContainer.appendChild(btn);
     });
-    setTimeout(() => playAudioFile(task.audio), 300);
+    setTimeout(() => speakTextOrMP3(task.word, task.audio), 300);
 }
 
 function generateChoicesK1(correct) {
@@ -143,6 +167,7 @@ function generateChoicesK1(correct) {
 }
 
 function handleChoiceK1(selected, correct) {
+    const currentTask = taskDataK1[indexK1 % taskDataK1.length];
     if (selected === correct) {
         updateScore(10);
         indexK1 = (indexK1 + 1) % taskDataK1.length;
@@ -150,11 +175,14 @@ function handleChoiceK1(selected, correct) {
     } else {
         const card = document.querySelector('#module-k1-anlaut .game-card');
         card.classList.add('shake');
-        playAudioFile(taskDataK1[indexK1 % taskDataK1.length].audio);
+        speakTextOrMP3(currentTask.word, currentTask.audio);
         setTimeout(() => card.classList.remove('shake'), 400);
     }
 }
-btnPlayAudio.addEventListener('click', () => playAudioFile(taskDataK1[indexK1 % taskDataK1.length].audio));
+btnPlayAudio.addEventListener('click', () => {
+    const currentTask = taskDataK1[indexK1 % taskDataK1.length];
+    speakTextOrMP3(currentTask.word, currentTask.audio);
+});
 
 // KLASSE 1: SILBEN
 const silbenData = [
@@ -168,24 +196,28 @@ const silbenData = [
 let indexSilben = 0;
 const silbenEmoji = document.getElementById('silben-emoji');
 function loadTaskSilben(index) {
-    const task = silbenData[index];
+    const task = silbenData[index % silbenData.length];
     silbenEmoji.textContent = task.emoji;
-    setTimeout(() => playAudioFile(task.audio), 300);
+    setTimeout(() => speakTextOrMP3(task.word, task.audio), 300);
 }
 
-document.getElementById('btn-play-silben-audio').addEventListener('click', () => playAudioFile(silbenData[indexSilben].audio));
+document.getElementById('btn-play-silben-audio').addEventListener('click', () => {
+    const task = silbenData[indexSilben % silbenData.length];
+    speakTextOrMP3(task.word, task.audio);
+});
 
 document.querySelectorAll('.btn-silbe').forEach(btn => {
     btn.addEventListener('click', () => {
+        const currentTask = silbenData[indexSilben % silbenData.length];
         const count = parseInt(btn.getAttribute('data-count'), 10);
-        if (count === silbenData[indexSilben].syllables) {
+        if (count === currentTask.syllables) {
             updateScore(10);
             indexSilben = (indexSilben + 1) % silbenData.length;
             loadTaskSilben(indexSilben);
         } else {
             const card = document.querySelector('#module-k1-silben .game-card');
             card.classList.add('shake');
-            playAudioFile(silbenData[indexSilben].audio);
+            speakTextOrMP3(currentTask.word, currentTask.audio);
             setTimeout(() => card.classList.remove('shake'), 400);
         }
     });
@@ -370,14 +402,14 @@ document.querySelectorAll('.btn-grammar').forEach(btn => {
     });
 });
 
-// KLASSE 3: RECHTSCHREIBSTRATEGIEN (BUGFIX STAMM & EXAKTE RECHTSCHREIBUNG)
+// KLASSE 3: RECHTSCHREIBSTRATEGIEN (MIT SPRACHAUSGABE FÜR DEUTSCH)
 const spellTasks = [
-    { baseStem: 'B', gapQuestion: 'äume', choices: ['äume', 'ume'], correct: 'äume', fullWord: 'Bäume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
-    { baseStem: 'Hun', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Hund', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
-    { baseStem: 'Hän', gapQuestion: 'de', choices: ['de', 'te'], correct: 'de', fullWord: 'Hände', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
-    { baseStem: 'Wal', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Wald', strategy: 'Verlängern: Wäl-der', instruction: 'Verlängere das Wort:' },
-    { baseStem: 'Äp', gapQuestion: 'fel', choices: ['fel', 'pel'], correct: 'fel', fullWord: 'Äpfel', strategy: 'Ableiten von: Apfel', instruction: 'Leite ab von Apfel:' },
-    { baseStem: 'Bro', gapQuestion: 't', choices: ['t', 'd'], correct: 't', fullWord: 'Brot', strategy: 'Verlängern: Bro-te', instruction: 'Verlängere das Wort:' }
+    { baseStem: 'B', gapQuestion: 'äume', choices: ['äume', 'ume'], correct: 'äume', fullWord: 'Bäume', strategy: 'Ableiten von Baum. Bäume schreibt man mit ä-u.', instruction: 'Leite ab von Baum:' },
+    { baseStem: 'Hun', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Hund', strategy: 'Verlängere das Wort zu Hunde. Man hört ein d.', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Hän', gapQuestion: 'de', choices: ['de', 'te'], correct: 'de', fullWord: 'Hände', strategy: 'Ableiten von Hand. Hände schreibt man mit ä.', instruction: 'Leite ab von Hand:' },
+    { baseStem: 'Wal', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Wald', strategy: 'Verlängere zu Wälder. Man hört ein d.', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Äp', gapQuestion: 'fel', choices: ['fel', 'pel'], correct: 'fel', fullWord: 'Äpfel', strategy: 'Ableiten von Apfel. Äpfel schreibt man mit Ä.', instruction: 'Leite ab von Apfel:' },
+    { baseStem: 'Bro', gapQuestion: 't', choices: ['t', 'd'], correct: 't', fullWord: 'Brot', strategy: 'Verlängere zu Brote. Man hört ein t.', instruction: 'Verlängere das Wort:' }
 ];
 
 let indexSpell = 0;
@@ -385,6 +417,7 @@ const spellInstructionEl = document.getElementById('spell-instruction');
 const spellWordDisplayEl = document.getElementById('spell-word-display');
 const spellHintEl = document.getElementById('spell-hint');
 const spellOptionsEl = document.getElementById('spell-options');
+const btnPlaySpellAudio = document.getElementById('btn-play-spell-audio');
 
 function initSpellTask() {
     const task = spellTasks[indexSpell % spellTasks.length];
@@ -401,16 +434,23 @@ function initSpellTask() {
             if (opt === task.correct) {
                 updateScore(15);
                 spellWordDisplayEl.innerHTML = `${task.baseStem}<strong style="color:var(--success-color);">${opt}</strong>`;
+                triggerWebSpeech(task.fullWord);
                 setTimeout(() => {
                     indexSpell = (indexSpell + 1) % spellTasks.length;
                     initSpellTask();
-                }, 600);
+                }, 700);
             } else {
                 const card = document.querySelector('#module-k3-spell .game-card');
                 card.classList.add('shake');
+                triggerWebSpeech(task.strategy);
                 setTimeout(() => card.classList.remove('shake'), 400);
             }
         });
         spellOptionsEl.appendChild(btn);
     });
 }
+
+btnPlaySpellAudio.addEventListener('click', () => {
+    const task = spellTasks[indexSpell % spellTasks.length];
+    triggerWebSpeech(`${task.instruction} ${task.fullWord}. ${task.strategy}`);
+});
