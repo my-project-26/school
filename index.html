@@ -2,195 +2,383 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Schul-App: Lernstudio BW</title>
-    <link rel="stylesheet" href="./style.css?v=25">
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#4A90E2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Schul App - Rechtschreibstrategien</title>
+    <style>
+        :root {
+            --primary-color: #2b7fff;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --accent-yellow: #ffdb58;
+            --btn-hover: #1a62d1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .top-bar {
+            width: 100%;
+            background-color: var(--primary-color);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-nav {
+            background: #ffffff;
+            color: var(--primary-color);
+            border: 2px solid #ffffff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            min-height: 48px;
+        }
+
+        .score-badge {
+            background-color: #1a62d1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* App Main Container */
+        .app-container {
+            width: 92%;
+            max-width: 480px;
+            background: var(--card-bg);
+            margin-top: 20px;
+            padding: 24px 20px;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        /* Anweisungssatz vollständig linksbündig ohne Abschneiden */
+        .instruction-box {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .instruction-text {
+            font-size: 1.15rem;
+            color: #2c3e50;
+            font-weight: 700;
+            line-height: 1.4;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Audio Button */
+        .audio-btn {
+            background-color: var(--accent-yellow);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 52px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .audio-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Wort-Anzeige Kasten */
+        .display-card {
+            background-color: #f8fafc;
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .word-display {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .missing-letter {
+            color: var(--primary-color);
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 2px;
+        }
+
+        .hint-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Antwort-Buttons Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 16px 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s ease, transform 0.1s ease;
+        }
+
+        .option-btn:active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(0.96);
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Start-Overlay für Audio-Unlock (Safari/iOS Autoplay Policy Fix) -->
-    <div id="start-overlay" class="overlay">
-        <div class="card start-card">
-            <h1>Willkommen im Lernstudio BW! 🌲🎈</h1>
-            <p>Tippe auf den Knopf, um das Lernspiel zu starten.</p>
-            <button id="btn-start" class="btn-primary">Lernstudio Öffnen 🚀</button>
-        </div>
+    <div class="top-bar">
+        <button class="btn-nav">≡ Rechtschreibung</button>
+        <div class="score-badge" id="scoreDisplay">Punkte: 90</div>
     </div>
 
-    <!-- Mobile Navigation Drawer -->
-    <div id="mobile-menu-drawer" class="menu-drawer hidden">
-        <div class="drawer-content">
-            <div class="drawer-header">
-                <h2>Modul wählen</h2>
-                <button id="btn-close-menu" class="btn-close">✕</button>
-            </div>
-            <div class="drawer-section">
-                <h3>1. Klasse</h3>
-                <button class="drawer-btn active" data-target="k1-anlaut">🔊 Anlaute hören</button>
-                <button class="drawer-btn" data-target="k1-silben">🌊 Silben schwingen</button>
-                <button class="drawer-btn" data-target="k1-zehner">🔴 Zehnerfeld</button>
-            </div>
-            <div class="drawer-section">
-                <h3>3. Klasse</h3>
-                <button class="drawer-btn" data-target="k3-math">🧮 1x1 Blitzrechnen</button>
-                <button class="drawer-btn" data-target="k3-halb">➕ Halbschriftlich</button>
-                <button class="drawer-btn" data-target="k3-lang">📝 Wortarten bestimmen</button>
-                <button class="drawer-btn" data-target="k3-spell">✍️ Rechtschreibung</button>
+    <div class="app-container">
+        <h1 class="main-title">Rechtschreibstrategien</h1>
+        
+        <div class="instruction-box">
+            <div class="instruction-text" id="instructionText">
+                Leite ab von Baum: Bäume
             </div>
         </div>
-    </div>
 
-    <header>
-        <!-- Desktop Tabs -->
-        <div class="nav-tabs desktop-only">
-            <button id="tab-k1-anlaut" class="tab-btn active">1. Kl: Anlaute 🔊</button>
-            <button id="tab-k1-silben" class="tab-btn">1. Kl: Silben 🌊</button>
-            <button id="tab-k1-zehner" class="tab-btn">1. Kl: Zehnerfeld 🔴</button>
-            <button id="tab-k3-math" class="tab-btn">3. Kl: 1x1 🧮</button>
-            <button id="tab-k3-halb" class="tab-btn">3. Kl: Halbschriftlich ➕</button>
-            <button id="tab-k3-lang" class="tab-btn">3. Kl: Wortarten 📝</button>
-            <button id="tab-k3-spell" class="tab-btn">3. Kl: Rechtschreibung ✍️</button>
-        </div>
-
-        <!-- Mobile Menu Trigger -->
-        <button id="btn-open-menu" class="mobile-menu-btn mobile-only">
-            ☰ <span id="current-module-title">Anlaute</span>
+        <button class="audio-btn" id="playAudioBtn">
+            🔊 Wort anhören
         </button>
 
-        <div id="score-display">Punkte: <span id="score">0</span></div>
-    </header>
-
-    <main class="container">
-        <!-- MODUL 1. KLASSE: ANLAUTE -->
-        <section id="module-k1-anlaut" class="module-card">
-            <div class="card game-card">
-                <h2>Anlaute Hören</h2>
-                <p class="instruction">Welcher Anlaut gehört zum Bild?</p>
-                <button id="btn-play-audio" class="btn-audio" aria-label="Wort noch einmal anhören">🔊 Wort anhören</button>
-                <div class="image-container"><span id="word-emoji" class="emoji-display">❓</span></div>
-                <div id="letter-options" class="options-grid"></div>
+        <div class="display-card">
+            <div class="word-display" id="wordDisplay">
+                B<span class="missing-letter">?</span>
             </div>
-        </section>
-
-        <!-- MODUL 1. KLASSE: SILBEN SCHWINGEN -->
-        <section id="module-k1-silben" class="module-card hidden">
-            <div class="card game-card">
-                <h2>Silben Schwingen</h2>
-                <p class="instruction">Wie viele Silben hat das Wort?</p>
-                <button id="btn-play-silben-audio" class="btn-audio">🔊 Wort anhören</button>
-                <div class="image-container"><span id="silben-emoji" class="emoji-display">❓</span></div>
-                <div id="silben-options" class="silben-grid">
-                    <button class="btn-silbe" data-count="1">1 Silbe 🌊</button>
-                    <button class="btn-silbe" data-count="2">2 Silben 🌊🌊</button>
-                    <button class="btn-silbe" data-count="3">3 Silben 🌊🌊🌊</button>
-                    <button class="btn-silbe" data-count="4">4 Silben 🌊🌊🌊🌊</button>
-                </div>
+            <div class="hint-text" id="hintText">
+                💡 Tipp: Ableiten von Baum
             </div>
-        </section>
+        </div>
 
-        <!-- MODUL 1. KLASSE: ZEHNERFELD -->
-        <section id="module-k1-zehner" class="module-card hidden">
-            <div class="card game-card">
-                <h2>Zehnerfeld: Mengen erfassen</h2>
-                <p class="instruction">Wie viele Punkte siehst du?</p>
-                <div id="ten-frame" class="ten-frame-grid"></div>
-                <div id="zehner-options" class="numpad-grid" style="margin-top: 1.5rem;"></div>
-            </div>
-        </section>
+        <div class="options-grid" id="optionsContainer"></div>
+    </div>
 
-        <!-- MODUL 3. KLASSE: 1x1 TRAINER -->
-        <section id="module-k3-math" class="module-card hidden">
-            <div class="card game-card">
-                <h2>1x1 Blitzrechnen</h2>
-                <div class="math-problem">
-                    <span id="math-task">3 × 4 =</span>
-                    <span id="math-input" class="input-display">?</span>
-                </div>
-                <div class="numpad-grid">
-                    <button class="btn-num" data-val="1">1</button>
-                    <button class="btn-num" data-val="2">2</button>
-                    <button class="btn-num" data-val="3">3</button>
-                    <button class="btn-num" data-val="4">4</button>
-                    <button class="btn-num" data-val="5">5</button>
-                    <button class="btn-num" data-val="6">6</button>
-                    <button class="btn-num" data-val="7">7</button>
-                    <button class="btn-num" data-val="8">8</button>
-                    <button class="btn-num" data-val="9">9</button>
-                    <button class="btn-num btn-action" data-val="clear">C</button>
-                    <button class="btn-num" data-val="0">0</button>
-                    <button class="btn-num btn-action-submit" id="btn-submit-math">OK</button>
-                </div>
-            </div>
-        </section>
+    <script>
+        // Aufgaben-Datenbank (Funktioniert für Obst, Gemüse, Tiere, Menschen etc.)
+        const tasks = [
+            {
+                baseWord: "Baum",
+                targetWord: "Bäume",
+                prefix: "B",
+                correctEnding: "äume",
+                wrongEnding: "ume"
+            },
+            {
+                baseWord: "Bär",
+                targetWord: "Bären",
+                prefix: "B",
+                correctEnding: "ären",
+                wrongEnding: "eren"
+            },
+            {
+                baseWord: "Apfel",
+                targetWord: "Äpfel",
+                prefix: "",
+                correctEnding: "Äpfel",
+                wrongEnding: "Epfel"
+            },
+            {
+                baseWord: "Hand",
+                targetWord: "Hände",
+                prefix: "H",
+                correctEnding: "ände",
+                wrongEnding: "ende"
+            },
+            {
+                baseWord: "Haus",
+                targetWord: "Häuser",
+                prefix: "H",
+                correctEnding: "äuser",
+                wrongEnding: "euser"
+            }
+        ];
 
-        <!-- MODUL 3. KLASSE: HALBSCHRIFTLICHES RECHNEN -->
-        <section id="module-k3-halb" class="module-card hidden">
-            <div class="card game-card">
-                <h2>Halbschriftlich Addieren</h2>
-                <p class="instruction">Löse Schritt für Schritt im ZR 1.000:</p>
-                <div class="halb-problem">
-                    <span id="halb-main-task">340 + 280 = ?</span>
-                </div>
-                <div class="step-container">
-                    <div class="step-row">
-                        <span id="step1-label">340 + 200 =</span>
-                        <span id="step1-input" class="input-display active-field">?</span>
-                    </div>
-                    <div class="step-row">
-                        <span id="step2-label">540 + 80 =</span>
-                        <span id="step2-input" class="input-display">?</span>
-                    </div>
-                </div>
-                <div class="numpad-grid" style="margin-top: 1rem;">
-                    <button class="btn-num-halb" data-val="1">1</button>
-                    <button class="btn-num-halb" data-val="2">2</button>
-                    <button class="btn-num-halb" data-val="3">3</button>
-                    <button class="btn-num-halb" data-val="4">4</button>
-                    <button class="btn-num-halb" data-val="5">5</button>
-                    <button class="btn-num-halb" data-val="6">6</button>
-                    <button class="btn-num-halb" data-val="7">7</button>
-                    <button class="btn-num-halb" data-val="8">8</button>
-                    <button class="btn-num-halb" data-val="9">9</button>
-                    <button class="btn-num-halb btn-action" data-val="clear">C</button>
-                    <button class="btn-num-halb" data-val="0">0</button>
-                    <button class="btn-num-halb btn-action-submit" id="btn-submit-halb">OK</button>
-                </div>
-            </div>
-        </section>
+        let currentTaskIndex = 0;
+        let score = 90;
+        let selectedVoice = null;
 
-        <!-- MODUL 3. KLASSE: WORTARTEN -->
-        <section id="module-k3-lang" class="module-card hidden">
-            <div class="card game-card">
-                <h2>Wortarten Bestimmen</h2>
-                <p class="instruction">Bestimme die Wortart des hervorgehobenen Worts:</p>
-                <div class="sentence-box">
-                    <p id="grammar-sentence">Der <strong id="target-word" class="highlight">schnelle</strong> Hund rennt.</p>
-                </div>
-                <div id="grammar-options" class="grammar-grid">
-                    <button class="btn-grammar btn-nomen" data-type="Nomen">Nomen</button>
-                    <button class="btn-grammar btn-verb" data-type="Verb">Verb</button>
-                    <button class="btn-grammar btn-adjektiv" data-type="Adjektiv">Adjektiv</button>
-                </div>
-            </div>
-        </section>
+        // Sprachausgabe-Optimierung & Normalisierung (Erzwingt 'Baer'-Qualität)
+        function normalizeForSpeech(text) {
+            return text
+                .replace(/ä/g, 'ae')
+                .replace(/Ä/g, 'Ae')
+                .replace(/ö/g, 'oe')
+                .replace(/Ö/g, 'Oe')
+                .replace(/ü/g, 'ue')
+                .replace(/Ü/g, 'Ue')
+                .replace(/ß/g, 'ss');
+        }
 
-        <!-- MODUL 3. KLASSE: RECHTSCHREIBSTRATEGIEN -->
-        <section id="module-k3-spell" class="module-card hidden">
-            <div class="card game-card">
-                <h2>Rechtschreibstrategien</h2>
-                <p id="spell-instruction" class="instruction">Verlängere das Wort: Hun...</p>
-                <button id="btn-play-spell-audio" class="btn-audio" style="margin-bottom:0.8rem;">🔊 Wort anhören</button>
-                <div class="sentence-box">
-                    <p id="spell-word-display" class="spell-display">Hun<span class="gap">?</span></p>
-                    <p id="spell-hint" class="spell-hint">💡 Tipp: Verlängerung Hun-de</p>
-                </div>
-                <div id="spell-options" class="options-grid"></div>
-            </div>
-        </section>
-    </main>
+        function initBestVoice() {
+            if ('speechSynthesis' in window) {
+                const loadVoices = () => {
+                    const voices = window.speechSynthesis.getVoices();
+                    // Priorisiere glatte, klare Stimmen
+                    selectedVoice = voices.find(v => v.lang.startsWith('de') && 
+                        (v.name.includes('Google') || v.name.includes('Anna') || v.name.includes('Helena') || v.name.includes('Clara') || v.name.includes('Natural'))) 
+                        || voices.find(v => v.lang.startsWith('de')) 
+                        || null;
+                };
 
-    <script src="./app.js?v=25"></script>
+                loadVoices();
+                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                    window.speechSynthesis.onvoiceschanged = loadVoices;
+                }
+            }
+        }
+
+        function playClearAudio(rawText) {
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel();
+            
+            // Konvertierung zu Phonetik-Reinschrift für gleichmäßige Qualität
+            const spokenText = normalizeForSpeech(rawText);
+            const utterance = new SpeechSynthesisUtterance(spokenText);
+            utterance.lang = 'de-DE';
+            
+            // Exakte Parameter-Abstimmung für deutliche Grundschul-Aussprache
+            utterance.rate = 0.82; 
+            utterance.pitch = 1.0; 
+            
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function renderTask() {
+            const task = tasks[currentTaskIndex];
+
+            // 1. Satz vollständig und linksbündig rendern
+            document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}: ${task.targetWord}`;
+            
+            if(task.prefix !== "") {
+                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
+            } else {
+                document.getElementById('wordDisplay').innerHTML = `<span class="missing-letter">?</span>`;
+            }
+            
+            document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
+            
+            // 2. Antwort-Buttons zufällig mischen (Fisher-Yates Shuffle)
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const options = [
+                { text: task.correctEnding, isCorrect: true },
+                { text: task.wrongEnding, isCorrect: false }
+            ];
+
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => checkAnswer(opt.isCorrect);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Audio-Button verknüpfen
+            document.getElementById('playAudioBtn').onclick = () => {
+                playClearAudio(task.targetWord);
+            };
+        }
+
+        function checkAnswer(isCorrect) {
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('scoreDisplay').innerText = `Punkte: ${score}`;
+                currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
+                renderTask();
+            } else {
+                playClearAudio("Versuche es noch einmal");
+            }
+        }
+
+        // Freischaltung für Safari Audio-Autoplay beim ersten Klick
+        document.addEventListener('touchstart', () => {
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking === false) {
+                window.speechSynthesis.resume();
+            }
+        }, { once: true });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initBestVoice();
+            renderTask();
+        });
+    </script>
 </body>
 </html>
