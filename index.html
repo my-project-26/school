@@ -63,7 +63,7 @@
             font-size: 1rem;
         }
 
-        /* App Main Container */
+        /* Main Container */
         .app-container {
             width: 92%;
             max-width: 480px;
@@ -83,7 +83,7 @@
             margin-bottom: 12px;
         }
 
-        /* Anweisungssatz vollständig linksbündig ohne Abschneiden */
+        /* Anweisungsausrichtung: Nach links verschoben, kein Verraten der Antwort */
         .instruction-box {
             width: 100%;
             text-align: left;
@@ -92,13 +92,12 @@
         }
 
         .instruction-text {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             color: #2c3e50;
             font-weight: 700;
             line-height: 1.4;
             white-space: normal;
             word-wrap: break-word;
-            overflow-wrap: break-word;
         }
 
         /* Audio Button */
@@ -199,8 +198,9 @@
         <h1 class="main-title">Rechtschreibstrategien</h1>
         
         <div class="instruction-box">
+            <!-- WICHTIG: Nur noch "Leite ab von Baum", verrät kein Ergebnis -->
             <div class="instruction-text" id="instructionText">
-                Leite ab von Baum: Bäume
+                Leite ab von Baum
             </div>
         </div>
 
@@ -221,11 +221,11 @@
     </div>
 
     <script>
-        // Aufgaben-Datenbank (Funktioniert für Obst, Gemüse, Tiere, Menschen etc.)
         const tasks = [
             {
                 baseWord: "Baum",
                 targetWord: "Bäume",
+                audioFile: "audio/Baeume.mp3",
                 prefix: "B",
                 correctEnding: "äume",
                 wrongEnding: "ume"
@@ -233,103 +233,51 @@
             {
                 baseWord: "Bär",
                 targetWord: "Bären",
+                audioFile: "audio/Baer.mp3",
                 prefix: "B",
                 correctEnding: "ären",
                 wrongEnding: "eren"
             },
             {
-                baseWord: "Apfel",
-                targetWord: "Äpfel",
-                prefix: "",
-                correctEnding: "Äpfel",
-                wrongEnding: "Epfel"
+                baseWord: "Haus",
+                targetWord: "Häuser",
+                audioFile: "audio/Haeuser.mp3",
+                prefix: "H",
+                correctEnding: "äuser",
+                wrongEnding: "euser"
             },
             {
                 baseWord: "Hand",
                 targetWord: "Hände",
+                audioFile: "audio/Haende.mp3",
                 prefix: "H",
                 correctEnding: "ände",
                 wrongEnding: "ende"
-            },
-            {
-                baseWord: "Haus",
-                targetWord: "Häuser",
-                prefix: "H",
-                correctEnding: "äuser",
-                wrongEnding: "euser"
             }
         ];
 
         let currentTaskIndex = 0;
         let score = 90;
-        let selectedVoice = null;
+        let currentAudio = null;
 
-        // Sprachausgabe-Optimierung & Normalisierung (Erzwingt 'Baer'-Qualität)
-        function normalizeForSpeech(text) {
-            return text
-                .replace(/ä/g, 'ae')
-                .replace(/Ä/g, 'Ae')
-                .replace(/ö/g, 'oe')
-                .replace(/Ö/g, 'Oe')
-                .replace(/ü/g, 'ue')
-                .replace(/Ü/g, 'Ue')
-                .replace(/ß/g, 'ss');
-        }
-
-        function initBestVoice() {
-            if ('speechSynthesis' in window) {
-                const loadVoices = () => {
-                    const voices = window.speechSynthesis.getVoices();
-                    // Priorisiere glatte, klare Stimmen
-                    selectedVoice = voices.find(v => v.lang.startsWith('de') && 
-                        (v.name.includes('Google') || v.name.includes('Anna') || v.name.includes('Helena') || v.name.includes('Clara') || v.name.includes('Natural'))) 
-                        || voices.find(v => v.lang.startsWith('de')) 
-                        || null;
-                };
-
-                loadVoices();
-                if (window.speechSynthesis.onvoiceschanged !== undefined) {
-                    window.speechSynthesis.onvoiceschanged = loadVoices;
-                }
+        function playAudio(audioPath) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-        }
-
-        function playClearAudio(rawText) {
-            if (!('speechSynthesis' in window)) return;
-            
-            window.speechSynthesis.cancel();
-            
-            // Konvertierung zu Phonetik-Reinschrift für gleichmäßige Qualität
-            const spokenText = normalizeForSpeech(rawText);
-            const utterance = new SpeechSynthesisUtterance(spokenText);
-            utterance.lang = 'de-DE';
-            
-            // Exakte Parameter-Abstimmung für deutliche Grundschul-Aussprache
-            utterance.rate = 0.82; 
-            utterance.pitch = 1.0; 
-            
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            }
-
-            window.speechSynthesis.speak(utterance);
+            currentAudio = new Audio(audioPath);
+            currentAudio.play().catch(e => console.log("Audio-Playback abgefangen:", e));
         }
 
         function renderTask() {
             const task = tasks[currentTaskIndex];
 
-            // 1. Satz vollständig und linksbündig rendern
-            document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}: ${task.targetWord}`;
-            
-            if(task.prefix !== "") {
-                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
-            } else {
-                document.getElementById('wordDisplay').innerHTML = `<span class="missing-letter">?</span>`;
-            }
-            
+            // 1. Satz ohne Verraten des Ergebnisses und weiter links platziert
+            document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
+            document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
             document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
             
-            // 2. Antwort-Buttons zufällig mischen (Fisher-Yates Shuffle)
+            // 2. Dynamisches Mischen der Buttons (Fisher-Yates Shuffle)
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
 
@@ -351,9 +299,9 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // Audio-Button verknüpfen
+            // Audio-Button mit generierter MP3 verknüpfen
             document.getElementById('playAudioBtn').onclick = () => {
-                playClearAudio(task.targetWord);
+                playAudio(task.audioFile);
             };
         }
 
@@ -364,19 +312,19 @@
                 currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
                 renderTask();
             } else {
-                playClearAudio("Versuche es noch einmal");
+                // Sanftes audio-visuelles Feedback
+                btnAnimationError();
             }
         }
 
-        // Freischaltung für Safari Audio-Autoplay beim ersten Klick
-        document.addEventListener('touchstart', () => {
-            if ('speechSynthesis' in window && window.speechSynthesis.speaking === false) {
-                window.speechSynthesis.resume();
-            }
-        }, { once: true });
+        function btnAnimationError() {
+            const container = document.getElementById('optionsContainer');
+            container.style.transform = 'translateX(-5px)';
+            setTimeout(() => container.style.transform = 'translateX(5px)', 50);
+            setTimeout(() => container.style.transform = 'translateX(0)', 100);
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
-            initBestVoice();
             renderTask();
         });
     </script>
