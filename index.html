@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Schul-App: Lernstudio BW</title>
-    <link rel="stylesheet" href="./style.css?v=16">
+    <link rel="stylesheet" href="./style.css?v=17">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#4A90E2">
 </head>
@@ -19,8 +19,31 @@
         </div>
     </div>
 
+    <!-- Mobile Navigation Drawer / Modal -->
+    <div id="mobile-menu-drawer" class="menu-drawer hidden">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <h2>Modul wählen</h2>
+                <button id="btn-close-menu" class="btn-close">✕</button>
+            </div>
+            <div class="drawer-section">
+                <h3>1. Klasse</h3>
+                <button class="drawer-btn active" data-target="k1-anlaut">🔊 Anlaute hören</button>
+                <button class="drawer-btn" data-target="k1-silben">🌊 Silben schwingen</button>
+                <button class="drawer-btn" data-target="k1-zehner">🔴 Zehnerfeld</button>
+            </div>
+            <div class="drawer-section">
+                <h3>3. Klasse</h3>
+                <button class="drawer-btn" data-target="k3-math">🧮 1x1 Blitzrechnen</button>
+                <button class="drawer-btn" data-target="k3-halb">➕ Halbschriftlich</button>
+                <button class="drawer-btn" data-target="k3-lang">📝 Wortarten bestimmen</button>
+            </div>
+        </div>
+    </div>
+
     <header>
-        <div class="nav-tabs">
+        <!-- Desktop Tabs (auf großen Bildschirmen sichtbar) -->
+        <div class="nav-tabs desktop-only">
             <button id="tab-k1-anlaut" class="tab-btn active">1. Kl: Anlaute 🔊</button>
             <button id="tab-k1-silben" class="tab-btn">1. Kl: Silben 🌊</button>
             <button id="tab-k1-zehner" class="tab-btn">1. Kl: Zehnerfeld 🔴</button>
@@ -28,6 +51,12 @@
             <button id="tab-k3-halb" class="tab-btn">3. Kl: Halbschriftlich ➕</button>
             <button id="tab-k3-lang" class="tab-btn">3. Kl: Wortarten 📝</button>
         </div>
+
+        <!-- Mobile Menu Trigger (auf Smartphones sichtbar) -->
+        <button id="btn-open-menu" class="mobile-menu-btn mobile-only">
+            ☰ <span id="current-module-title">Anlaute</span>
+        </button>
+
         <div id="score-display">Punkte: <span id="score">0</span></div>
     </header>
 
@@ -146,6 +175,6 @@
         </section>
     </main>
 
-    <script src="./app.js?v=16"></script>
+    <script src="./app.js?v=17"></script>
 </body>
 </html>

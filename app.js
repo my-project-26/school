@@ -15,19 +15,15 @@ fetch('./content.json')
         }
     }).catch(() => {});
 
-const tabK1Anlaut = document.getElementById('tab-k1-anlaut');
-const tabK1Silben = document.getElementById('tab-k1-silben');
-const tabK1Zehner = document.getElementById('tab-k1-zehner');
-const tabK3Math = document.getElementById('tab-k3-math');
-const tabK3Halb = document.getElementById('tab-k3-halb');
-const tabK3Lang = document.getElementById('tab-k3-lang');
-
-const moduleK1Anlaut = document.getElementById('module-k1-anlaut');
-const moduleK1Silben = document.getElementById('module-k1-silben');
-const moduleK1Zehner = document.getElementById('module-k1-zehner');
-const moduleK3Math = document.getElementById('module-k3-math');
-const moduleK3Halb = document.getElementById('module-k3-halb');
-const moduleK3Lang = document.getElementById('module-k3-lang');
+// Navigation Mapping
+const modules = {
+    'k1-anlaut': { tab: document.getElementById('tab-k1-anlaut'), mod: document.getElementById('module-k1-anlaut'), title: 'Anlaute', init: null },
+    'k1-silben': { tab: document.getElementById('tab-k1-silben'), mod: document.getElementById('module-k1-silben'), title: 'Silben', init: () => loadTaskSilben(indexSilben) },
+    'k1-zehner': { tab: document.getElementById('tab-k1-zehner'), mod: document.getElementById('module-k1-zehner'), title: 'Zehnerfeld', init: initZehnerTask },
+    'k3-math': { tab: document.getElementById('tab-k3-math'), mod: document.getElementById('module-k3-math'), title: '1x1 Blitz', init: initMathTask },
+    'k3-halb': { tab: document.getElementById('tab-k3-halb'), mod: document.getElementById('module-k3-halb'), title: 'Halbschriftlich', init: initHalbTask },
+    'k3-lang': { tab: document.getElementById('tab-k3-lang'), mod: document.getElementById('module-k3-lang'), title: 'Wortarten', init: initGrammarTask }
+};
 
 const scoreDisplay = document.getElementById('score');
 scoreDisplay.textContent = score;
@@ -38,20 +34,51 @@ function updateScore(points) {
     scoreDisplay.textContent = score;
 }
 
-function switchTab(activeTab, activeModule) {
-    [tabK1Anlaut, tabK1Silben, tabK1Zehner, tabK3Math, tabK3Halb, tabK3Lang].forEach(t => t.classList.remove('active'));
-    [moduleK1Anlaut, moduleK1Silben, moduleK1Zehner, moduleK3Math, moduleK3Halb, moduleK3Lang].forEach(m => m.classList.add('hidden'));
+// Global Module Switcher
+function selectModule(key) {
+    Object.keys(modules).forEach(k => {
+        if (modules[k].tab) modules[k].tab.classList.remove('active');
+        if (modules[k].mod) modules[k].mod.classList.add('hidden');
+    });
 
-    activeTab.classList.add('active');
-    activeModule.classList.remove('hidden');
+    const active = modules[key];
+    if (active) {
+        if (active.tab) active.tab.classList.add('active');
+        if (active.mod) active.mod.classList.remove('hidden');
+        document.getElementById('current-module-title').textContent = active.title;
+        
+        // Update Drawer UI State
+        document.querySelectorAll('.drawer-btn').forEach(btn => {
+            if (btn.getAttribute('data-target') === key) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+
+        if (active.init) active.init();
+    }
 }
 
-tabK1Anlaut.addEventListener('click', () => switchTab(tabK1Anlaut, moduleK1Anlaut));
-tabK1Silben.addEventListener('click', () => { switchTab(tabK1Silben, moduleK1Silben); loadTaskSilben(indexSilben); });
-tabK1Zehner.addEventListener('click', () => { switchTab(tabK1Zehner, moduleK1Zehner); initZehnerTask(); });
-tabK3Math.addEventListener('click', () => { switchTab(tabK3Math, moduleK3Math); initMathTask(); });
-tabK3Halb.addEventListener('click', () => { switchTab(tabK3Halb, moduleK3Halb); initHalbTask(); });
-tabK3Lang.addEventListener('click', () => { switchTab(tabK3Lang, moduleK3Lang); initGrammarTask(); });
+// Desktop Tab Clicks
+Object.keys(modules).forEach(key => {
+    if (modules[key].tab) {
+        modules[key].tab.addEventListener('click', () => selectModule(key));
+    }
+});
+
+// Mobile Drawer Controls
+const menuDrawer = document.getElementById('mobile-menu-drawer');
+const btnOpenMenu = document.getElementById('btn-open-menu');
+const btnCloseMenu = document.getElementById('btn-close-menu');
+
+btnOpenMenu.addEventListener('click', () => menuDrawer.classList.remove('hidden'));
+btnCloseMenu.addEventListener('click', () => menuDrawer.classList.add('hidden'));
+
+document.querySelectorAll('.drawer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetKey = btn.getAttribute('data-target');
+        selectModule(targetKey);
+        menuDrawer.classList.add('hidden');
+    });
+});
 
 let currentAudio = null;
 function playAudioFile(path) {
