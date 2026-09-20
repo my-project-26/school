@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('Service Worker aktiv.'))
         .catch(err => console.log('SW Fehler:', err));
 }
@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
 let score = parseInt(localStorage.getItem('school_app_score') || '0');
 
 let dynamicGrammarTasks = [];
-fetch('content.json')
+fetch('./content.json')
     .then(res => res.json())
     .then(data => {
         if (data.klasse3_wortarten && data.klasse3_wortarten.length > 0) {
@@ -53,7 +53,6 @@ tabK3Math.addEventListener('click', () => { switchTab(tabK3Math, moduleK3Math); 
 tabK3Halb.addEventListener('click', () => { switchTab(tabK3Halb, moduleK3Halb); initHalbTask(); });
 tabK3Lang.addEventListener('click', () => { switchTab(tabK3Lang, moduleK3Lang); initGrammarTask(); });
 
-// AUDIO ENGINE
 let currentAudio = null;
 function playAudioFile(path) {
     if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
