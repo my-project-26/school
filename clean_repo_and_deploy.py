@@ -678,13 +678,10 @@ def run_cmd(cmd):
     if res.stderr and res.returncode != 0:
         print(f"    --> {res.stderr.strip()}")
 
-print("🧹 Entferne venv aus dem Git-Tracking...")
-run_cmd("git rm -r --cached venv 2>/dev/null")
-
 print("🚀 Führe sauberen Git-Push aus...")
 run_cmd("git add .")
-run_cmd("git commit -m 'Fix: Remove venv tracking and configure Actions Workflow'")
+run_cmd("git commit -m 'Fix: Trigger GitHub Actions Deployment'")
 run_cmd("git branch -M main")
 run_cmd("git push -u origin main")
 
-print("\n✨ Bereinigung beendet!")
+print("\n✨ Upload beendet!")
