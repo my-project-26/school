@@ -22,7 +22,8 @@ const modules = {
     'k1-zehner': { tab: document.getElementById('tab-k1-zehner'), mod: document.getElementById('module-k1-zehner'), title: 'Zehnerfeld', init: initZehnerTask },
     'k3-math': { tab: document.getElementById('tab-k3-math'), mod: document.getElementById('module-k3-math'), title: '1x1 Blitz', init: initMathTask },
     'k3-halb': { tab: document.getElementById('tab-k3-halb'), mod: document.getElementById('module-k3-halb'), title: 'Halbschriftlich', init: initHalbTask },
-    'k3-lang': { tab: document.getElementById('tab-k3-lang'), mod: document.getElementById('module-k3-lang'), title: 'Wortarten', init: initGrammarTask }
+    'k3-lang': { tab: document.getElementById('tab-k3-lang'), mod: document.getElementById('module-k3-lang'), title: 'Wortarten', init: initGrammarTask },
+    'k3-spell': { tab: document.getElementById('tab-k3-spell'), mod: document.getElementById('module-k3-spell'), title: 'Rechtschreibung', init: initSpellTask }
 };
 
 const scoreDisplay = document.getElementById('score');
@@ -34,7 +35,6 @@ function updateScore(points) {
     scoreDisplay.textContent = score;
 }
 
-// Global Module Switcher
 function selectModule(key) {
     Object.keys(modules).forEach(k => {
         if (modules[k].tab) modules[k].tab.classList.remove('active');
@@ -47,7 +47,6 @@ function selectModule(key) {
         if (active.mod) active.mod.classList.remove('hidden');
         document.getElementById('current-module-title').textContent = active.title;
         
-        // Update Drawer UI State
         document.querySelectorAll('.drawer-btn').forEach(btn => {
             if (btn.getAttribute('data-target') === key) btn.classList.add('active');
             else btn.classList.remove('active');
@@ -57,14 +56,12 @@ function selectModule(key) {
     }
 }
 
-// Desktop Tab Clicks
 Object.keys(modules).forEach(key => {
     if (modules[key].tab) {
         modules[key].tab.addEventListener('click', () => selectModule(key));
     }
 });
 
-// Mobile Drawer Controls
 const menuDrawer = document.getElementById('mobile-menu-drawer');
 const btnOpenMenu = document.getElementById('btn-open-menu');
 const btnCloseMenu = document.getElementById('btn-close-menu');
@@ -367,3 +364,47 @@ document.querySelectorAll('.btn-grammar').forEach(btn => {
         }
     });
 });
+
+// KLASSE 3: RECHTSCHREIBSTRATEGIEN (Verlängern & Ableiten)
+const spellTasks = [
+    { prefix: 'Hun', options: ['d', 't'], correct: 'd', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
+    { prefix: 'Hän', options: ['de', 'te'], correct: 'de', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
+    { prefix: 'Gera', options: ['de', 'te'], correct: 'de', strategy: 'Verlängern: gera-de', instruction: 'Verlängere das Wort:' },
+    { prefix: 'Bä', options: ['ume', 'ume'], correct: 'ume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
+    { prefix: 'Kro', options: ['g', 'k'], correct: 'g', strategy: 'Verlängern: Kro-ge', instruction: 'Verlängere das Wort:' }
+];
+
+let indexSpell = 0;
+const spellInstructionEl = document.getElementById('spell-instruction');
+const spellWordDisplayEl = document.getElementById('spell-word-display');
+const spellHintEl = document.getElementById('spell-hint');
+const spellOptionsEl = document.getElementById('spell-options');
+
+function initSpellTask() {
+    const task = spellTasks[indexSpell % spellTasks.length];
+    spellInstructionEl.textContent = `${task.instruction} ${task.prefix}...`;
+    spellWordDisplayEl.innerHTML = `${task.prefix}<span class="gap">?</span>`;
+    spellHintEl.textContent = `💡 Tipp: ${task.strategy}`;
+
+    spellOptionsEl.innerHTML = '';
+    task.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+            if (opt === task.correct) {
+                updateScore(15);
+                spellWordDisplayEl.innerHTML = `${task.prefix}<strong style="color:var(--success-color);">${opt}</strong>`;
+                setTimeout(() => {
+                    indexSpell = (indexSpell + 1) % spellTasks.length;
+                    initSpellTask();
+                }, 600);
+            } else {
+                const card = document.querySelector('#module-k3-spell .game-card');
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 400);
+            }
+        });
+        spellOptionsEl.appendChild(btn);
+    });
+}

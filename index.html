@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Schul-App: Lernstudio BW</title>
-    <link rel="stylesheet" href="./style.css?v=17">
+    <link rel="stylesheet" href="./style.css?v=18">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#4A90E2">
 </head>
@@ -37,12 +37,13 @@
                 <button class="drawer-btn" data-target="k3-math">🧮 1x1 Blitzrechnen</button>
                 <button class="drawer-btn" data-target="k3-halb">➕ Halbschriftlich</button>
                 <button class="drawer-btn" data-target="k3-lang">📝 Wortarten bestimmen</button>
+                <button class="drawer-btn" data-target="k3-spell">✍️ Rechtschreibung</button>
             </div>
         </div>
     </div>
 
     <header>
-        <!-- Desktop Tabs (auf großen Bildschirmen sichtbar) -->
+        <!-- Desktop Tabs -->
         <div class="nav-tabs desktop-only">
             <button id="tab-k1-anlaut" class="tab-btn active">1. Kl: Anlaute 🔊</button>
             <button id="tab-k1-silben" class="tab-btn">1. Kl: Silben 🌊</button>
@@ -50,9 +51,10 @@
             <button id="tab-k3-math" class="tab-btn">3. Kl: 1x1 🧮</button>
             <button id="tab-k3-halb" class="tab-btn">3. Kl: Halbschriftlich ➕</button>
             <button id="tab-k3-lang" class="tab-btn">3. Kl: Wortarten 📝</button>
+            <button id="tab-k3-spell" class="tab-btn">3. Kl: Rechtschreibung ✍️</button>
         </div>
 
-        <!-- Mobile Menu Trigger (auf Smartphones sichtbar) -->
+        <!-- Mobile Menu Trigger -->
         <button id="btn-open-menu" class="mobile-menu-btn mobile-only">
             ☰ <span id="current-module-title">Anlaute</span>
         </button>
@@ -80,7 +82,7 @@
                 <button id="btn-play-silben-audio" class="btn-audio">🔊 Wort anhören</button>
                 <div class="image-container"><span id="silben-emoji" class="emoji-display">❓</span></div>
                 <div id="silben-options" class="silben-grid">
-                    <button class="btn-silbe" data-count="1">1 Silbe 🌊</button>
+                    <button class="btn-silbe" data-count="1">1 Silbe 0</button>
                     <button class="btn-silbe" data-count="2">2 Silben 🌊🌊</button>
                     <button class="btn-silbe" data-count="3">3 Silben 🌊🌊🌊</button>
                     <button class="btn-silbe" data-count="4">4 Silben 🌊🌊🌊🌊</button>
@@ -173,8 +175,21 @@
                 </div>
             </div>
         </section>
+
+        <!-- MODUL 3. KLASSE: RECHTSCHREIBSTRATEGIEN -->
+        <section id="module-k3-spell" class="module-card hidden">
+            <div class="card game-card">
+                <h2>Rechtschreibstrategien</h2>
+                <p id="spell-instruction" class="instruction">Verlängere das Wort: Hun...</p>
+                <div class="sentence-box">
+                    <p id="spell-word-display" class="spell-display">Hun<span class="gap">?</span></p>
+                    <p id="spell-hint" class="spell-hint">💡 Verlängerung: Hun-de</p>
+                </div>
+                <div id="spell-options" class="options-grid"></div>
+            </div>
+        </section>
     </main>
 
-    <script src="./app.js?v=17"></script>
+    <script src="./app.js?v=18"></script>
 </body>
 </html>

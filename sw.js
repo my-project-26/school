@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schul-app-v17';
+const CACHE_NAME = 'schul-app-v18';
 const ASSETS = [
   './',
   './index.html',

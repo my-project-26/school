@@ -32,11 +32,10 @@ header {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
 }
 
-/* Responsive Display Classes */
 .mobile-only { display: none !important; }
 .desktop-only { display: flex !important; }
 
-@media (max-width: 650px) {
+@media (max-width: 700px) {
     .mobile-only { display: flex !important; }
     .desktop-only { display: none !important; }
 }
@@ -45,7 +44,6 @@ header {
 .tab-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 0.5rem 0.8rem; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85rem; white-space: nowrap; transition: background 0.2s; }
 .tab-btn.active { background: white; color: var(--primary-color); }
 
-/* Mobile Menu Button */
 .mobile-menu-btn {
     background: white;
     color: var(--primary-color);
@@ -61,7 +59,6 @@ header {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Mobile Menu Drawer Modal */
 .menu-drawer {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -128,6 +125,11 @@ header {
 .emoji-display { font-size: 4.5rem; }
 .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
 .btn-option { background-color: var(--bg-color); border: 3px solid var(--primary-color); border-radius: 16px; font-size: 2.2rem; font-weight: bold; color: var(--primary-color); padding: 0.8rem; min-height: 65px; cursor: pointer; }
+
+/* RECHTSCHREIBSTRATEGIEN STYLES */
+.spell-display { font-size: 2.8rem; font-weight: bold; letter-spacing: 2px; }
+.gap { color: var(--primary-color); border-bottom: 4px solid var(--primary-color); padding: 0 0.3rem; }
+.spell-hint { font-size: 1rem; color: #64748B; font-weight: 600; margin-top: 0.8rem; }
 
 .ten-frame-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; background: #E2E8F0; padding: 12px; border-radius: 16px; border: 3px solid #CBD5E1; max-width: 300px; margin: 0 auto; }
 .ten-frame-cell { aspect-ratio: 1; background: white; border-radius: 50%; border: 2px dashed #94A3B8; display: flex; justify-content: center; align-items: center; }
