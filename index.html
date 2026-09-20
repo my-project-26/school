@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Schul App - Rechtschreibstrategien</title>
+    <title>Schul App - Lernportal</title>
     <style>
         :root {
             --primary-color: #2b7fff;
@@ -11,6 +11,7 @@
             --card-bg: #ffffff;
             --text-color: #2c3e50;
             --accent-yellow: #ffdb58;
+            --accent-green: #2ecc71;
             --btn-hover: #1a62d1;
         }
 
@@ -31,7 +32,7 @@
             min-height: 100vh;
         }
 
-        /* Top Bar */
+        /* Top Bar Navigation */
         .top-bar {
             width: 100%;
             background-color: var(--primary-color);
@@ -40,6 +41,9 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .btn-nav {
@@ -52,6 +56,14 @@
             font-size: 1rem;
             cursor: pointer;
             min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s ease;
+        }
+
+        .btn-nav:active {
+            transform: scale(0.95);
         }
 
         .score-badge {
@@ -63,12 +75,13 @@
             font-size: 1rem;
         }
 
-        /* Container */
+        /* Main Container */
         .app-container {
             width: 92%;
             max-width: 480px;
             background: var(--card-bg);
             margin-top: 20px;
+            margin-bottom: 30px;
             padding: 24px 20px;
             border-radius: 24px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.06);
@@ -80,10 +93,64 @@
             color: var(--primary-color);
             font-size: 1.6rem;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
-        /* Anweisungssatz: Linksbündig ohne Verraten der Lösung */
+        /* Views (SPA Umschaltung) */
+        .view-section {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+
+        /* Hauptmenü Kacheln */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .menu-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s, transform 0.1s;
+        }
+
+        .menu-card:active {
+            border-color: var(--primary-color);
+            transform: scale(0.98);
+        }
+
+        .menu-card-icon {
+            font-size: 2.2rem;
+            background: #e0f2fe;
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .menu-card-info h2 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .menu-card-info p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* Übungsansicht Layout */
         .instruction-box {
             width: 100%;
             text-align: left;
@@ -100,7 +167,6 @@
             word-wrap: break-word;
         }
 
-        /* Audio Button */
         .audio-btn {
             background-color: var(--accent-yellow);
             border: none;
@@ -124,7 +190,6 @@
             transform: scale(0.98);
         }
 
-        /* Wort-Kasten */
         .display-card {
             background-color: #f8fafc;
             border-radius: 16px;
@@ -157,7 +222,6 @@
             gap: 6px;
         }
 
-        /* Antwort Buttons Grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -189,39 +253,77 @@
 </head>
 <body>
 
+    <!-- Header mit funktionalem Menü-Button -->
     <div class="top-bar">
-        <button class="btn-nav">≡ Rechtschreibung</button>
-        <div class="score-badge" id="scoreDisplay">Punkte: 90</div>
+        <button class="btn-nav" id="mainMenuNavBtn" onclick="showView('main-menu')">
+            <span>☰</span> <span id="navTitle">Hauptmenü</span>
+        </button>
+        <div class="score-badge" id="scoreDisplay">Punkte: 0</div>
     </div>
 
     <div class="app-container">
-        <h1 class="main-title">Rechtschreibstrategien</h1>
-        
-        <div class="instruction-box">
-            <!-- Nur noch der Ausgangsbegriff, kein Verraten der Antwort -->
-            <div class="instruction-text" id="instructionText">
-                Leite ab von Baum
+
+        <!-- ANSICHT 1: HAUPTMENÜ -->
+        <div id="view-main-menu" class="view-section active">
+            <h1 class="main-title">Lernbereiche</h1>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="startExercise('rechtschreibung')">
+                    <div class="menu-card-icon">✏️</div>
+                    <div class="menu-card-info">
+                        <h2>Rechtschreibung</h2>
+                        <p>Ableiten & Verlängern (3. Klasse)</p>
+                    </div>
+                </div>
+                
+                <div class="menu-card" onclick="startExercise('1x1')">
+                    <div class="menu-card-icon">🔢</div>
+                    <div class="menu-card-info">
+                        <h2>1x1 Trainer</h2>
+                        <p>Einmaleins automatisieren</p>
+                    </div>
+                </div>
+
+                <div class="menu-card" onclick="startExercise('anlaute')">
+                    <div class="menu-card-icon">🔤</div>
+                    <div class="menu-card-info">
+                        <h2>Anlaute hören</h2>
+                        <p>Audio-Training (1. Klasse)</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <button class="audio-btn" id="playAudioBtn">
-            🔊 Wort anhören
-        </button>
+        <!-- ANSICHT 2: ÜBUNGSMODUL RECHTSCHREIBSTRATEGIEN -->
+        <div id="view-exercise" class="view-section">
+            <h1 class="main-title" id="exerciseTitle">Rechtschreibstrategien</h1>
+            
+            <div class="instruction-box">
+                <div class="instruction-text" id="instructionText">
+                    Leite ab von Baum
+                </div>
+            </div>
 
-        <div class="display-card">
-            <div class="word-display" id="wordDisplay">
-                B<span class="missing-letter">?</span>
+            <button class="audio-btn" id="playAudioBtn">
+                🔊 Wort anhören
+            </button>
+
+            <div class="display-card">
+                <div class="word-display" id="wordDisplay">
+                    B<span class="missing-letter">?</span>
+                </div>
+                <div class="hint-text" id="hintText">
+                    💡 Tipp: Ableiten von Baum
+                </div>
             </div>
-            <div class="hint-text" id="hintText">
-                💡 Tipp: Ableiten von Baum
-            </div>
+
+            <div class="options-grid" id="optionsContainer"></div>
         </div>
 
-        <div class="options-grid" id="optionsContainer"></div>
     </div>
 
     <script>
-        const tasks = [
+        // Aufgabenkatalog für Rechtschreibstrategien (Klasse 3)
+        const spellingTasks = [
             {
                 baseWord: "Baum",
                 targetWord: "Bäume",
@@ -257,30 +359,61 @@
         ];
 
         let currentTaskIndex = 0;
-        let score = 90;
+        let score = parseInt(localStorage.getItem('schulapp_score') || '90');
         window.activeAudio = null;
 
-        // Robuster Audio-Player ohne Abbrüche
+        // Punkte im UI und LocalStorage aktualisieren
+        function updateScore(points) {
+            score = points;
+            localStorage.setItem('schulapp_score', score.toString());
+            document.getElementById('scoreDisplay').innerText = `Punkte: ${score}`;
+        }
+
+        // View-Management (Hauptmenü <-> Übung)
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+
+            const navTitle = document.getElementById('navTitle');
+            if (viewId === 'main-menu') {
+                navTitle.innerText = "Hauptmenü";
+                if (window.activeAudio) window.activeAudio.pause();
+            } else {
+                navTitle.innerText = "≡ Menü";
+            }
+        }
+
+        // Startet das gewählte Modul
+        function startExercise(moduleType) {
+            if (moduleType === 'rechtschreibung') {
+                document.getElementById('exerciseTitle').innerText = "Rechtschreibstrategien";
+                showView('exercise');
+                renderSpellingTask();
+            } else {
+                alert("Dieses Modul befindet sich aktuell im Aufbau.");
+            }
+        }
+
+        // Audio abspielen
         function playAudio(audioPath) {
             if (window.activeAudio) {
                 window.activeAudio.pause();
                 window.activeAudio.currentTime = 0;
             }
             window.activeAudio = new Audio(audioPath);
-            window.activeAudio.play().catch(err => {
-                console.warn("Audio Playback Hinweis:", err);
-            });
+            window.activeAudio.play().catch(err => console.warn("Audio-Hinweis:", err));
         }
 
-        function renderTask() {
-            const task = tasks[currentTaskIndex];
+        // Rendert die Rechtschreibaufgabe
+        function renderSpellingTask() {
+            const task = spellingTasks[currentTaskIndex];
 
-            // 1. Textanzeige: Weiter links, kein Lösungssatz
+            // Nur Ausgangswort, kein Verraten der Lösung
             document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
             document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
             document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
-            
-            // 2. Antwort-Buttons zufällig mischen
+
+            // Buttons zufällig mischen (Fisher-Yates Shuffle)
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
 
@@ -289,7 +422,6 @@
                 { text: task.wrongEnding, isCorrect: false }
             ];
 
-            // Fisher-Yates Shuffle
             for (let i = options.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
@@ -299,22 +431,20 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = opt.text;
-                btn.onclick = () => checkAnswer(opt.isCorrect);
+                btn.onclick = () => checkSpellingAnswer(opt.isCorrect);
                 optionsContainer.appendChild(btn);
             });
 
-            // Audio-Button Verknüpfung
             document.getElementById('playAudioBtn').onclick = () => {
                 playAudio(task.audioFile);
             };
         }
 
-        function checkAnswer(isCorrect) {
+        function checkSpellingAnswer(isCorrect) {
             if (isCorrect) {
-                score += 10;
-                document.getElementById('scoreDisplay').innerText = `Punkte: ${score}`;
-                currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
-                renderTask();
+                updateScore(score + 10);
+                currentTaskIndex = (currentTaskIndex + 1) % spellingTasks.length;
+                renderSpellingTask();
             } else {
                 const container = document.getElementById('optionsContainer');
                 container.style.transform = 'translateX(-6px)';
@@ -323,8 +453,10 @@
             }
         }
 
+        // Initialisierung
         window.addEventListener('DOMContentLoaded', () => {
-            renderTask();
+            updateScore(score);
+            showView('main-menu');
         });
     </script>
 </body>
