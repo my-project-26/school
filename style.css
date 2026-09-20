@@ -35,7 +35,7 @@ header {
 .mobile-only { display: none !important; }
 .desktop-only { display: flex !important; }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
     .mobile-only { display: flex !important; }
     .desktop-only { display: none !important; }
 }
@@ -124,7 +124,7 @@ header {
 .image-container { height: 100px; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
 .emoji-display { font-size: 4.5rem; }
 .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
-.btn-option { background-color: var(--bg-color); border: 3px solid var(--primary-color); border-radius: 16px; font-size: 2.2rem; font-weight: bold; color: var(--primary-color); padding: 0.8rem; min-height: 65px; cursor: pointer; }
+.btn-option { background-color: var(--bg-color); border: 3px solid var(--primary-color); border-radius: 16px; font-size: 1.8rem; font-weight: bold; color: var(--primary-color); padding: 0.8rem; min-height: 65px; cursor: pointer; }
 
 /* RECHTSCHREIBSTRATEGIEN STYLES */
 .spell-display { font-size: 2.8rem; font-weight: bold; letter-spacing: 2px; }

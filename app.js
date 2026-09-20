@@ -86,26 +86,22 @@ function playAudioFile(path) {
 
 // KLASSE 1: ANLAUTE
 const taskDataK1 = [
-    { word: 'Affe', letter: 'A', emoji: '🐒', audio: 'audio/Affe.mp3' },
     { word: 'Apfel', letter: 'A', emoji: '🍎', audio: 'audio/Apfel.mp3' },
+    { word: 'Affe', letter: 'A', emoji: '🐒', audio: 'audio/Affe.mp3' },
     { word: 'Bär', letter: 'B', emoji: '🐻', audio: 'audio/Baer.mp3' },
-    { word: 'Ball', letter: 'B', emoji: '⚽', audio: 'audio/Ball.mp3' },
+    { word: 'Brot', letter: 'B', emoji: '🍞', audio: 'audio/Brot.mp3' },
     { word: 'Elefant', letter: 'E', emoji: '🐘', audio: 'audio/Elefant.mp3' },
     { word: 'Fisch', letter: 'F', emoji: '🐟', audio: 'audio/Fisch.mp3' },
     { word: 'Gitarre', letter: 'G', emoji: '🎸', audio: 'audio/Gitarre.mp3' },
     { word: 'Hase', letter: 'H', emoji: '🐰', audio: 'audio/Hase.mp3' },
     { word: 'Igel', letter: 'I', emoji: '🦔', audio: 'audio/Igel.mp3' },
     { word: 'Krokodil', letter: 'K', emoji: '🐊', audio: 'audio/Krokodil.mp3' },
-    { word: 'Löwe', letter: 'L', emoji: '🦁', audio: 'audio/Loewe.mp3' },
+    { word: 'Kirsche', letter: 'K', emoji: '🍒', audio: 'audio/Kirsche.mp3' },
     { word: 'Maus', letter: 'M', emoji: '🐭', audio: 'audio/Maus.mp3' },
-    { word: 'Nase', letter: 'N', emoji: '👃', audio: 'audio/Nase.mp3' },
-    { word: 'Oma', letter: 'O', emoji: '👵', audio: 'audio/Oma.mp3' },
-    { word: 'Pinguin', letter: 'P', emoji: '🐧', audio: 'audio/Pinguin.mp3' },
+    { word: 'Milch', letter: 'M', emoji: '🥛', audio: 'audio/Milch.mp3' },
+    { word: 'Pilz', letter: 'P', emoji: '🍄', audio: 'audio/Pilz.mp3' },
     { word: 'Sonne', letter: 'S', emoji: '☀️', audio: 'audio/Sonne.mp3' },
-    { word: 'Trommel', letter: 'T', emoji: '🥁', audio: 'audio/Trommel.mp3' },
-    { word: 'Uhr', letter: 'U', emoji: '⏰', audio: 'audio/Uhr.mp3' },
-    { word: 'Vogel', letter: 'V', emoji: '🐦', audio: 'audio/Vogel.mp3' },
-    { word: 'Zebra', letter: 'Z', emoji: '🦓', audio: 'audio/Zebra.mp3' }
+    { word: 'Tanne', letter: 'T', emoji: '🌲', audio: 'audio/Tanne.mp3' }
 ];
 
 let indexK1 = 0;
@@ -159,7 +155,7 @@ const silbenData = [
     { word: 'Affe', syllables: 2, emoji: '🐒', audio: 'audio/Affe.mp3' },
     { word: 'Elefant', syllables: 3, emoji: '🐘', audio: 'audio/Elefant.mp3' },
     { word: 'Krokodil', syllables: 3, emoji: '🐊', audio: 'audio/Krokodil.mp3' },
-    { word: 'Pinguin', syllables: 2, emoji: '🐧', audio: 'audio/Pinguin.mp3' }
+    { word: 'Maultasche', syllables: 3, emoji: '🥟', audio: 'audio/Maultasche.mp3' }
 ];
 
 let indexSilben = 0;
@@ -338,7 +334,9 @@ document.getElementById('btn-submit-halb').addEventListener('click', () => {
 const fallbackGrammarTasks = [
     { sentence: 'Der schnelle Hund rennt.', target: 'schnelle', type: 'Adjektiv' },
     { sentence: 'Die Katze schläft auf dem Sofa.', target: 'Katze', type: 'Nomen' },
-    { sentence: 'Wir fröhlichen Kinder singen laut.', target: 'singen', type: 'Verb' }
+    { sentence: 'Wir fröhlichen Kinder singen laut.', target: 'singen', type: 'Verb' },
+    { sentence: 'Oma kocht leckere Spätzle.', target: 'Spätzle', type: 'Nomen' },
+    { sentence: 'Der große Bär wandert durch den Schwarzwald.', target: 'wandert', type: 'Verb' }
 ];
 let indexGrammar = 0;
 
@@ -365,13 +363,14 @@ document.querySelectorAll('.btn-grammar').forEach(btn => {
     });
 });
 
-// KLASSE 3: RECHTSCHREIBSTRATEGIEN (Verlängern & Ableiten)
+// KLASSE 3: RECHTSCHREIBSTRATEGIEN
 const spellTasks = [
-    { prefix: 'Hun', options: ['d', 't'], correct: 'd', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
-    { prefix: 'Hän', options: ['de', 'te'], correct: 'de', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
-    { prefix: 'Gera', options: ['de', 'te'], correct: 'de', strategy: 'Verlängern: gera-de', instruction: 'Verlängere das Wort:' },
-    { prefix: 'Bä', options: ['ume', 'ume'], correct: 'ume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
-    { prefix: 'Kro', options: ['g', 'k'], correct: 'g', strategy: 'Verlängern: Kro-ge', instruction: 'Verlängere das Wort:' }
+    { prefix: 'Hun', choices: ['d', 't'], correct: 'd', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
+    { prefix: 'Bä', choices: ['äume', 'ume'], correct: 'äume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
+    { prefix: 'Hän', choices: ['de', 'te'], correct: 'de', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
+    { prefix: 'Wal', choices: ['d', 't'], correct: 'd', strategy: 'Verlängern: Wäl-der', instruction: 'Verlängere das Wort:' },
+    { prefix: 'Äp', choices: ['fel', 'pel'], correct: 'fel', strategy: 'Ableiten von: Apfel', instruction: 'Leite ab von Apfel:' },
+    { prefix: 'Bro', choices: ['t', 'd'], correct: 't', strategy: 'Verlängern: Bro-te', instruction: 'Verlängere das Wort:' }
 ];
 
 let indexSpell = 0;
@@ -387,7 +386,7 @@ function initSpellTask() {
     spellHintEl.textContent = `💡 Tipp: ${task.strategy}`;
 
     spellOptionsEl.innerHTML = '';
-    task.options.forEach(opt => {
+    task.choices.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'btn-option';
         btn.textContent = opt;

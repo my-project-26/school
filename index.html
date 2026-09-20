@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Schul-App: Lernstudio BW</title>
-    <link rel="stylesheet" href="./style.css?v=18">
+    <link rel="stylesheet" href="./style.css?v=20">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#4A90E2">
 </head>
@@ -13,13 +13,13 @@
     <!-- Start-Overlay für Audio-Unlock (Safari/iOS Autoplay Policy Fix) -->
     <div id="start-overlay" class="overlay">
         <div class="card start-card">
-            <h1>Willkommen im Lernstudio! 🎈</h1>
+            <h1>Willkommen im Lernstudio BW! 🌲🎈</h1>
             <p>Tippe auf den Knopf, um das Lernspiel zu starten.</p>
             <button id="btn-start" class="btn-primary">Lernstudio Öffnen 🚀</button>
         </div>
     </div>
 
-    <!-- Mobile Navigation Drawer / Modal -->
+    <!-- Mobile Navigation Drawer -->
     <div id="mobile-menu-drawer" class="menu-drawer hidden">
         <div class="drawer-content">
             <div class="drawer-header">
@@ -82,7 +82,7 @@
                 <button id="btn-play-silben-audio" class="btn-audio">🔊 Wort anhören</button>
                 <div class="image-container"><span id="silben-emoji" class="emoji-display">❓</span></div>
                 <div id="silben-options" class="silben-grid">
-                    <button class="btn-silbe" data-count="1">1 Silbe 0</button>
+                    <button class="btn-silbe" data-count="1">1 Silbe 🌊</button>
                     <button class="btn-silbe" data-count="2">2 Silben 🌊🌊</button>
                     <button class="btn-silbe" data-count="3">3 Silben 🌊🌊🌊</button>
                     <button class="btn-silbe" data-count="4">4 Silben 🌊🌊🌊🌊</button>
@@ -183,13 +183,13 @@
                 <p id="spell-instruction" class="instruction">Verlängere das Wort: Hun...</p>
                 <div class="sentence-box">
                     <p id="spell-word-display" class="spell-display">Hun<span class="gap">?</span></p>
-                    <p id="spell-hint" class="spell-hint">💡 Verlängerung: Hun-de</p>
+                    <p id="spell-hint" class="spell-hint">💡 Tipp: Verlängerung Hun-de</p>
                 </div>
                 <div id="spell-options" class="options-grid"></div>
             </div>
         </section>
     </main>
 
-    <script src="./app.js?v=18"></script>
+    <script src="./app.js?v=20"></script>
 </body>
 </html>
