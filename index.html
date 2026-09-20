@@ -33,7 +33,7 @@
             overflow-x: hidden;
         }
 
-        /* Top Navigation Bar */
+        /* Top Bar */
         .top-bar {
             width: 100%;
             background-color: var(--primary-color);
@@ -76,7 +76,7 @@
             font-size: 1rem;
         }
 
-        /* Overlay & Drawer Menu (Exakt wie im Screenshot) */
+        /* Overlay & Drawer Menu */
         .drawer-overlay {
             position: fixed;
             top: 0;
@@ -108,7 +108,7 @@
             padding: 24px 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
             box-shadow: 4px 0 15px rgba(0,0,0,0.15);
             transform: translateX(-100%);
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -177,7 +177,7 @@
             transform: scale(0.97);
         }
 
-        /* App Haupt-Container */
+        /* Container */
         .app-container {
             width: 92%;
             max-width: 480px;
@@ -198,7 +198,6 @@
             margin-bottom: 16px;
         }
 
-        /* Übungs-Elemente */
         .instruction-box {
             width: 100%;
             text-align: left;
@@ -301,7 +300,7 @@
 </head>
 <body>
 
-    <!-- Header Navigation Bar -->
+    <!-- Navigation Header -->
     <div class="top-bar">
         <button class="btn-nav" onclick="toggleMenu(true)">
             <span>≡</span> <span id="currentModuleName">Rechtschreibung</span>
@@ -309,7 +308,7 @@
         <div class="score-badge" id="scoreDisplay">Punkte: 90</div>
     </div>
 
-    <!-- Modul-Wahl Overlay (Exakt aus Screenshot "Menü.png") -->
+    <!-- Drawer Overlay Menu -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu(false)"></div>
     <div class="drawer-menu" id="drawerMenu">
         <div class="drawer-header">
@@ -318,24 +317,24 @@
         </div>
 
         <div class="category-title">1. Klasse</div>
-        <button class="module-item-btn" onclick="selectModule('anlaute')">
+        <button class="module-item-btn" id="btn-anlaute" onclick="selectModule('anlaute')">
             <span>🔊</span> Anlaute hören
         </button>
-        <button class="module-item-btn" onclick="selectModule('silben')">
+        <button class="module-item-btn" id="btn-silben" onclick="selectModule('silben')">
             <span>🌊</span> Silben schwingen
         </button>
-        <button class="module-item-btn" onclick="selectModule('zehnerfeld')">
+        <button class="module-item-btn" id="btn-zehnerfeld" onclick="selectModule('zehnerfeld')">
             <span>🔴</span> Zehnerfeld
         </button>
 
         <div class="category-title">3. Klasse</div>
-        <button class="module-item-btn" onclick="selectModule('1x1')">
+        <button class="module-item-btn" id="btn-1x1" onclick="selectModule('1x1')">
             <span>🧮</span> 1x1 Blitzrechnen
         </button>
-        <button class="module-item-btn" onclick="selectModule('halbschriftlich')">
+        <button class="module-item-btn" id="btn-halbschriftlich" onclick="selectModule('halbschriftlich')">
             <span>➕</span> Halbschriftlich
         </button>
-        <button class="module-item-btn" onclick="selectModule('wortarten')">
+        <button class="module-item-btn" id="btn-wortarten" onclick="selectModule('wortarten')">
             <span>📝</span> Wortarten bestimmen
         </button>
         <button class="module-item-btn active" id="btn-rechtschreibung" onclick="selectModule('rechtschreibung')">
@@ -343,12 +342,11 @@
         </button>
     </div>
 
-    <!-- Hauptfenster für die aktuelle Übung -->
+    <!-- Übungs-Container -->
     <div class="app-container">
         <h1 class="main-title" id="exerciseMainTitle">Rechtschreibstrategien</h1>
         
         <div class="instruction-box">
-            <!-- Kurzer Satz ohne Ergebnis-Spoiler -->
             <div class="instruction-text" id="instructionText">
                 Leite ab von Baum
             </div>
@@ -367,52 +365,35 @@
             </div>
         </div>
 
-        <!-- Zufällig gemischte Antwort-Buttons -->
         <div class="options-grid" id="optionsContainer"></div>
     </div>
 
     <script>
-        // Aufgaben-Katalog
-        const spellingTasks = [
-            {
-                baseWord: "Baum",
-                targetWord: "Bäume",
-                audioFile: "audio/Baeume.mp3",
-                prefix: "B",
-                correctEnding: "äume",
-                wrongEnding: "ume"
-            },
-            {
-                baseWord: "Bär",
-                targetWord: "Bären",
-                audioFile: "audio/Baeren.mp3",
-                prefix: "B",
-                correctEnding: "ären",
-                wrongEnding: "eren"
-            },
-            {
-                baseWord: "Haus",
-                targetWord: "Häuser",
-                audioFile: "audio/Haeuser.mp3",
-                prefix: "H",
-                correctEnding: "äuser",
-                wrongEnding: "euser"
-            },
-            {
-                baseWord: "Hand",
-                targetWord: "Hände",
-                audioFile: "audio/Haende.mp3",
-                prefix: "H",
-                correctEnding: "ände",
-                wrongEnding: "ende"
-            }
-        ];
+        // Datenbanken für alle Module
+        const modulesData = {
+            rechtschreibung: [
+                { baseWord: "Baum", targetWord: "Bäume", audioFile: "audio/Baeume.mp3", prefix: "B", correctEnding: "äume", wrongEnding: "ume" },
+                { baseWord: "Bär", targetWord: "Bären", audioFile: "audio/Baeren.mp3", prefix: "B", correctEnding: "ären", wrongEnding: "eren" },
+                { baseWord: "Haus", targetWord: "Häuser", audioFile: "audio/Haeuser.mp3", prefix: "H", correctEnding: "äuser", wrongEnding: "euser" },
+                { baseWord: "Hand", targetWord: "Hände", audioFile: "audio/Haende.mp3", prefix: "H", correctEnding: "ände", wrongEnding: "ende" }
+            ],
+            anlaute: [
+                { baseWord: "Affe", targetWord: "Affe", audioFile: "audio/Affe.mp3", prefix: "", correctEnding: "A", wrongEnding: "O" },
+                { baseWord: "Bär", targetWord: "Bär", audioFile: "audio/Baer.mp3", prefix: "", correctEnding: "B", wrongEnding: "D" },
+                { baseWord: "Elefant", targetWord: "Elefant", audioFile: "audio/Elefant.mp3", prefix: "", correctEnding: "E", wrongEnding: "I" }
+            ],
+            "1x1": [
+                { baseWord: "3 × 4", targetWord: "12", audioFile: "", prefix: "3 × 4 = ", correctEnding: "12", wrongEnding: "14" },
+                { baseWord: "5 × 5", targetWord: "25", audioFile: "", prefix: "5 × 5 = ", correctEnding: "25", wrongEnding: "20" },
+                { baseWord: "7 × 8", targetWord: "56", audioFile: "", prefix: "7 × 8 = ", correctEnding: "56", wrongEnding: "54" }
+            ]
+        };
 
+        let currentModuleKey = 'rechtschreibung';
         let currentTaskIndex = 0;
         let score = parseInt(localStorage.getItem('schulapp_score') || '90');
         window.activeAudio = null;
 
-        // Drawer Menu öffnen/schließen
         function toggleMenu(open) {
             const overlay = document.getElementById('drawerOverlay');
             const menu = document.getElementById('drawerMenu');
@@ -425,38 +406,34 @@
             }
         }
 
-        // Modul-Auswahl aus dem Seiten-Menü
         function selectModule(moduleId) {
             toggleMenu(false);
-            
-            // Aktiven Button hervorheben
             document.querySelectorAll('.module-item-btn').forEach(btn => btn.classList.remove('active'));
-            
-            if (moduleId === 'rechtschreibung') {
-                document.getElementById('btn-rechtschreibung').classList.add('active');
-                document.getElementById('currentModuleName').innerText = "Rechtschreibung";
-                document.getElementById('exerciseMainTitle').innerText = "Rechtschreibstrategien";
-                renderSpellingTask();
-            } else {
-                // Platzhalter für weitere Module
-                const names = {
-                    'anlaute': 'Anlaute hören',
-                    'silben': 'Silben schwingen',
-                    'zehnerfeld': 'Zehnerfeld',
-                    '1x1': '1x1 Blitzrechnen',
-                    'halbschriftlich': 'Halbschriftlich',
-                    'wortarten': 'Wortarten bestimmen'
-                };
-                document.getElementById('currentModuleName').innerText = names[moduleId] || 'Modul';
-                document.getElementById('exerciseMainTitle').innerText = names[moduleId] || 'Übung';
-                document.getElementById('instructionText').innerText = 'Übung wird geladen...';
-                document.getElementById('wordDisplay').innerHTML = '...';
-                document.getElementById('optionsContainer').innerHTML = '';
-            }
+
+            const activeBtn = document.getElementById(`btn-${moduleId}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const names = {
+                'anlaute': 'Anlaute hören',
+                'silben': 'Silben schwingen',
+                'zehnerfeld': 'Zehnerfeld',
+                '1x1': '1x1 Blitzrechnen',
+                'halbschriftlich': 'Halbschriftlich',
+                'wortarten': 'Wortarten bestimmen',
+                'rechtschreibung': 'Rechtschreibung'
+            };
+
+            currentModuleKey = modulesData[moduleId] ? moduleId : 'rechtschreibung';
+            currentTaskIndex = 0;
+
+            document.getElementById('currentModuleName').innerText = names[moduleId] || 'Modul';
+            document.getElementById('exerciseMainTitle').innerText = names[moduleId] || 'Übung';
+
+            renderTask();
         }
 
-        // Audio-Wiedergabe ohne Abbrüche
         function playAudio(audioPath) {
+            if (!audioPath) return;
             if (window.activeAudio) {
                 window.activeAudio.pause();
                 window.activeAudio.currentTime = 0;
@@ -465,16 +442,24 @@
             window.activeAudio.play().catch(err => console.warn("Audio-Hinweis:", err));
         }
 
-        // Rendert die Rechtschreibaufgabe
-        function renderSpellingTask() {
-            const task = spellingTasks[currentTaskIndex];
+        function renderTask() {
+            const moduleList = modulesData[currentModuleKey] || modulesData['rechtschreibung'];
+            const task = moduleList[currentTaskIndex % moduleList.length];
 
-            // 1. Textanzeige: Weiter links, kein Lösungssatz
-            document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
-            document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
-            document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
+            if (currentModuleKey === 'rechtschreibung') {
+                document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
+                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
+                document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
+            } else if (currentModuleKey === 'anlaute') {
+                document.getElementById('instructionText').innerText = `Welcher Anlaut gehört dazu?`;
+                document.getElementById('wordDisplay').innerHTML = `<span class="missing-letter">?</span> ${task.baseWord.slice(1)}`;
+                document.getElementById('hintText').innerText = `💡 Höre genau auf den ersten Laut`;
+            } else if (currentModuleKey === '1x1') {
+                document.getElementById('instructionText').innerText = `Berechne das Ergebnis`;
+                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
+                document.getElementById('hintText').innerText = `💡 Blitzrechnen`;
+            }
 
-            // 2. Antwort-Buttons zufällig mischen (Fisher-Yates)
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
 
@@ -492,22 +477,26 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = opt.text;
-                btn.onclick = () => checkSpellingAnswer(opt.isCorrect);
+                btn.onclick = () => checkAnswer(opt.isCorrect);
                 optionsContainer.appendChild(btn);
             });
 
-            document.getElementById('playAudioBtn').onclick = () => {
-                playAudio(task.audioFile);
-            };
+            const audioBtn = document.getElementById('playAudioBtn');
+            if (task.audioFile) {
+                audioBtn.style.display = 'flex';
+                audioBtn.onclick = () => playAudio(task.audioFile);
+            } else {
+                audioBtn.style.display = 'none';
+            }
         }
 
-        function checkSpellingAnswer(isCorrect) {
+        function checkAnswer(isCorrect) {
             if (isCorrect) {
                 score += 10;
                 localStorage.setItem('schulapp_score', score.toString());
                 document.getElementById('scoreDisplay').innerText = `Punkte: ${score}`;
-                currentTaskIndex = (currentTaskIndex + 1) % spellingTasks.length;
-                renderSpellingTask();
+                currentTaskIndex++;
+                renderTask();
             } else {
                 const container = document.getElementById('optionsContainer');
                 container.style.transform = 'translateX(-6px)';
@@ -518,7 +507,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('scoreDisplay').innerText = `Punkte: ${score}`;
-            renderSpellingTask();
+            renderTask();
         });
     </script>
 </body>
