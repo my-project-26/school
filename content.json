@@ -1,19 +1,834 @@
 {
-  "klasse3_wortarten": [
+  "obst_gemuese": [
     {
-      "sentence": "Die stolze Mutter freut sich.",
-      "target": "stolze",
-      "type": "Adjektiv"
+      "word": "Apfel",
+      "letter": "A",
+      "emoji": "🍎",
+      "syllables": 2
     },
     {
-      "sentence": "Die Schüler lesen ein Buch.",
-      "target": "Schüler",
-      "type": "Nomen"
+      "word": "Ananas",
+      "letter": "A",
+      "emoji": "🍍",
+      "syllables": 3
     },
     {
-      "sentence": "Die Musik ist schön.",
-      "target": "Musik",
-      "type": "Nomen"
+      "word": "Avocado",
+      "letter": "A",
+      "emoji": "🥑",
+      "syllables": 4
+    },
+    {
+      "word": "Aubergine",
+      "letter": "A",
+      "emoji": "🍆",
+      "syllables": 4
+    },
+    {
+      "word": "Banane",
+      "letter": "B",
+      "emoji": "🍌",
+      "syllables": 3
+    },
+    {
+      "word": "Birne",
+      "letter": "B",
+      "emoji": "🍐",
+      "syllables": 2
+    },
+    {
+      "word": "Brokkoli",
+      "letter": "B",
+      "emoji": "🥦",
+      "syllables": 3
+    },
+    {
+      "word": "Bohne",
+      "letter": "B",
+      "emoji": "🫘",
+      "syllables": 2
+    },
+    {
+      "word": "Chili",
+      "letter": "C",
+      "emoji": "🌶️",
+      "syllables": 2
+    },
+    {
+      "word": "Dattel",
+      "letter": "D",
+      "emoji": "🌴",
+      "syllables": 2
+    },
+    {
+      "word": "Erdbeere",
+      "letter": "E",
+      "emoji": "🍓",
+      "syllables": 3
+    },
+    {
+      "word": "Erbse",
+      "letter": "E",
+      "emoji": "🫛",
+      "syllables": 2
+    },
+    {
+      "word": "Feige",
+      "letter": "F",
+      "emoji": "🫐",
+      "syllables": 2
+    },
+    {
+      "word": "Gurke",
+      "letter": "G",
+      "emoji": "🥒",
+      "syllables": 2
+    },
+    {
+      "word": "Granatapfel",
+      "letter": "G",
+      "emoji": "🍎",
+      "syllables": 4
+    },
+    {
+      "word": "Himbeere",
+      "letter": "H",
+      "emoji": "🫐",
+      "syllables": 3
+    },
+    {
+      "word": "Heidelbeere",
+      "letter": "H",
+      "emoji": "🫐",
+      "syllables": 4
+    },
+    {
+      "word": "Ingwer",
+      "letter": "I",
+      "emoji": "🫚",
+      "syllables": 2
+    },
+    {
+      "word": "Johannisbeere",
+      "letter": "J",
+      "emoji": "🫐",
+      "syllables": 4
+    },
+    {
+      "word": "Kirsche",
+      "letter": "K",
+      "emoji": "🍒",
+      "syllables": 2
+    },
+    {
+      "word": "Karotte",
+      "letter": "K",
+      "emoji": "🥕",
+      "syllables": 3
+    },
+    {
+      "word": "Kartoffel",
+      "letter": "K",
+      "emoji": "🥔",
+      "syllables": 3
+    },
+    {
+      "word": "Knoblauch",
+      "letter": "K",
+      "emoji": "🧄",
+      "syllables": 2
+    },
+    {
+      "word": "Kürbis",
+      "letter": "K",
+      "emoji": "🎃",
+      "syllables": 2
+    },
+    {
+      "word": "Kiwi",
+      "letter": "K",
+      "emoji": "🥝",
+      "syllables": 2
+    },
+    {
+      "word": "Kohl",
+      "letter": "K",
+      "emoji": "🥬",
+      "syllables": 1
+    },
+    {
+      "word": "Kokosnuss",
+      "letter": "K",
+      "emoji": "🥥",
+      "syllables": 3
+    },
+    {
+      "word": "Lauch",
+      "letter": "L",
+      "emoji": "🧅",
+      "syllables": 1
+    },
+    {
+      "word": "Zitrone",
+      "letter": "Z",
+      "emoji": "🍋",
+      "syllables": 3
+    },
+    {
+      "word": "Mais",
+      "letter": "M",
+      "emoji": "🌽",
+      "syllables": 1
+    },
+    {
+      "word": "Mango",
+      "letter": "M",
+      "emoji": "🥭",
+      "syllables": 2
+    },
+    {
+      "word": "Melone",
+      "letter": "M",
+      "emoji": "🍉",
+      "syllables": 3
+    },
+    {
+      "word": "Mandarine",
+      "letter": "M",
+      "emoji": "🍊",
+      "syllables": 4
+    },
+    {
+      "word": "Nuss",
+      "letter": "N",
+      "emoji": "🥜",
+      "syllables": 1
+    },
+    {
+      "word": "Orange",
+      "letter": "O",
+      "emoji": "🍊",
+      "syllables": 3
+    },
+    {
+      "word": "Olive",
+      "letter": "O",
+      "emoji": "🫒",
+      "syllables": 3
+    },
+    {
+      "word": "Paprika",
+      "letter": "P",
+      "emoji": "🫑",
+      "syllables": 3
+    },
+    {
+      "word": "Pfirsich",
+      "letter": "P",
+      "emoji": "🍑",
+      "syllables": 2
+    },
+    {
+      "word": "Pflaume",
+      "letter": "P",
+      "emoji": "🫐",
+      "syllables": 2
+    },
+    {
+      "word": "Pilz",
+      "letter": "P",
+      "emoji": "🍄",
+      "syllables": 1
+    },
+    {
+      "word": "Radieschen",
+      "letter": "R",
+      "emoji": "🪴",
+      "syllables": 3
+    },
+    {
+      "word": "Salat",
+      "letter": "S",
+      "emoji": "🥗",
+      "syllables": 2
+    },
+    {
+      "word": "Spargel",
+      "letter": "S",
+      "emoji": "🎍",
+      "syllables": 2
+    },
+    {
+      "word": "Spinat",
+      "letter": "S",
+      "emoji": "🥬",
+      "syllables": 2
+    },
+    {
+      "word": "Tomate",
+      "letter": "T",
+      "emoji": "🍅",
+      "syllables": 3
+    },
+    {
+      "word": "Traube",
+      "letter": "T",
+      "emoji": "🍇",
+      "syllables": 2
+    },
+    {
+      "word": "Walnuss",
+      "letter": "W",
+      "emoji": "🌰",
+      "syllables": 2
+    },
+    {
+      "word": "Zucchini",
+      "letter": "Z",
+      "emoji": "🥒",
+      "syllables": 3
+    },
+    {
+      "word": "Zwiebel",
+      "letter": "Z",
+      "emoji": "🧅",
+      "syllables": 2
+    },
+    {
+      "word": "Zwetschge",
+      "letter": "Z",
+      "emoji": "🫐",
+      "syllables": 2
+    }
+  ],
+  "tiere_weltweit": [
+    {
+      "word": "Ameise",
+      "letter": "A",
+      "emoji": "🐜",
+      "syllables": 3
+    },
+    {
+      "word": "Affe",
+      "letter": "A",
+      "emoji": "🐒",
+      "syllables": 2
+    },
+    {
+      "word": "Alpaka",
+      "letter": "A",
+      "emoji": "🦙",
+      "syllables": 3
+    },
+    {
+      "word": "Adler",
+      "letter": "A",
+      "emoji": "🦅",
+      "syllables": 2
+    },
+    {
+      "word": "Alligator",
+      "letter": "A",
+      "emoji": "🐊",
+      "syllables": 4
+    },
+    {
+      "word": "Bär",
+      "letter": "B",
+      "emoji": "🐻",
+      "syllables": 1
+    },
+    {
+      "word": "Biber",
+      "letter": "B",
+      "emoji": "🦫",
+      "syllables": 2
+    },
+    {
+      "word": "Biene",
+      "letter": "B",
+      "emoji": "🐝",
+      "syllables": 2
+    },
+    {
+      "word": "Büffel",
+      "letter": "B",
+      "emoji": "🐃",
+      "syllables": 2
+    },
+    {
+      "word": "Chinchilla",
+      "letter": "C",
+      "emoji": "🐁",
+      "syllables": 3
+    },
+    {
+      "word": "Dachs",
+      "letter": "D",
+      "emoji": "🦡",
+      "syllables": 1
+    },
+    {
+      "word": "Delfin",
+      "letter": "D",
+      "emoji": "🐬",
+      "syllables": 2
+    },
+    {
+      "word": "Dinosaurier",
+      "letter": "D",
+      "emoji": "🦕",
+      "syllables": 5
+    },
+    {
+      "word": "Elefant",
+      "letter": "E",
+      "emoji": "🐘",
+      "syllables": 3
+    },
+    {
+      "word": "Eule",
+      "letter": "E",
+      "emoji": "🦉",
+      "syllables": 2
+    },
+    {
+      "word": "Esel",
+      "letter": "E",
+      "emoji": "🫏",
+      "syllables": 2
+    },
+    {
+      "word": "Eidechse",
+      "letter": "E",
+      "emoji": "🦎",
+      "syllables": 3
+    },
+    {
+      "word": "Eichhörnchen",
+      "letter": "E",
+      "emoji": "🐿️",
+      "syllables": 3
+    },
+    {
+      "word": "Fisch",
+      "letter": "F",
+      "emoji": "🐟",
+      "syllables": 1
+    },
+    {
+      "word": "Fuchs",
+      "letter": "F",
+      "emoji": "🦊",
+      "syllables": 1
+    },
+    {
+      "word": "Flamingo",
+      "letter": "F",
+      "emoji": "🦩",
+      "syllables": 3
+    },
+    {
+      "word": "Fledermaus",
+      "letter": "F",
+      "emoji": "🦇",
+      "syllables": 3
+    },
+    {
+      "word": "Frosch",
+      "letter": "F",
+      "emoji": "🐸",
+      "syllables": 1
+    },
+    {
+      "word": "Gepard",
+      "letter": "G",
+      "emoji": "🐆",
+      "syllables": 2
+    },
+    {
+      "word": "Giraffe",
+      "letter": "G",
+      "emoji": "🦒",
+      "syllables": 3
+    },
+    {
+      "word": "Gans",
+      "letter": "G",
+      "emoji": "🪿",
+      "syllables": 1
+    },
+    {
+      "word": "Gorilla",
+      "letter": "G",
+      "emoji": "🦍",
+      "syllables": 3
+    },
+    {
+      "word": "Hund",
+      "letter": "H",
+      "emoji": "🐕",
+      "syllables": 1
+    },
+    {
+      "word": "Hase",
+      "letter": "H",
+      "emoji": "🐰",
+      "syllables": 2
+    },
+    {
+      "word": "Hai",
+      "letter": "H",
+      "emoji": "🦈",
+      "syllables": 1
+    },
+    {
+      "word": "Hirsch",
+      "letter": "H",
+      "emoji": "🦌",
+      "syllables": 1
+    },
+    {
+      "word": "Huhn",
+      "letter": "H",
+      "emoji": "🐔",
+      "syllables": 1
+    },
+    {
+      "word": "Igel",
+      "letter": "I",
+      "emoji": "🦔",
+      "syllables": 2
+    },
+    {
+      "word": "Jaguar",
+      "letter": "J",
+      "emoji": "🐆",
+      "syllables": 2
+    },
+    {
+      "word": "Kamel",
+      "letter": "K",
+      "emoji": "🐪",
+      "syllables": 2
+    },
+    {
+      "word": "Katze",
+      "letter": "K",
+      "emoji": "🐈",
+      "syllables": 2
+    },
+    {
+      "word": "Känguru",
+      "letter": "K",
+      "emoji": "🦘",
+      "syllables": 3
+    },
+    {
+      "word": "Koala",
+      "letter": "K",
+      "emoji": "🐨",
+      "syllables": 3
+    },
+    {
+      "word": "Krabbe",
+      "letter": "K",
+      "emoji": "🦀",
+      "syllables": 2
+    },
+    {
+      "word": "Krokodil",
+      "letter": "K",
+      "emoji": "🐊",
+      "syllables": 3
+    },
+    {
+      "word": "Kuh",
+      "letter": "K",
+      "emoji": "🐄",
+      "syllables": 1
+    },
+    {
+      "word": "Küken",
+      "letter": "K",
+      "emoji": "🐥",
+      "syllables": 2
+    },
+    {
+      "word": "Lama",
+      "letter": "L",
+      "emoji": "🦙",
+      "syllables": 2
+    },
+    {
+      "word": "Löwe",
+      "letter": "L",
+      "emoji": "🦁",
+      "syllables": 2
+    },
+    {
+      "word": "Leopard",
+      "letter": "L",
+      "emoji": "🐆",
+      "syllables": 3
+    },
+    {
+      "word": "Libelle",
+      "letter": "L",
+      "emoji": "🦟",
+      "syllables": 3
+    },
+    {
+      "word": "Marienkäfer",
+      "letter": "M",
+      "emoji": "🐞",
+      "syllables": 5
+    },
+    {
+      "word": "Maus",
+      "letter": "M",
+      "emoji": "🐭",
+      "syllables": 1
+    },
+    {
+      "word": "Maulwurf",
+      "letter": "M",
+      "emoji": "🕳️",
+      "syllables": 2
+    },
+    {
+      "word": "Meerschweinchen",
+      "letter": "M",
+      "emoji": "🐹",
+      "syllables": 4
+    },
+    {
+      "word": "Möwe",
+      "letter": "M",
+      "emoji": "🐦‍⬛",
+      "syllables": 2
+    },
+    {
+      "word": "Mücke",
+      "letter": "M",
+      "emoji": "🦟",
+      "syllables": 2
+    },
+    {
+      "word": "Nashorn",
+      "letter": "N",
+      "emoji": "🦏",
+      "syllables": 2
+    },
+    {
+      "word": "Nilpferd",
+      "letter": "N",
+      "emoji": "🦛",
+      "syllables": 2
+    },
+    {
+      "word": "Oktopus",
+      "letter": "O",
+      "emoji": "🐙",
+      "syllables": 3
+    },
+    {
+      "word": "Orang-Utan",
+      "letter": "O",
+      "emoji": "🦧",
+      "syllables": 4
+    },
+    {
+      "word": "Panda",
+      "letter": "P",
+      "emoji": "🐼",
+      "syllables": 2
+    },
+    {
+      "word": "Papagei",
+      "letter": "P",
+      "emoji": "🦜",
+      "syllables": 3
+    },
+    {
+      "word": "Pfau",
+      "letter": "P",
+      "emoji": "🦚",
+      "syllables": 1
+    },
+    {
+      "word": "Pferd",
+      "letter": "P",
+      "emoji": "🐴",
+      "syllables": 1
+    },
+    {
+      "word": "Pinguin",
+      "letter": "P",
+      "emoji": "🐧",
+      "syllables": 2
+    },
+    {
+      "word": "Puma",
+      "letter": "P",
+      "emoji": "🐈‍⬛",
+      "syllables": 2
+    },
+    {
+      "word": "Qualle",
+      "letter": "Q",
+      "emoji": "🪼",
+      "syllables": 2
+    },
+    {
+      "word": "Ratte",
+      "letter": "R",
+      "emoji": "🐀",
+      "syllables": 2
+    },
+    {
+      "word": "Raupe",
+      "letter": "R",
+      "emoji": "🐛",
+      "syllables": 2
+    },
+    {
+      "word": "Reh",
+      "letter": "R",
+      "emoji": "🦌",
+      "syllables": 1
+    },
+    {
+      "word": "Rentier",
+      "letter": "R",
+      "emoji": "🫎",
+      "syllables": 2
+    },
+    {
+      "word": "Robbe",
+      "letter": "R",
+      "emoji": "🦭",
+      "syllables": 2
+    },
+    {
+      "word": "Schaf",
+      "letter": "S",
+      "emoji": "🐑",
+      "syllables": 1
+    },
+    {
+      "word": "Schildkröte",
+      "letter": "S",
+      "emoji": "🐢",
+      "syllables": 3
+    },
+    {
+      "word": "Schlange",
+      "letter": "S",
+      "emoji": "🐍",
+      "syllables": 2
+    },
+    {
+      "word": "Schmetterling",
+      "letter": "S",
+      "emoji": "🦋",
+      "syllables": 4
+    },
+    {
+      "word": "Schwein",
+      "letter": "S",
+      "emoji": "🐖",
+      "syllables": 1
+    },
+    {
+      "word": "Seepferdchen",
+      "letter": "S",
+      "emoji": "🪼",
+      "syllables": 3
+    },
+    {
+      "word": "Skorpion",
+      "letter": "S",
+      "emoji": "🦂",
+      "syllables": 3
+    },
+    {
+      "word": "Spinne",
+      "letter": "S",
+      "emoji": "🕷️",
+      "syllables": 2
+    },
+    {
+      "word": "Strauß",
+      "letter": "S",
+      "emoji": "🦩",
+      "syllables": 1
+    },
+    {
+      "word": "Tiger",
+      "letter": "T",
+      "emoji": "🐅",
+      "syllables": 2
+    },
+    {
+      "word": "Thunfisch",
+      "letter": "T",
+      "emoji": "🐟",
+      "syllables": 2
+    },
+    {
+      "word": "Uhu",
+      "letter": "U",
+      "emoji": "🦉",
+      "syllables": 2
+    },
+    {
+      "word": "Vogel",
+      "letter": "V",
+      "emoji": "🐦",
+      "syllables": 2
+    },
+    {
+      "word": "Wal",
+      "letter": "W",
+      "emoji": "🐋",
+      "syllables": 1
+    },
+    {
+      "word": "Walross",
+      "letter": "W",
+      "emoji": "🦭",
+      "syllables": 2
+    },
+    {
+      "word": "Waschbär",
+      "letter": "W",
+      "emoji": "🦝",
+      "syllables": 2
+    },
+    {
+      "word": "Wolf",
+      "letter": "W",
+      "emoji": "🐺",
+      "syllables": 1
+    },
+    {
+      "word": "Wurm",
+      "letter": "W",
+      "emoji": "🪱",
+      "syllables": 1
+    },
+    {
+      "word": "Zebra",
+      "letter": "Z",
+      "emoji": "🦓",
+      "syllables": 2
+    },
+    {
+      "word": "Ziege",
+      "letter": "Z",
+      "emoji": "🐐",
+      "syllables": 2
     }
   ]
 }

@@ -6,12 +6,13 @@ if ('serviceWorker' in navigator) {
 
 let score = parseInt(localStorage.getItem('school_app_score') || '0');
 
-let dynamicGrammarTasks = [];
+let dynamicContent = null;
 fetch('./content.json')
     .then(res => res.json())
     .then(data => {
-        if (data.klasse3_wortarten && data.klasse3_wortarten.length > 0) {
-            dynamicGrammarTasks = data.klasse3_wortarten;
+        dynamicContent = data;
+        if (data.obst_gemuese && data.tiere_weltweit) {
+            mergeDynamicVocabulary(data.obst_gemuese, data.tiere_weltweit);
         }
     }).catch(() => {});
 
@@ -85,24 +86,30 @@ function playAudioFile(path) {
 }
 
 // KLASSE 1: ANLAUTE
-const taskDataK1 = [
+let taskDataK1 = [
     { word: 'Apfel', letter: 'A', emoji: '🍎', audio: 'audio/Apfel.mp3' },
-    { word: 'Affe', letter: 'A', emoji: '🐒', audio: 'audio/Affe.mp3' },
     { word: 'Bär', letter: 'B', emoji: '🐻', audio: 'audio/Baer.mp3' },
-    { word: 'Brot', letter: 'B', emoji: '🍞', audio: 'audio/Brot.mp3' },
     { word: 'Elefant', letter: 'E', emoji: '🐘', audio: 'audio/Elefant.mp3' },
     { word: 'Fisch', letter: 'F', emoji: '🐟', audio: 'audio/Fisch.mp3' },
     { word: 'Gitarre', letter: 'G', emoji: '🎸', audio: 'audio/Gitarre.mp3' },
     { word: 'Hase', letter: 'H', emoji: '🐰', audio: 'audio/Hase.mp3' },
     { word: 'Igel', letter: 'I', emoji: '🦔', audio: 'audio/Igel.mp3' },
     { word: 'Krokodil', letter: 'K', emoji: '🐊', audio: 'audio/Krokodil.mp3' },
-    { word: 'Kirsche', letter: 'K', emoji: '🍒', audio: 'audio/Kirsche.mp3' },
+    { word: 'Löwe', letter: 'L', emoji: '🦁', audio: 'audio/Loewe.mp3' },
     { word: 'Maus', letter: 'M', emoji: '🐭', audio: 'audio/Maus.mp3' },
-    { word: 'Milch', letter: 'M', emoji: '🥛', audio: 'audio/Milch.mp3' },
     { word: 'Pilz', letter: 'P', emoji: '🍄', audio: 'audio/Pilz.mp3' },
-    { word: 'Sonne', letter: 'S', emoji: '☀️', audio: 'audio/Sonne.mp3' },
-    { word: 'Tanne', letter: 'T', emoji: '🌲', audio: 'audio/Tanne.mp3' }
+    { word: 'Sonne', letter: 'S', emoji: '☀️', audio: 'audio/Sonne.mp3' }
 ];
+
+function mergeDynamicVocabulary(obstList, tiereList) {
+    const mapEntry = item => ({
+        word: item.word,
+        letter: item.letter,
+        emoji: item.emoji,
+        audio: `audio/${item.word}.mp3`
+    });
+    taskDataK1 = [...taskDataK1, ...obstList.map(mapEntry), ...tiereList.map(mapEntry)];
+}
 
 let indexK1 = 0;
 const startOverlay = document.getElementById('start-overlay');
@@ -114,7 +121,7 @@ const letterOptionsContainer = document.getElementById('letter-options');
 btnStart.addEventListener('click', () => { startOverlay.style.display = 'none'; loadTaskK1(indexK1); });
 
 function loadTaskK1(index) {
-    const task = taskDataK1[index];
+    const task = taskDataK1[index % taskDataK1.length];
     wordEmoji.textContent = task.emoji;
     const choices = generateChoicesK1(task.letter);
     letterOptionsContainer.innerHTML = '';
@@ -143,11 +150,11 @@ function handleChoiceK1(selected, correct) {
     } else {
         const card = document.querySelector('#module-k1-anlaut .game-card');
         card.classList.add('shake');
-        playAudioFile(taskDataK1[indexK1].audio);
+        playAudioFile(taskDataK1[indexK1 % taskDataK1.length].audio);
         setTimeout(() => card.classList.remove('shake'), 400);
     }
 }
-btnPlayAudio.addEventListener('click', () => playAudioFile(taskDataK1[indexK1].audio));
+btnPlayAudio.addEventListener('click', () => playAudioFile(taskDataK1[indexK1 % taskDataK1.length].audio));
 
 // KLASSE 1: SILBEN
 const silbenData = [
@@ -341,7 +348,7 @@ const fallbackGrammarTasks = [
 let indexGrammar = 0;
 
 function initGrammarTask() {
-    const tasks = dynamicGrammarTasks.length > 0 ? dynamicGrammarTasks : fallbackGrammarTasks;
+    const tasks = (dynamicContent && dynamicContent.klasse3_wortarten) ? dynamicContent.klasse3_wortarten : fallbackGrammarTasks;
     const task = tasks[indexGrammar % tasks.length];
     const parts = task.sentence.split(task.target);
     document.getElementById('grammar-sentence').innerHTML = `${parts[0]}<strong class="highlight">${task.target}</strong>${parts[1]}`;
@@ -349,7 +356,7 @@ function initGrammarTask() {
 
 document.querySelectorAll('.btn-grammar').forEach(btn => {
     btn.addEventListener('click', () => {
-        const tasks = dynamicGrammarTasks.length > 0 ? dynamicGrammarTasks : fallbackGrammarTasks;
+        const tasks = (dynamicContent && dynamicContent.klasse3_wortarten) ? dynamicContent.klasse3_wortarten : fallbackGrammarTasks;
         const selectedType = btn.getAttribute('data-type');
         if (selectedType === tasks[indexGrammar % tasks.length].type) {
             updateScore(15);
@@ -363,14 +370,14 @@ document.querySelectorAll('.btn-grammar').forEach(btn => {
     });
 });
 
-// KLASSE 3: RECHTSCHREIBSTRATEGIEN
+// KLASSE 3: RECHTSCHREIBSTRATEGIEN (BUGFIX STAMM & EXAKTE RECHTSCHREIBUNG)
 const spellTasks = [
-    { prefix: 'Hun', choices: ['d', 't'], correct: 'd', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
-    { prefix: 'Bä', choices: ['äume', 'ume'], correct: 'äume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
-    { prefix: 'Hän', choices: ['de', 'te'], correct: 'de', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
-    { prefix: 'Wal', choices: ['d', 't'], correct: 'd', strategy: 'Verlängern: Wäl-der', instruction: 'Verlängere das Wort:' },
-    { prefix: 'Äp', choices: ['fel', 'pel'], correct: 'fel', strategy: 'Ableiten von: Apfel', instruction: 'Leite ab von Apfel:' },
-    { prefix: 'Bro', choices: ['t', 'd'], correct: 't', strategy: 'Verlängern: Bro-te', instruction: 'Verlängere das Wort:' }
+    { baseStem: 'B', gapQuestion: 'äume', choices: ['äume', 'ume'], correct: 'äume', fullWord: 'Bäume', strategy: 'Ableiten von: Baum', instruction: 'Leite ab von Baum:' },
+    { baseStem: 'Hun', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Hund', strategy: 'Verlängern: Hun-de', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Hän', gapQuestion: 'de', choices: ['de', 'te'], correct: 'de', fullWord: 'Hände', strategy: 'Ableiten von: Hand', instruction: 'Leite ab von Hand:' },
+    { baseStem: 'Wal', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Wald', strategy: 'Verlängern: Wäl-der', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Äp', gapQuestion: 'fel', choices: ['fel', 'pel'], correct: 'fel', fullWord: 'Äpfel', strategy: 'Ableiten von: Apfel', instruction: 'Leite ab von Apfel:' },
+    { baseStem: 'Bro', gapQuestion: 't', choices: ['t', 'd'], correct: 't', fullWord: 'Brot', strategy: 'Verlängern: Bro-te', instruction: 'Verlängere das Wort:' }
 ];
 
 let indexSpell = 0;
@@ -381,8 +388,8 @@ const spellOptionsEl = document.getElementById('spell-options');
 
 function initSpellTask() {
     const task = spellTasks[indexSpell % spellTasks.length];
-    spellInstructionEl.textContent = `${task.instruction} ${task.prefix}...`;
-    spellWordDisplayEl.innerHTML = `${task.prefix}<span class="gap">?</span>`;
+    spellInstructionEl.textContent = `${task.instruction} ${task.baseStem}...`;
+    spellWordDisplayEl.innerHTML = `${task.baseStem}<span class="gap">?</span>`;
     spellHintEl.textContent = `💡 Tipp: ${task.strategy}`;
 
     spellOptionsEl.innerHTML = '';
@@ -393,7 +400,7 @@ function initSpellTask() {
         btn.addEventListener('click', () => {
             if (opt === task.correct) {
                 updateScore(15);
-                spellWordDisplayEl.innerHTML = `${task.prefix}<strong style="color:var(--success-color);">${opt}</strong>`;
+                spellWordDisplayEl.innerHTML = `${task.baseStem}<strong style="color:var(--success-color);">${opt}</strong>`;
                 setTimeout(() => {
                     indexSpell = (indexSpell + 1) % spellTasks.length;
                     initSpellTask();
