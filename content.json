@@ -1,0 +1,19 @@
+{
+  "klasse3_wortarten": [
+    {
+      "sentence": "Die stolze Mutter freut sich.",
+      "target": "stolze",
+      "type": "Adjektiv"
+    },
+    {
+      "sentence": "Die Schüler lesen ein Buch.",
+      "target": "Schüler",
+      "type": "Nomen"
+    },
+    {
+      "sentence": "Die Musik ist schön.",
+      "target": "Musik",
+      "type": "Nomen"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+:root {
+    --bg-color: #F0F4F8;
+    --card-bg: #FFFFFF;
+    --primary-color: #4A90E2;
+    --success-color: #50E3C2;
+    --text-color: #2C3E50;
+    --font-family: system-ui, -apple-system, sans-serif;
+    --nomen-color: #3B82F6;
+    --verb-color: #EF4444;
+    --adjektiv-color: #EAB308;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+body { 
+    font-family: var(--font-family); 
+    background-color: var(--bg-color); 
+    color: var(--text-color); 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+header { background-color: var(--primary-color); color: white; padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.nav-tabs { display: flex; gap: 0.4rem; overflow-x: auto; }
+.tab-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 0.5rem 0.8rem; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85rem; white-space: nowrap; transition: background 0.2s; }
+.tab-btn.active { background: white; color: var(--primary-color); }
+#score-display { font-weight: bold; font-size: 1.1rem; background: rgba(0,0,0,0.15); padding: 0.5rem 1rem; border-radius: 12px; white-space: nowrap; }
+.container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 1rem; }
+.module-card { width: 100%; max-width: 500px; }
+.hidden { display: none !important; }
+.card { background: var(--card-bg); border-radius: 20px; padding: 1.8rem; width: 100%; box-shadow: 0 8px 24px rgba(0,0,0,0.08); text-align: center; }
+.card h2 { margin-bottom: 0.8rem; color: var(--primary-color); }
+.instruction { font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600; }
+.btn-audio { background-color: #FFE066; border: none; border-radius: 12px; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; min-height: 50px; margin-bottom: 1rem; }
+.image-container { height: 100px; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
+.emoji-display { font-size: 4.5rem; }
+.options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+.btn-option { background-color: var(--bg-color); border: 3px solid var(--primary-color); border-radius: 16px; font-size: 2.2rem; font-weight: bold; color: var(--primary-color); padding: 0.8rem; min-height: 65px; cursor: pointer; }
+
+/* ZEHNERFELD GRID */
+.ten-frame-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; background: #E2E8F0; padding: 12px; border-radius: 16px; border: 3px solid #CBD5E1; max-width: 300px; margin: 0 auto; }
+.ten-frame-cell { aspect-ratio: 1; background: white; border-radius: 50%; border: 2px dashed #94A3B8; display: flex; justify-content: center; align-items: center; }
+.ten-frame-cell.dot { background: #EF4444; border: 2px solid #B91C1C; box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2); }
+
+.silben-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 0.8rem; }
+.btn-silbe { background-color: var(--bg-color); border: 2px solid var(--primary-color); border-radius: 14px; font-size: 1.2rem; font-weight: bold; color: var(--primary-color); padding: 0.9rem; min-height: 55px; cursor: pointer; }
+
+/* MATHE & HALBSCHRIFTLICH */
+.math-problem, .halb-problem { font-size: 2.5rem; font-weight: bold; margin: 0.5rem 0 1rem 0; display: flex; justify-content: center; align-items: center; gap: 0.8rem; }
+.step-container { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem; }
+.step-row { font-size: 1.4rem; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 0.6rem; }
+
+.input-display { background: var(--bg-color); border: 3px solid #CBD5E1; border-radius: 12px; padding: 0.2rem 0.8rem; min-width: 80px; color: var(--text-color); }
+.input-display.active-field { border-color: var(--primary-color); background: #EBF8FF; color: var(--primary-color); }
+
+.numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; max-width: 320px; margin: 0 auto; }
+.btn-num, .btn-num-halb { background-color: var(--bg-color); border: 2px solid #CBD5E1; border-radius: 14px; font-size: 1.8rem; font-weight: bold; color: var(--text-color); min-height: 55px; cursor: pointer; }
+.btn-action { background-color: #FCA5A5; color: #991B1B; }
+.btn-action-submit { background-color: var(--success-color); color: #065F46; }
+
+.sentence-box { background: var(--bg-color); padding: 1.2rem; border-radius: 12px; font-size: 1.3rem; margin-bottom: 1.5rem; }
+.highlight { color: var(--primary-color); text-decoration: underline; }
+.grammar-grid { display: flex; flex-direction: column; gap: 0.8rem; }
+.btn-grammar { border: none; border-radius: 12px; padding: 1rem; font-size: 1.2rem; font-weight: bold; color: white; cursor: pointer; }
+.btn-nomen { background-color: var(--nomen-color); }
+.btn-verb { background-color: var(--verb-color); }
+.btn-adjektiv { background-color: var(--adjektiv-color); }
+
+.shake { animation: shake 0.4s ease-in-out; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.btn-primary { background-color: var(--success-color); border: none; border-radius: 12px; padding: 1rem 2rem; font-size: 1.3rem; font-weight: bold; color: #1A3636; margin-top: 1.5rem; cursor: pointer; }
