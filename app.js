@@ -6,31 +6,27 @@ if ('serviceWorker' in navigator) {
 
 let score = parseInt(localStorage.getItem('school_app_score') || '0');
 
-// GLOBALE HYBRID SPEECH ENGINE (Web Speech API + MP3 Fallback)
-function speakTextOrMP3(text, mp3Path) {
-    // 1. Versuche MP3 abzuspielen (falls lokal vorhanden)
-    if (mp3Path) {
-        const audio = new Audio(mp3Path);
-        audio.play().then(() => {
-            return; // MP3 erfolgreich gestartet
-        }).catch(() => {
-            // MP3 existiert nicht oder blockiert -> Fallback auf Web Speech API
-            triggerWebSpeech(text);
-        });
-    } else {
-        triggerWebSpeech(text);
-    }
-}
+let activeAudio = null;
 
-function triggerWebSpeech(text) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Vorherige Sprache stoppen
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'de-DE';
-        utterance.rate = 0.85; // Leicht verlangsamte, deutliche Aussprache für Grundschule
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
+// PRÄZISIONSAUDIO-PLAYER (STUDIO MP3 FIRST)
+function playStudioAudio(word, customMp3Path) {
+    if (activeAudio) {
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
     }
+
+    const mp3Target = customMp3Path || `audio/${word}.mp3`;
+    activeAudio = new Audio(mp3Target);
+
+    activeAudio.play().catch(() => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'de-DE';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+    });
 }
 
 let dynamicContent = null;
@@ -43,7 +39,6 @@ fetch('./content.json')
         }
     }).catch(() => {});
 
-// Navigation Mapping
 const modules = {
     'k1-anlaut': { tab: document.getElementById('tab-k1-anlaut'), mod: document.getElementById('module-k1-anlaut'), title: 'Anlaute', init: null },
     'k1-silben': { tab: document.getElementById('tab-k1-silben'), mod: document.getElementById('module-k1-silben'), title: 'Silben', init: () => loadTaskSilben(indexSilben) },
@@ -140,7 +135,7 @@ const letterOptionsContainer = document.getElementById('letter-options');
 
 btnStart.addEventListener('click', () => { 
     startOverlay.style.display = 'none'; 
-    triggerWebSpeech("Willkommen im Lernstudio!"); // Autoplay Lock in Safari entsperren
+    playStudioAudio('Apfel');
     loadTaskK1(indexK1); 
 });
 
@@ -156,7 +151,7 @@ function loadTaskK1(index) {
         btn.addEventListener('click', () => handleChoiceK1(letter, task.letter));
         letterOptionsContainer.appendChild(btn);
     });
-    setTimeout(() => speakTextOrMP3(task.word, task.audio), 300);
+    setTimeout(() => playStudioAudio(task.word, task.audio), 300);
 }
 
 function generateChoicesK1(correct) {
@@ -175,13 +170,13 @@ function handleChoiceK1(selected, correct) {
     } else {
         const card = document.querySelector('#module-k1-anlaut .game-card');
         card.classList.add('shake');
-        speakTextOrMP3(currentTask.word, currentTask.audio);
+        playStudioAudio(currentTask.word, currentTask.audio);
         setTimeout(() => card.classList.remove('shake'), 400);
     }
 }
 btnPlayAudio.addEventListener('click', () => {
     const currentTask = taskDataK1[indexK1 % taskDataK1.length];
-    speakTextOrMP3(currentTask.word, currentTask.audio);
+    playStudioAudio(currentTask.word, currentTask.audio);
 });
 
 // KLASSE 1: SILBEN
@@ -198,12 +193,12 @@ const silbenEmoji = document.getElementById('silben-emoji');
 function loadTaskSilben(index) {
     const task = silbenData[index % silbenData.length];
     silbenEmoji.textContent = task.emoji;
-    setTimeout(() => speakTextOrMP3(task.word, task.audio), 300);
+    setTimeout(() => playStudioAudio(task.word, task.audio), 300);
 }
 
 document.getElementById('btn-play-silben-audio').addEventListener('click', () => {
     const task = silbenData[indexSilben % silbenData.length];
-    speakTextOrMP3(task.word, task.audio);
+    playStudioAudio(task.word, task.audio);
 });
 
 document.querySelectorAll('.btn-silbe').forEach(btn => {
@@ -217,7 +212,7 @@ document.querySelectorAll('.btn-silbe').forEach(btn => {
         } else {
             const card = document.querySelector('#module-k1-silben .game-card');
             card.classList.add('shake');
-            speakTextOrMP3(currentTask.word, currentTask.audio);
+            playStudioAudio(currentTask.word, currentTask.audio);
             setTimeout(() => card.classList.remove('shake'), 400);
         }
     });
@@ -402,14 +397,14 @@ document.querySelectorAll('.btn-grammar').forEach(btn => {
     });
 });
 
-// KLASSE 3: RECHTSCHREIBSTRATEGIEN (MIT SPRACHAUSGABE FÜR DEUTSCH)
+// KLASSE 3: RECHTSCHREIBSTRATEGIEN
 const spellTasks = [
-    { baseStem: 'B', gapQuestion: 'äume', choices: ['äume', 'ume'], correct: 'äume', fullWord: 'Bäume', strategy: 'Ableiten von Baum. Bäume schreibt man mit ä-u.', instruction: 'Leite ab von Baum:' },
-    { baseStem: 'Hun', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Hund', strategy: 'Verlängere das Wort zu Hunde. Man hört ein d.', instruction: 'Verlängere das Wort:' },
-    { baseStem: 'Hän', gapQuestion: 'de', choices: ['de', 'te'], correct: 'de', fullWord: 'Hände', strategy: 'Ableiten von Hand. Hände schreibt man mit ä.', instruction: 'Leite ab von Hand:' },
-    { baseStem: 'Wal', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Wald', strategy: 'Verlängere zu Wälder. Man hört ein d.', instruction: 'Verlängere das Wort:' },
-    { baseStem: 'Äp', gapQuestion: 'fel', choices: ['fel', 'pel'], correct: 'fel', fullWord: 'Äpfel', strategy: 'Ableiten von Apfel. Äpfel schreibt man mit Ä.', instruction: 'Leite ab von Apfel:' },
-    { baseStem: 'Bro', gapQuestion: 't', choices: ['t', 'd'], correct: 't', fullWord: 'Brot', strategy: 'Verlängere zu Brote. Man hört ein t.', instruction: 'Verlängere das Wort:' }
+    { baseStem: 'B', gapQuestion: 'äume', choices: ['äume', 'ume'], correct: 'äume', fullWord: 'Bäume', strategy: 'Ableiten von Baum', instruction: 'Leite ab von Baum:' },
+    { baseStem: 'Hun', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Hund', strategy: 'Verlängern: Hunde', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Hän', gapQuestion: 'de', choices: ['de', 'te'], correct: 'de', fullWord: 'Hände', strategy: 'Ableiten von Hand', instruction: 'Leite ab von Hand:' },
+    { baseStem: 'Wal', gapQuestion: 'd', choices: ['d', 't'], correct: 'd', fullWord: 'Wald', strategy: 'Verlängern: Wälder', instruction: 'Verlängere das Wort:' },
+    { baseStem: 'Äp', gapQuestion: 'fel', choices: ['fel', 'pel'], correct: 'fel', fullWord: 'Äpfel', strategy: 'Ableiten von Apfel', instruction: 'Leite ab von Apfel:' },
+    { baseStem: 'Bro', gapQuestion: 't', choices: ['t', 'd'], correct: 't', fullWord: 'Brot', strategy: 'Verlängern: Brote', instruction: 'Verlängere das Wort:' }
 ];
 
 let indexSpell = 0;
@@ -434,7 +429,7 @@ function initSpellTask() {
             if (opt === task.correct) {
                 updateScore(15);
                 spellWordDisplayEl.innerHTML = `${task.baseStem}<strong style="color:var(--success-color);">${opt}</strong>`;
-                triggerWebSpeech(task.fullWord);
+                playStudioAudio(task.fullWord);
                 setTimeout(() => {
                     indexSpell = (indexSpell + 1) % spellTasks.length;
                     initSpellTask();
@@ -442,7 +437,7 @@ function initSpellTask() {
             } else {
                 const card = document.querySelector('#module-k3-spell .game-card');
                 card.classList.add('shake');
-                triggerWebSpeech(task.strategy);
+                playStudioAudio(task.fullWord);
                 setTimeout(() => card.classList.remove('shake'), 400);
             }
         });
@@ -452,5 +447,5 @@ function initSpellTask() {
 
 btnPlaySpellAudio.addEventListener('click', () => {
     const task = spellTasks[indexSpell % spellTasks.length];
-    triggerWebSpeech(`${task.instruction} ${task.fullWord}. ${task.strategy}`);
+    playStudioAudio(task.fullWord);
 });
