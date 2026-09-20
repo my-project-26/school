@@ -31,7 +31,7 @@
             min-height: 100vh;
         }
 
-        /* Navigation Bar */
+        /* Top Bar */
         .top-bar {
             width: 100%;
             background-color: var(--primary-color);
@@ -63,7 +63,7 @@
             font-size: 1rem;
         }
 
-        /* Main Container */
+        /* Container */
         .app-container {
             width: 92%;
             max-width: 480px;
@@ -83,7 +83,7 @@
             margin-bottom: 12px;
         }
 
-        /* Anweisungsausrichtung: Nach links verschoben, kein Verraten der Antwort */
+        /* Anweisungssatz: Linksbündig ohne Verraten der Lösung */
         .instruction-box {
             width: 100%;
             text-align: left;
@@ -92,7 +92,7 @@
         }
 
         .instruction-text {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: #2c3e50;
             font-weight: 700;
             line-height: 1.4;
@@ -124,7 +124,7 @@
             transform: scale(0.98);
         }
 
-        /* Wort-Anzeige Kasten */
+        /* Wort-Kasten */
         .display-card {
             background-color: #f8fafc;
             border-radius: 16px;
@@ -157,7 +157,7 @@
             gap: 6px;
         }
 
-        /* Antwort-Buttons Grid */
+        /* Antwort Buttons Grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -198,7 +198,7 @@
         <h1 class="main-title">Rechtschreibstrategien</h1>
         
         <div class="instruction-box">
-            <!-- WICHTIG: Nur noch "Leite ab von Baum", verrät kein Ergebnis -->
+            <!-- Nur noch der Ausgangsbegriff, kein Verraten der Antwort -->
             <div class="instruction-text" id="instructionText">
                 Leite ab von Baum
             </div>
@@ -233,7 +233,7 @@
             {
                 baseWord: "Bär",
                 targetWord: "Bären",
-                audioFile: "audio/Baer.mp3",
+                audioFile: "audio/Baeren.mp3",
                 prefix: "B",
                 correctEnding: "ären",
                 wrongEnding: "eren"
@@ -258,26 +258,29 @@
 
         let currentTaskIndex = 0;
         let score = 90;
-        let currentAudio = null;
+        window.activeAudio = null;
 
+        // Robuster Audio-Player ohne Abbrüche
         function playAudio(audioPath) {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
+            if (window.activeAudio) {
+                window.activeAudio.pause();
+                window.activeAudio.currentTime = 0;
             }
-            currentAudio = new Audio(audioPath);
-            currentAudio.play().catch(e => console.log("Audio-Playback abgefangen:", e));
+            window.activeAudio = new Audio(audioPath);
+            window.activeAudio.play().catch(err => {
+                console.warn("Audio Playback Hinweis:", err);
+            });
         }
 
         function renderTask() {
             const task = tasks[currentTaskIndex];
 
-            // 1. Satz ohne Verraten des Ergebnisses und weiter links platziert
+            // 1. Textanzeige: Weiter links, kein Lösungssatz
             document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
             document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
             document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
             
-            // 2. Dynamisches Mischen der Buttons (Fisher-Yates Shuffle)
+            // 2. Antwort-Buttons zufällig mischen
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
 
@@ -286,6 +289,7 @@
                 { text: task.wrongEnding, isCorrect: false }
             ];
 
+            // Fisher-Yates Shuffle
             for (let i = options.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
@@ -299,7 +303,7 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // Audio-Button mit generierter MP3 verknüpfen
+            // Audio-Button Verknüpfung
             document.getElementById('playAudioBtn').onclick = () => {
                 playAudio(task.audioFile);
             };
@@ -312,16 +316,11 @@
                 currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
                 renderTask();
             } else {
-                // Sanftes audio-visuelles Feedback
-                btnAnimationError();
+                const container = document.getElementById('optionsContainer');
+                container.style.transform = 'translateX(-6px)';
+                setTimeout(() => container.style.transform = 'translateX(6px)', 50);
+                setTimeout(() => container.style.transform = 'translateX(0)', 100);
             }
-        }
-
-        function btnAnimationError() {
-            const container = document.getElementById('optionsContainer');
-            container.style.transform = 'translateX(-5px)';
-            setTimeout(() => container.style.transform = 'translateX(5px)', 50);
-            setTimeout(() => container.style.transform = 'translateX(0)', 100);
         }
 
         window.addEventListener('DOMContentLoaded', () => {

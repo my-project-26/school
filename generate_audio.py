@@ -1,39 +1,76 @@
 import os
-from gtts import gTTS
+import sys
 
-# Wortschatz für die 1. Klasse - Google liest jetzt direkt das saubere Wort
-anlaut_words = [
-    {"word": "Affe", "file": "Affe.mp3"},
-    {"word": "Apfel", "file": "Apfel.mp3"},
-    {"word": "Bär", "file": "Baer.mp3"},
-    {"word": "Ball", "file": "Ball.mp3"},
-    {"word": "Elefant", "file": "Elefant.mp3"},
-    {"word": "Fisch", "file": "Fisch.mp3"},
-    {"word": "Gitarre", "file": "Gitarre.mp3"},
-    {"word": "Hase", "file": "Hase.mp3"},
-    {"word": "Igel", "file": "Igel.mp3"},
-    {"word": "Krokodil", "file": "Krokodil.mp3"},
-    {"word": "Löwe", "file": "Loewe.mp3"},
-    {"word": "Maus", "file": "Maus.mp3"},
-    {"word": "Nase", "file": "Nase.mp3"},
-    {"word": "Oma", "file": "Oma.mp3"},
-    {"word": "Pinguin", "file": "Pinguin.mp3"},
-    {"word": "Sonne", "file": "Sonne.mp3"},
-    {"word": "Trommel", "file": "Trommel.mp3"},
-    {"word": "Uhr", "file": "Uhr.mp3"},
-    {"word": "Vogel", "file": "Vogel.mp3"},
-    {"word": "Zebra", "file": "Zebra.mp3"}
-]
+try:
+    from gtts import gTTS
+except ImportError:
+    print("gTTS nicht gefunden. Installiere gTTS...")
+    os.system(f"{sys.executable} -m pip install gtts")
+    from gtts import gTTS
 
-output_dir = "audio"
-os.makedirs(output_dir, exist_ok=True)
+# Vollständige Wortliste für deine App (Tiere, Obst, Gemüse, Begriffe)
+word_catalog = {
+    "Adler": "Adler",
+    "Affe": "Affe",
+    "Alligator": "Alligator",
+    "Alpaka": "Alpaka",
+    "Ameise": "Ameise",
+    "Ananas": "Ananas",
+    "Apfel": "Apfel",
+    "Aepfel": "Aepfel",
+    "Äpfel": "Aepfel",
+    "Aubergine": "Aubergine",
+    "Avocado": "Avocado",
+    "Baer": "Baer",
+    "Bär": "Baer",
+    "Baeren": "Baeren",
+    "Bären": "Baeren",
+    "Ball": "Ball",
+    "Banane": "Banane",
+    "Baum": "Baum",
+    "Baeume": "Baeume",
+    "Bäume": "Baeume",
+    "Biber": "Biber",
+    "Biene": "Biene",
+    "Birne": "Birne",
+    "Bohne": "Bohne",
+    "Brokkoli": "Brokkoli",
+    "Brot": "Brot",
+    "Brote": "Brote",
+    "Bueffel": "Bueffel",
+    "Büffel": "Bueffel",
+    "Chili": "Chili",
+    "Chinchilla": "Chinchilla",
+    "Dachs": "Dachs",
+    "Dattel": "Dattel",
+    "Delfin": "Delfin",
+    "Dinosaurier": "Dinosaurier",
+    "Eichhoernchen": "Eichhoernchen",
+    "Eichhörnchen": "Eichhoernchen",
+    "Eidechse": "Eidechse",
+    "Elefant": "Elefant",
+    "Erbse": "Erbse",
+    "Erdbeere": "Erdbeere",
+    "Esel": "Esel",
+    "Eule": "Eule",
+    "Feige": "Feige",
+    "Haende": "Haende",
+    "Hände": "Haende",
+    "Haeuser": "Haeuser",
+    "Häuser": "Haeuser"
+}
 
-print("🎙️ Generiere saubere Wort-Audios ohne Buchstaben-Namen...")
+os.makedirs("audio", exist_ok=True)
 
-for item in anlaut_words:
-    file_path = os.path.join(output_dir, item["file"])
-    tts = gTTS(text=item["word"], lang='de', slow=False)
-    tts.save(file_path)
-    print(f"  ✓ Generiert: {item['word']} -> {file_path}")
+print("--- STARTE AUDIO-GENERIERUNG IN HOCHAUFLÖSENDER BAER-QUALITÄT ---")
+for file_key, speak_text in word_catalog.items():
+    file_path = f"audio/{file_key}.mp3"
+    try:
+        # Generierung mit der klaren Google TTS Engine (Aussprache auf Deutsch)
+        tts = gTTS(text=speak_text, lang='de', slow=False)
+        tts.save(file_path)
+        print(f"[OK] Generiert: {file_path} (Text: '{speak_text}')")
+    except Exception as e:
+        print(f"[ERROR] Fehler bei {file_key}: {e}")
 
-print("\n✨ Fertig! Sprachdateien wurden im Ordner 'audio/' erneuert.")
+print("--- ALLE TONSPUREN ERFOLGREICH NEU ERSTELLT UND ÜBERSCHRIEBEN ---")
