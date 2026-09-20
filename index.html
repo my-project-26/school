@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Schul App - Lernportal</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --primary-color: #2b7fff;
@@ -11,7 +12,7 @@
             --card-bg: #ffffff;
             --text-color: #2c3e50;
             --accent-yellow: #ffdb58;
-            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
             --btn-hover: #1a62d1;
         }
 
@@ -33,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* Top Bar */
+        /* Top Navigation Bar */
         .top-bar {
             width: 100%;
             background-color: var(--primary-color);
@@ -76,7 +77,7 @@
             font-size: 1rem;
         }
 
-        /* Overlay & Drawer Menu */
+        /* Drawer Overlay Menu */
         .drawer-overlay {
             position: fixed;
             top: 0;
@@ -177,7 +178,7 @@
             transform: scale(0.97);
         }
 
-        /* Container */
+        /* App Container */
         .app-container {
             width: 92%;
             max-width: 480px;
@@ -237,6 +238,37 @@
             transform: scale(0.98);
         }
 
+        /* Zehnerfeld UI-Spezialkomponente */
+        .ten-frame-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .ten-frame-cell {
+            aspect-ratio: 1;
+            border: 2px dashed #cbd5e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot-red {
+            width: 85%;
+            height: 85%;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Standard Word Display Card */
         .display-card {
             background-color: #f8fafc;
             border-radius: 16px;
@@ -275,6 +307,12 @@
             gap: 16px;
         }
 
+        .options-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
         .option-btn {
             background: white;
             border: 3px solid var(--primary-color);
@@ -300,7 +338,7 @@
 </head>
 <body>
 
-    <!-- Navigation Header -->
+    <!-- Header Navigation Bar -->
     <div class="top-bar">
         <button class="btn-nav" onclick="toggleMenu(true)">
             <span>≡</span> <span id="currentModuleName">Rechtschreibung</span>
@@ -342,7 +380,7 @@
         </button>
     </div>
 
-    <!-- Übungs-Container -->
+    <!-- Hauptfenster für die aktuelle Übung -->
     <div class="app-container">
         <h1 class="main-title" id="exerciseMainTitle">Rechtschreibstrategien</h1>
         
@@ -356,12 +394,15 @@
             🔊 Wort anhören
         </button>
 
-        <div class="display-card">
-            <div class="word-display" id="wordDisplay">
-                B<span class="missing-letter">?</span>
-            </div>
-            <div class="hint-text" id="hintText">
-                💡 Tipp: Ableiten von Baum
+        <!-- Dynamischer Übungsbereich (Wortkarte oder Zehnerfeld) -->
+        <div id="exerciseDisplayArea">
+            <div class="display-card">
+                <div class="word-display" id="wordDisplay">
+                    B<span class="missing-letter">?</span>
+                </div>
+                <div class="hint-text" id="hintText">
+                    💡 Tipp: Ableiten von Baum
+                </div>
             </div>
         </div>
 
@@ -369,23 +410,43 @@
     </div>
 
     <script>
-        // Datenbanken für alle Module
+        // Vollständige Datenbank für alle Modul-Inhalte
         const modulesData = {
             rechtschreibung: [
-                { baseWord: "Baum", targetWord: "Bäume", audioFile: "audio/Baeume.mp3", prefix: "B", correctEnding: "äume", wrongEnding: "ume" },
                 { baseWord: "Bär", targetWord: "Bären", audioFile: "audio/Baeren.mp3", prefix: "B", correctEnding: "ären", wrongEnding: "eren" },
+                { baseWord: "Baum", targetWord: "Bäume", audioFile: "audio/Baeume.mp3", prefix: "B", correctEnding: "äume", wrongEnding: "ume" },
                 { baseWord: "Haus", targetWord: "Häuser", audioFile: "audio/Haeuser.mp3", prefix: "H", correctEnding: "äuser", wrongEnding: "euser" },
                 { baseWord: "Hand", targetWord: "Hände", audioFile: "audio/Haende.mp3", prefix: "H", correctEnding: "ände", wrongEnding: "ende" }
             ],
+            zehnerfeld: [
+                { count: 4, wrongCount: 3 },
+                { count: 7, wrongCount: 6 },
+                { count: 3, wrongCount: 5 },
+                { count: 9, wrongCount: 8 }
+            ],
             anlaute: [
-                { baseWord: "Affe", targetWord: "Affe", audioFile: "audio/Affe.mp3", prefix: "", correctEnding: "A", wrongEnding: "O" },
-                { baseWord: "Bär", targetWord: "Bär", audioFile: "audio/Baer.mp3", prefix: "", correctEnding: "B", wrongEnding: "D" },
-                { baseWord: "Elefant", targetWord: "Elefant", audioFile: "audio/Elefant.mp3", prefix: "", correctEnding: "E", wrongEnding: "I" }
+                { word: "Bär", letter: "B", wrongLetter: "D", audioFile: "audio/Baer.mp3" },
+                { word: "Affe", letter: "A", wrongLetter: "O", audioFile: "audio/Affe.mp3" },
+                { word: "Elefant", letter: "E", wrongLetter: "I", audioFile: "audio/Elefant.mp3" }
+            ],
+            silben: [
+                { word: "Elefant", count: 3, wrongCount: 2, audioFile: "audio/Elefant.mp3" },
+                { word: "Bär", count: 1, wrongCount: 2, audioFile: "audio/Baer.mp3" },
+                { word: "Ananas", count: 3, wrongCount: 4, audioFile: "audio/Ananas.mp3" }
             ],
             "1x1": [
-                { baseWord: "3 × 4", targetWord: "12", audioFile: "", prefix: "3 × 4 = ", correctEnding: "12", wrongEnding: "14" },
-                { baseWord: "5 × 5", targetWord: "25", audioFile: "", prefix: "5 × 5 = ", correctEnding: "25", wrongEnding: "20" },
-                { baseWord: "7 × 8", targetWord: "56", audioFile: "", prefix: "7 × 8 = ", correctEnding: "56", wrongEnding: "54" }
+                { question: "3 × 4 =", answer: "12", wrongAnswer: "14" },
+                { question: "5 × 5 =", answer: "25", wrongAnswer: "20" },
+                { question: "7 × 8 =", answer: "56", wrongAnswer: "54" }
+            ],
+            halbschriftlich: [
+                { question: "140 + 230 =", answer: "370", wrongAnswer: "350" },
+                { question: "450 - 120 =", answer: "330", wrongAnswer: "310" }
+            ],
+            wortarten: [
+                { word: "laufen", correct: "Verb", wrong: "Nomen" },
+                { word: "Hund", correct: "Nomen", wrong: "Adjektiv" },
+                { word: "schnell", correct: "Adjektiv", wrong: "Verb" }
             ]
         };
 
@@ -445,29 +506,118 @@
         function renderTask() {
             const moduleList = modulesData[currentModuleKey] || modulesData['rechtschreibung'];
             const task = moduleList[currentTaskIndex % moduleList.length];
-
-            if (currentModuleKey === 'rechtschreibung') {
-                document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
-                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
-                document.getElementById('hintText').innerText = `💡 Tipp: Ableiten von ${task.baseWord}`;
-            } else if (currentModuleKey === 'anlaute') {
-                document.getElementById('instructionText').innerText = `Welcher Anlaut gehört dazu?`;
-                document.getElementById('wordDisplay').innerHTML = `<span class="missing-letter">?</span> ${task.baseWord.slice(1)}`;
-                document.getElementById('hintText').innerText = `💡 Höre genau auf den ersten Laut`;
-            } else if (currentModuleKey === '1x1') {
-                document.getElementById('instructionText').innerText = `Berechne das Ergebnis`;
-                document.getElementById('wordDisplay').innerHTML = `${task.prefix}<span class="missing-letter">?</span>`;
-                document.getElementById('hintText').innerText = `💡 Blitzrechnen`;
-            }
-
+            const displayArea = document.getElementById('exerciseDisplayArea');
             const optionsContainer = document.getElementById('optionsContainer');
+            const audioBtn = document.getElementById('playAudioBtn');
+
             optionsContainer.innerHTML = '';
 
-            const options = [
-                { text: task.correctEnding, isCorrect: true },
-                { text: task.wrongEnding, isCorrect: false }
-            ];
+            // MODUL 1: ZEHNERFELD (Spezifische GUI)
+            if (currentModuleKey === 'zehnerfeld') {
+                document.getElementById('instructionText').innerText = "Wie viele Punkte siehst du?";
+                audioBtn.style.display = 'none';
 
+                let gridHTML = '<div class="ten-frame-grid">';
+                for (let i = 0; i < 10; i++) {
+                    const hasDot = i < task.count ? '<div class="dot-red"></div>' : '';
+                    gridHTML += `<div class="ten-frame-cell">${hasDot}</div>`;
+                }
+                gridHTML += '</div>';
+                displayArea.innerHTML = gridHTML;
+
+                setupOptions([
+                    { text: task.count.toString(), isCorrect: true },
+                    { text: task.wrongCount.toString(), isCorrect: false }
+                ]);
+            }
+            // MODUL 2: RECHTSCHREIBUNG
+            else if (currentModuleKey === 'rechtschreibung') {
+                document.getElementById('instructionText').innerText = `Leite ab von ${task.baseWord}`;
+                audioBtn.style.display = 'flex';
+                audioBtn.onclick = () => playAudio(task.audioFile);
+
+                displayArea.innerHTML = `
+                    <div class="display-card">
+                        <div class="word-display">${task.prefix}<span class="missing-letter">?</span></div>
+                        <div class="hint-text">💡 Tipp: Ableiten von ${task.baseWord}</div>
+                    </div>`;
+
+                setupOptions([
+                    { text: task.correctEnding, isCorrect: true },
+                    { text: task.wrongEnding, isCorrect: false }
+                ]);
+            }
+            // MODUL 3: ANLAUTE HÖREN
+            else if (currentModuleKey === 'anlaute') {
+                document.getElementById('instructionText').innerText = `Welcher Anlaut gehört dazu?`;
+                audioBtn.style.display = 'flex';
+                audioBtn.onclick = () => playAudio(task.audioFile);
+
+                displayArea.innerHTML = `
+                    <div class="display-card">
+                        <div class="word-display"><span class="missing-letter">?</span>${task.word.slice(1)}</div>
+                        <div class="hint-text">💡 Höre auf den ersten Laut</div>
+                    </div>`;
+
+                setupOptions([
+                    { text: task.letter, isCorrect: true },
+                    { text: task.wrongLetter, isCorrect: false }
+                ]);
+            }
+            // MODUL 4: SILBEN SCHWINGEN
+            else if (currentModuleKey === 'silben') {
+                document.getElementById('instructionText').innerText = `Wie viele Silben hat das Wort?`;
+                audioBtn.style.display = 'flex';
+                audioBtn.onclick = () => playAudio(task.audioFile);
+
+                displayArea.innerHTML = `
+                    <div class="display-card">
+                        <div class="word-display">${task.word}</div>
+                        <div class="hint-text">💡 Klatsche das Wort gedanklich</div>
+                    </div>`;
+
+                setupOptions([
+                    { text: task.count + " Silbe(n)", isCorrect: true },
+                    { text: task.wrongCount + " Silbe(n)", isCorrect: false }
+                ]);
+            }
+            // MODUL 5: 1x1 BLITZRECHNEN / HALBSCHRIFTLICH
+            else if (currentModuleKey === '1x1' || currentModuleKey === 'halbschriftlich') {
+                document.getElementById('instructionText').innerText = `Berechne das Ergebnis:`;
+                audioBtn.style.display = 'none';
+
+                displayArea.innerHTML = `
+                    <div class="display-card">
+                        <div class="word-display">${task.question} <span class="missing-letter">?</span></div>
+                        <div class="hint-text">💡 Kopfrechnen</div>
+                    </div>`;
+
+                setupOptions([
+                    { text: task.answer, isCorrect: true },
+                    { text: task.wrongAnswer, isCorrect: false }
+                ]);
+            }
+            // MODUL 6: WORTARTEN BESTIMMEN
+            else if (currentModuleKey === 'wortarten') {
+                document.getElementById('instructionText').innerText = `Welche Wortart ist das?`;
+                audioBtn.style.display = 'none';
+
+                displayArea.innerHTML = `
+                    <div class="display-card">
+                        <div class="word-display">${task.word}</div>
+                        <div class="hint-text">💡 Nomen, Verb oder Adjektiv?</div>
+                    </div>`;
+
+                setupOptions([
+                    { text: task.correct, isCorrect: true },
+                    { text: task.wrong, isCorrect: false }
+                ]);
+            }
+        }
+
+        function setupOptions(options) {
+            const optionsContainer = document.getElementById('optionsContainer');
+            // Fisher-Yates Shuffle
             for (let i = options.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
@@ -480,14 +630,6 @@
                 btn.onclick = () => checkAnswer(opt.isCorrect);
                 optionsContainer.appendChild(btn);
             });
-
-            const audioBtn = document.getElementById('playAudioBtn');
-            if (task.audioFile) {
-                audioBtn.style.display = 'flex';
-                audioBtn.onclick = () => playAudio(task.audioFile);
-            } else {
-                audioBtn.style.display = 'none';
-            }
         }
 
         function checkAnswer(isCorrect) {
@@ -503,6 +645,11 @@
                 setTimeout(() => container.style.transform = 'translateX(6px)', 50);
                 setTimeout(() => container.style.transform = 'translateX(0)', 100);
             }
+        }
+
+        // PWA Service Worker Registrierung
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Registration:', err));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
