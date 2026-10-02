@@ -1,0 +1,227 @@
+[
+  {
+    "id": 1,
+    "category": "Familie & Haus",
+    "strategy": "Ableiten",
+    "baseWord": "Hand",
+    "gapText": "H?",
+    "fullWord": "Hände",
+    "instruction": "Leite ab von Hand",
+    "hint": "💡 Tipp: Ableiten von Hand",
+    "options": [
+      "ände",
+      "ende"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 2,
+    "category": "Familie & Haus",
+    "strategy": "Ableiten",
+    "baseWord": "Haus",
+    "gapText": "H?",
+    "fullWord": "Häuser",
+    "instruction": "Leite ab von Haus",
+    "hint": "💡 Tipp: Ableiten von Haus",
+    "options": [
+      "euser",
+      "äuser"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 3,
+    "category": "Natur & Tiere",
+    "strategy": "Ableiten",
+    "baseWord": "Maus",
+    "gapText": "M?",
+    "fullWord": "Mäuse",
+    "instruction": "Leite ab von Maus",
+    "hint": "💡 Tipp: Ableiten von Maus",
+    "options": [
+      "euse",
+      "äuse"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 4,
+    "category": "Natur & Tiere",
+    "strategy": "Ableiten",
+    "baseWord": "Baum",
+    "gapText": "B?",
+    "fullWord": "Bäume",
+    "instruction": "Leite ab von Baum",
+    "hint": "💡 Tipp: Ableiten von Baum",
+    "options": [
+      "äume",
+      "eume"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 5,
+    "category": "Alltag & Fahrzeuge",
+    "strategy": "Ableiten",
+    "baseWord": "Rad",
+    "gapText": "R?",
+    "fullWord": "Räder",
+    "instruction": "Leite ab von Rad",
+    "hint": "💡 Tipp: Rad (Auto/Fahrrad) -> Räder",
+    "options": [
+      "äder",
+      "eder"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 6,
+    "category": "Natur & Tiere",
+    "strategy": "Ableiten",
+    "baseWord": "Wald",
+    "gapText": "W?",
+    "fullWord": "Wälder",
+    "instruction": "Leite ab von Wald",
+    "hint": "💡 Tipp: Ableiten von Wald",
+    "options": [
+      "älder",
+      "elder"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 7,
+    "category": "Familie & Haus",
+    "strategy": "Verlängern",
+    "baseWord": "Hund",
+    "gapText": "Hun?",
+    "fullWord": "Hund",
+    "instruction": "Verlängere: Hunde",
+    "hint": "💡 Tipp: Wir hören d bei Hun-de",
+    "options": [
+      "d",
+      "t"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 8,
+    "category": "Alltag & Fahrzeuge",
+    "strategy": "Verlängern",
+    "baseWord": "Tag",
+    "gapText": "Ta?",
+    "fullWord": "Tag",
+    "instruction": "Verlängere: Tage",
+    "hint": "💡 Tipp: Wir hören g bei Ta-ge",
+    "options": [
+      "g",
+      "k"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 9,
+    "category": "Familie & Haus",
+    "strategy": "Verlängern",
+    "baseWord": "Kind",
+    "gapText": "Kin?",
+    "fullWord": "Kind",
+    "instruction": "Verlängere: Kinder",
+    "hint": "💡 Tipp: Wir hören d bei Kin-der",
+    "options": [
+      "d",
+      "t"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 10,
+    "category": "Alltag & Farben",
+    "strategy": "Verlängern",
+    "baseWord": "Gelb",
+    "gapText": "gel?",
+    "fullWord": "gelb",
+    "instruction": "Verlängere: gelbe",
+    "hint": "💡 Tipp: Wir hören b bei gel-be",
+    "options": [
+      "b",
+      "p"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 11,
+    "category": "Familie & Haus",
+    "strategy": "Merkwort",
+    "baseWord": "Oma",
+    "gapText": "Om?",
+    "fullWord": "Oma",
+    "instruction": "Familie: Oma",
+    "hint": "💡 Tipp: Großmutter",
+    "options": [
+      "a",
+      "ah"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 12,
+    "category": "Familie & Haus",
+    "strategy": "Merkwort",
+    "baseWord": "Opa",
+    "gapText": "Op?",
+    "fullWord": "Opa",
+    "instruction": "Familie: Opa",
+    "hint": "💡 Tipp: Großvater",
+    "options": [
+      "a",
+      "ah"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 13,
+    "category": "Familie & Haus",
+    "strategy": "Merkwort",
+    "baseWord": "Bruder",
+    "gapText": "Br?",
+    "fullWord": "Bruder",
+    "instruction": "Familie: Bruder",
+    "hint": "💡 Tipp: Ein Familienmitglied",
+    "options": [
+      "uder",
+      "ooder"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 14,
+    "category": "Familie & Haus",
+    "strategy": "Merkwort",
+    "baseWord": "Schwester",
+    "gapText": "Schw?",
+    "fullWord": "Schwester",
+    "instruction": "Familie: Schwester",
+    "hint": "💡 Tipp: Ein Familienmitglied",
+    "options": [
+      "ester",
+      "äster"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 15,
+    "category": "Natur & Garten",
+    "strategy": "Ableiten",
+    "baseWord": "Garten",
+    "gapText": "G?",
+    "fullWord": "Gärtner",
+    "instruction": "Leite ab von Garten",
+    "hint": "💡 Tipp: Ableiten von Garten",
+    "options": [
+      "ertner",
+      "ärtner"
+    ],
+    "correctIndex": 1
+  }
+]
