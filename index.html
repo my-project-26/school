@@ -19,6 +19,11 @@
       --text-dark: #1e293b;
       --text-muted: #64748b;
       --border-radius: 16px;
+
+      /* Wortarten Farben (Montessori/Duden Standard) */
+      --nomen-blue: #2563eb;
+      --verb-red: #dc2626;
+      --adjektiv-green: #16a34a;
     }
 
     * {
@@ -97,7 +102,7 @@
       font-size: 1rem;
     }
 
-    /* SIDEBAR NAVI DRAWER - EXAKT BILD-REFERENZ */
+    /* SIDEBAR NAVI DRAWER */
     .drawer-overlay {
       position: fixed;
       top: 0;
@@ -316,7 +321,7 @@
       background: #ffffff;
       border: 2px solid #93c5fd;
       border-radius: var(--border-radius);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--primary-color);
       cursor: pointer;
@@ -366,7 +371,7 @@
     </div>
   </header>
 
-  <!-- OVERLAY & SIDEBAR NAVI (EXAKT WIE AUF BILDREFERENZ) -->
+  <!-- OVERLAY & SIDEBAR NAVI -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <nav class="nav-drawer" id="navDrawer">
     <div class="drawer-header">
@@ -415,7 +420,6 @@
   </main>
 
   <script>
-    // SERVICE WORKER REGISTRIERUNG FÜR 100% OFFLINE-PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
@@ -480,7 +484,7 @@
       return tasks;
     }
 
-    // --- MODULE DATENBANK (EXAKT NACH REFERENZBILD) ---
+    // --- MODULE DATENBANK INKLUSIVE WORTARTEN (3. KLASSE) ---
     const modulesData = {
       einmaleins: generateAll1x1Tasks(),
       anlaute: [
@@ -501,7 +505,10 @@
         { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
       ],
       wortarten: [
-        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" }
+        { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, man kann 'der' davor setzen", options: ["Nomen", "Verb"], correctIndex: 0, speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
+        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
+        { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", options: ["Adjektiv", "Nomen"], correctIndex: 0, speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" },
+        { baseWord: "Haus", gapText: "Haus", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Das Haus...", options: ["Verb", "Nomen"], correctIndex: 1, speechPrompt: "Welche Wortart ist Haus?", speechText: "Haus ist ein Nomen" }
       ],
       rechtschreibung: [
         { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände" },
@@ -587,7 +594,7 @@
       if (task.audioFile) {
         const audio = new Audio(task.audioFile);
         audio.play().catch(err => {
-          console.warn("Audio MP3 nicht gefunden, nutze TTS Fallback:", err);
+          console.warn("Audio MP3 nicht gefunden, nutze Fallback:", err);
           speakTextFallback(isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction));
         });
       } else {
@@ -640,7 +647,7 @@
       btnOpt1.textContent = task.options[0];
       btnOpt2.textContent = task.options[1];
 
-      listenBtn.textContent = currentModule === "einmaleins" ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
+      listenBtn.textContent = (currentModule === "einmaleins" || currentModule === "wortarten") ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
     }
 
     function handleOptionClick(selectedIndex, clickedBtn) {
