@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schul App - Rechtschreibstrategien</title>
+  <title>Schul App - Lernportal BW</title>
   <style>
     :root {
       --primary-color: #3b82f6;
@@ -26,50 +26,142 @@
 
     body {
       background-color: var(--bg-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* BLAUER TOP-HEADER MIT MENÜ-BUTTON */
+    .top-header {
+      width: 100%;
+      background-color: var(--primary-color);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .btn-menu {
+      background: #ffffff;
+      color: var(--primary-color);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-menu:active {
+      background-color: #e2e8f0;
+    }
+
+    .header-score {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* SIDEBAR NAVI */
+    .nav-drawer {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 280px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 200;
+      box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+      transition: left 0.3s ease;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .nav-drawer.open {
+      left: 0;
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 150;
+      display: none;
+    }
+
+    .drawer-overlay.active {
+      display: block;
+    }
+
+    .drawer-title {
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      font-weight: 800;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .nav-item {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .nav-item.active {
+      border-color: var(--primary-color);
+      background-color: #eff6ff;
+      color: var(--primary-color);
+    }
+
+    /* MAIN CONTAINER / CARD */
+    .main-content {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px 16px;
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 16px;
     }
 
     .app-card {
       background: var(--card-bg);
       width: 100%;
-      max-width: 500px;
       border-radius: var(--border-radius);
       padding: 24px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
       text-align: center;
     }
 
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .title {
-      color: var(--primary-color);
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .score-badge {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-
     .instruction {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.2rem;
+      font-weight: 700;
       color: var(--text-dark);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       min-height: 1.5em;
     }
 
@@ -119,7 +211,7 @@
       color: #14532d;
     }
 
-    /* DISPLAY BOX FÜR WORT/LÜCKE */
+    /* DISPLAY BOX FÜR WORT/LÜCKE/EMOJI */
     .word-display-box {
       background-color: #f8fafc;
       border: 2px solid #e2e8f0;
@@ -130,11 +222,11 @@
     }
 
     .word-target {
-      font-size: 3rem;
+      font-size: 3.5rem;
       font-weight: 800;
       color: var(--primary-color);
       letter-spacing: 2px;
-      min-height: 60px;
+      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -147,7 +239,7 @@
     }
 
     .hint-text {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: #64748b;
       margin-top: 12px;
       display: flex;
@@ -157,7 +249,7 @@
       min-height: 1.2em;
     }
 
-    /* ANTWORT BUTTONS */
+    /* ANTWORT BUTTONS (GRID) */
     .options-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -208,48 +300,82 @@
 </head>
 <body>
 
-  <div class="app-card">
-    <div class="header-row">
-      <h2 class="title">Rechtschreibung</h2>
-      <div class="score-badge" id="scoreDisplay">Punkte: 0</div>
-    </div>
+  <!-- BLAUER TOP-HEADER -->
+  <header class="top-header">
+    <button class="btn-menu" id="menuToggleBtn">
+      ≡ <span id="currentModuleLabel">Rechtschreibung</span>
+    </button>
+    <div class="header-score" id="scoreDisplay">Punkte: 0</div>
+  </header>
 
-    <div class="instruction" id="instructionText">Lade Wortschatz...</div>
+  <!-- OVERLAY & SIDEBAR NAVI -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <nav class="nav-drawer" id="navDrawer">
+    <div class="drawer-title">Module Auswählen</div>
+    <button class="nav-item active" data-module="rechtschreibung">✏️ Rechtschreibung (Kl. 3)</button>
+    <button class="nav-item" data-module="anlaute">🍎 Anlaute Hören (Kl. 1)</button>
+    <button class="nav-item" data-module="einmaleins">🔢 1x1 Trainer (Kl. 3)</button>
+  </nav>
 
-    <div class="controls-row">
-      <button class="btn-control btn-listen" id="listenBtn">
-        🔊 Wort anhören
-      </button>
-      <button class="btn-control btn-sound-toggle active" id="soundToggleBtn">
-        🔔 Ton: AN
-      </button>
-    </div>
+  <!-- MAIN CONTENT CARD -->
+  <main class="main-content">
+    <div class="app-card">
+      <div class="instruction" id="instructionText">Lade Modul...</div>
 
-    <div class="word-display-box" id="displayBox">
-      <div class="word-target" id="wordDisplay">...</div>
-      <div class="hint-text" id="hintText">...</div>
-    </div>
+      <div class="controls-row">
+        <button class="btn-control btn-listen" id="listenBtn">
+          🔊 Wort anhören
+        </button>
+        <button class="btn-control btn-sound-toggle active" id="soundToggleBtn">
+          🔔 Ton: AN
+        </button>
+      </div>
 
-    <div class="options-row" id="optionsContainer">
-      <button class="btn-option" id="btnOpt1" data-index="0">-</button>
-      <button class="btn-option" id="btnOpt2" data-index="1">-</button>
+      <div class="word-display-box" id="displayBox">
+        <div class="word-target" id="wordDisplay">...</div>
+        <div class="hint-text" id="hintText">...</div>
+      </div>
+
+      <div class="options-row" id="optionsContainer">
+        <button class="btn-option" id="btnOpt1" data-index="0">-</button>
+        <button class="btn-option" id="btnOpt2" data-index="1">-</button>
+      </div>
     </div>
-  </div>
+  </main>
 
   <script>
-    // --- FALLBACK-DATEN (Falls JSON nicht geladen werden kann) ---
-    const fallbackTasks = [
-      { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0 },
-      { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1 }
-    ];
+    // --- MODULE DATENBANKEN ---
+    const modulesData = {
+      rechtschreibung: [
+        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0 },
+        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1 },
+        { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum", hint: "💡 Tipp: Ableiten von Baum", options: ["äume", "eume"], correctIndex: 0 }
+      ],
+      anlaute: [
+        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Apfel fängt mit A an", options: ["A", "H"], correctIndex: 0 },
+        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Bär fängt mit B an", options: ["B", "P"], correctIndex: 0 },
+        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Fisch fängt mit F an", options: ["F", "V"], correctIndex: 0 },
+        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Löwe fängt mit L an", options: ["L", "M"], correctIndex: 0 }
+      ],
+      einmaleins: [
+        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "Berechne das Ergebnis", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0 },
+        { baseWord: "5 x 5", gapText: "5 × 5 = ?", fullWord: "25", instruction: "Berechne das Ergebnis", hint: "💡 Tipp: 5 mal 5 ist gleich 25", options: ["20", "25"], correctIndex: 1 }
+      ]
+    };
 
-    let tasks = [];
+    let currentModule = "rechtschreibung";
     let currentTaskIndex = 0;
     let score = 0;
     let isAudioFeedbackEnabled = true;
     let isEvaluating = false;
 
     // --- DOM ELEMENTE ---
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const currentModuleLabel = document.getElementById('currentModuleLabel');
+    const navDrawer = document.getElementById('navDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const navItems = document.querySelectorAll('.nav-item');
+
     const instructionText = document.getElementById('instructionText');
     const listenBtn = document.getElementById('listenBtn');
     const soundToggleBtn = document.getElementById('soundToggleBtn');
@@ -261,35 +387,58 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const displayBox = document.getElementById('displayBox');
 
-    // --- AUDIO (Web Speech API) ---
+    // --- WEICHE STIMMAUSGABE (OPTIMIERT FÜR KLASSE 1 & 3) ---
     function speakText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
+        
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'de-DE';
-        utterance.rate = 0.85;
+        
+        // Sanftere Sprechgeschwindigkeit & veränderte Tonhöhe für weiche Konsonanten
+        utterance.rate = 0.82;
+        utterance.pitch = 1.05;
+
+        // Versuche eine qualitativ hochwertige deutsche Stimme auszuwählen
+        const voices = window.speechSynthesis.getVoices();
+        const germanVoice = voices.find(v => v.lang.startsWith('de') && (v.name.includes('Anna') || v.name.includes('Helena') || v.name.includes('Google')));
+        if (germanVoice) {
+          utterance.voice = germanVoice;
+        }
+
         window.speechSynthesis.speak(utterance);
       }
     }
 
-    // --- WORTSCHATZ LADEN (JSON FETCH) ---
-    async function loadTasks() {
-      try {
-        const response = await fetch('words.json');
-        if (!response.ok) throw new Error('Netzwerk-Fehler beim Laden der JSON');
-        tasks = await response.json();
-      } catch (error) {
-        console.warn('words.json konnte nicht geladen werden, nutze Fallback-Daten:', error);
-        tasks = fallbackTasks;
-      }
-      renderTask();
+    // --- NAVI & DRAWER LOGIK ---
+    function toggleDrawer() {
+      navDrawer.classList.toggle('open');
+      drawerOverlay.classList.toggle('active');
     }
+
+    menuToggleBtn.addEventListener('click', toggleDrawer);
+    drawerOverlay.addEventListener('click', toggleDrawer);
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        navItems.forEach(i => i.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        currentModule = e.target.getAttribute('data-module');
+        currentModuleLabel.textContent = e.target.textContent.split('(')[0].trim();
+        
+        currentTaskIndex = 0;
+        toggleDrawer();
+        renderTask();
+      });
+    });
 
     // --- RENDERUNG ---
     function renderTask() {
-      if (!tasks || tasks.length === 0) return;
+      const activeTasks = modulesData[currentModule];
+      if (!activeTasks || activeTasks.length === 0) return;
 
-      const task = tasks[currentTaskIndex];
+      const task = activeTasks[currentTaskIndex];
 
       isEvaluating = false;
       optionsContainer.classList.remove('disabled');
@@ -310,28 +459,26 @@
     function handleOptionClick(selectedIndex, clickedBtn) {
       if (isEvaluating) return;
 
-      const task = tasks[currentTaskIndex];
+      const activeTasks = modulesData[currentModule];
+      const task = activeTasks[currentTaskIndex];
 
       if (selectedIndex === task.correctIndex) {
         isEvaluating = true;
         optionsContainer.classList.add('disabled');
 
-        // Wort auflösen & grün hervorheben
-        wordDisplay.textContent = task.fullWord;
+        wordDisplay.textContent = currentModule === "anlaute" ? `${task.gapText} (${task.fullWord})` : task.fullWord;
         wordDisplay.classList.add('correct');
         clickedBtn.classList.add('btn-correct');
 
         score += 10;
         scoreDisplay.textContent = `Punkte: ${score}`;
 
-        // Sprachausgabe (ohne Glucksen/Synthesizer-Sound)
         if (isAudioFeedbackEnabled) {
           speakText(task.fullWord);
         }
 
-        // Exakt 2 Sekunden Verweilzeit, dann nächste Aufgabe
         setTimeout(() => {
-          currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
+          currentTaskIndex = (currentTaskIndex + 1) % activeTasks.length;
           renderTask();
         }, 2000);
 
@@ -345,8 +492,9 @@
 
     // --- EVENT LISTENER ---
     listenBtn.addEventListener('click', () => {
-      if (tasks.length > 0) {
-        speakText(tasks[currentTaskIndex].fullWord);
+      const activeTasks = modulesData[currentModule];
+      if (activeTasks && activeTasks.length > 0) {
+        speakText(activeTasks[currentTaskIndex].fullWord);
       }
     });
 
@@ -365,8 +513,14 @@
     btnOpt1.addEventListener('click', () => handleOptionClick(0, btnOpt1));
     btnOpt2.addEventListener('click', () => handleOptionClick(1, btnOpt2));
 
-    // Start
-    loadTasks();
+    // Stimmen initialisieren (wichtig für Chrome/Safari Async Load)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
+    renderTask();
   </script>
 </body>
 </html>
