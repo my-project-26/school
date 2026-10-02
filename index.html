@@ -407,7 +407,7 @@
 
   <header class="top-header">
     <button class="btn-menu" id="menuToggleBtn">
-      ≡ <span id="currentModuleLabel">Anlaute hören</span>
+      ≡ <span id="currentModuleLabel">Silben schwingen</span>
     </button>
     <div class="header-score-container">
       <div class="stars-badge" id="starsDisplay">⭐ 0</div>
@@ -423,8 +423,8 @@
     </div>
 
     <div class="section-label">1. Klasse</div>
-    <button class="nav-item active" data-module="anlaute">🔊 Anlaute hören</button>
-    <button class="nav-item" data-module="silben">🌊 Silben schwingen</button>
+    <button class="nav-item" data-module="anlaute">🔊 Anlaute hören</button>
+    <button class="nav-item active" data-module="silben">🌊 Silben schwingen</button>
     <button class="nav-item" data-module="zehnerfeld">🔴 Zehnerfeld</button>
 
     <div class="section-label">3. Klasse</div>
@@ -436,7 +436,7 @@
 
   <main class="main-content">
     <div class="app-card">
-      <div class="instruction" id="instructionText">Anlaute hören</div>
+      <div class="instruction" id="instructionText">Silben schwingen</div>
 
       <div class="controls-row">
         <button class="btn-control btn-listen" id="listenBtn">
@@ -568,6 +568,53 @@
       return tasks;
     }
 
+    // 40 SILBEN WÖRTER VOLLSTÄNDIGE DATENBANK (KLASSE 1)
+    const rawSilben40 = [
+      { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, hint: "💡 Tipp: Hund (1 Klatscher)", correct: "1", wrong: "2", file: "hund_silben", speechText: "Hund hat eine Silbe" },
+      { baseWord: "Haus", gapText: "🏠", fullWord: "Haus", count: 1, hint: "💡 Tipp: Haus (1 Klatscher)", correct: "1", wrong: "2", file: "haus_silben", speechText: "Haus hat eine Silbe" },
+      { baseWord: "Frosch", gapText: "🐸", fullWord: "Frosch", count: 1, hint: "💡 Tipp: Frosch (1 Klatscher)", correct: "1", wrong: "2", file: "frosch_silben", speechText: "Frosch hat eine Silbe" },
+      { baseWord: "Ball", gapText: "⚽", fullWord: "Ball", count: 1, hint: "💡 Tipp: Ball (1 Klatscher)", correct: "1", wrong: "2", file: "ball_silben", speechText: "Ball hat eine Silbe" },
+      { baseWord: "Baum", gapText: "🌳", fullWord: "Baum", count: 1, hint: "💡 Tipp: Baum (1 Klatscher)", correct: "1", wrong: "2", file: "baum_silben", speechText: "Baum hat eine Silbe" },
+      { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", count: 1, hint: "💡 Tipp: Fisch (1 Klatscher)", correct: "1", wrong: "2", file: "fisch_silben", speechText: "Fisch hat eine Silbe" },
+      { baseWord: "Maus", gapText: "🐭", fullWord: "Maus", count: 1, hint: "💡 Tipp: Maus (1 Klatscher)", correct: "1", wrong: "2", file: "maus_silben", speechText: "Maus hat eine Silbe" },
+      { baseWord: "Uhr", gapText: "⏰", fullWord: "Uhr", count: 1, hint: "💡 Tipp: Uhr (1 Klatscher)", correct: "1", wrong: "2", file: "uhr_silben", speechText: "Uhr hat eine Silbe" },
+      { baseWord: "Brot", gapText: "🍞", fullWord: "Brot", count: 1, hint: "💡 Tipp: Brot (1 Klatscher)", correct: "1", wrong: "2", file: "brot_silben", speechText: "Brot hat eine Silbe" },
+      { baseWord: "Stern", gapText: "⭐", fullWord: "Stern", count: 1, hint: "💡 Tipp: Stern (1 Klatscher)", correct: "1", wrong: "2", file: "stern_silben", speechText: "Stern hat eine Silbe" },
+
+      { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, hint: "💡 Tipp: Kat - ze (2 Klatscher)", correct: "2", wrong: "3", file: "katze_silben", speechText: "Kat ze hat zwei Silben" },
+      { baseWord: "Blume", gapText: "🌻", fullWord: "Blu-me", count: 2, hint: "💡 Tipp: Blu - me (2 Klatscher)", correct: "2", wrong: "3", file: "blume_silben", speechText: "Blu me hat zwei Silben" },
+      { baseWord: "Sonne", gapText: "☀️", fullWord: "Son-ne", count: 2, hint: "💡 Tipp: Son - ne (2 Klatscher)", correct: "2", wrong: "1", file: "sonne_silben", speechText: "Son ne hat zwei Silben" },
+      { baseWord: "Vogel", gapText: "🐦", fullWord: "Vo-gel", count: 2, hint: "💡 Tipp: Vo - gel (2 Klatscher)", correct: "2", wrong: "3", file: "vogel_silben", speechText: "Vo gel hat zwei Silben" },
+      { baseWord: "Wolke", gapText: "☁️", fullWord: "Wol-ke", count: 2, hint: "💡 Tipp: Wol - ke (2 Klatscher)", correct: "2", wrong: "1", file: "wolke_silben", speechText: "Wol ke hat zwei Silben" },
+      { baseWord: "Lampe", gapText: "💡", fullWord: "Lam-pe", count: 2, hint: "💡 Tipp: Lam - pe (2 Klatscher)", correct: "2", wrong: "3", file: "lampe_silben", speechText: "Lam pe hat zwei Silben" },
+      { baseWord: "Apfel", gapText: "🍎", fullWord: "Ap-fel", count: 2, hint: "💡 Tipp: Ap - fel (2 Klatscher)", correct: "2", wrong: "1", file: "apfel_silben", speechText: "Ap fel hat zwei Silben" },
+      { baseWord: "Kerze", gapText: "🕯️", fullWord: "Ker-ze", count: 2, hint: "💡 Tipp: Ker - ze (2 Klatscher)", correct: "2", wrong: "3", file: "kerze_silben", speechText: "Ker ze hat zwei Silben" },
+      { baseWord: "Schule", gapText: "🏫", fullWord: "Schu-le", count: 2, hint: "💡 Tipp: Schu - le (2 Klatscher)", correct: "2", wrong: "1", file: "schule_silben", speechText: "Schu le hat zwei Silben" },
+      { baseWord: "Tafel", gapText: "⬛", fullWord: "Ta-fel", count: 2, hint: "💡 Tipp: Ta - fel (2 Klatscher)", correct: "2", wrong: "3", file: "tafel_silben", speechText: "Ta fel hat zwei Silben" },
+      { baseWord: "Tasche", gapText: "🎒", fullWord: "Ta-sche", count: 2, hint: "💡 Tipp: Ta - sche (2 Klatscher)", correct: "2", wrong: "1", file: "tasche_silben", speechText: "Ta sche hat zwei Silben" },
+      { baseWord: "Puppe", gapText: "🪆", fullWord: "Pup-pe", count: 2, hint: "💡 Tipp: Pup - pe (2 Klatscher)", correct: "2", wrong: "3", file: "puppe_silben", speechText: "Pup pe hat zwei Silben" },
+      { baseWord: "Biene", gapText: "🐝", fullWord: "Bie-ne", count: 2, hint: "💡 Tipp: Bie - ne (2 Klatscher)", correct: "2", wrong: "1", file: "biene_silben", speechText: "Bie ne hat zwei Silben" },
+      { baseWord: "Eule", gapText: "🦉", fullWord: "Eu-le", count: 2, hint: "💡 Tipp: Eu - le (2 Klatscher)", correct: "2", wrong: "3", file: "eule_silben", speechText: "Eu le hat zwei Silben" },
+      { baseWord: "Kirsche", gapText: "🍒", fullWord: "Kir-sche", count: 2, hint: "💡 Tipp: Kir - sche (2 Klatscher)", correct: "2", wrong: "1", file: "kirsche_silben", speechText: "Kir sche hat zwei Silben" },
+
+      { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, hint: "💡 Tipp: To - ma - te (3 Klatscher)", correct: "3", wrong: "2", file: "tomate_silben", speechText: "To ma te hat drei Silben" },
+      { baseWord: "Banane", gapText: "🍌", fullWord: "Ba-na-ne", count: 3, hint: "💡 Tipp: Ba - na - ne (3 Klatscher)", correct: "3", wrong: "2", file: "banane_silben", speechText: "Ba na ne hat drei Silben" },
+      { baseWord: "Schmetterling", gapText: "🦋", fullWord: "Schmet-ter-ling", count: 3, hint: "💡 Tipp: Schmet - ter - ling (3 Klatscher)", correct: "3", wrong: "2", file: "schmetterling_silben", speechText: "Schmet ter ling hat drei Silben" },
+      { baseWord: "Elefant", gapText: "🐘", fullWord: "E-le-fant", count: 3, hint: "💡 Tipp: E - le - fant (3 Klatscher)", correct: "3", wrong: "2", file: "elefant_silben", speechText: "E le fant hat drei Silben" },
+      { baseWord: "Rakete", gapText: "🚀", fullWord: "Ra-ke-te", count: 3, hint: "💡 Tipp: Ra - ke - te (3 Klatscher)", correct: "3", wrong: "2", file: "rakete_silben", speechText: "Ra ke te hat drei Silben" },
+      { baseWord: "Gitarre", gapText: "🎸", fullWord: "Gi-tar-re", count: 3, hint: "💡 Tipp: Gi - tar - re (3 Klatscher)", correct: "3", wrong: "2", file: "gitarre_silben", speechText: "Gi tar re hat drei Silben" },
+      { baseWord: "Zitrone", gapText: "🍋", fullWord: "Zi-tro-ne", count: 3, hint: "💡 Tipp: Zi - tro - ne (3 Klatscher)", correct: "3", wrong: "2", file: "zitrone", speechText: "Zi tro ne hat drei Silben" },
+      { baseWord: "Delfin", gapText: "🐬", fullWord: "Del-fin", count: 2, hint: "💡 Tipp: Del - fin (2 Klatscher)", correct: "2", wrong: "3", file: "delfin_silben", speechText: "Del fin hat zwei Silben" },
+      { baseWord: "Papagei", gapText: "🦜", fullWord: "Pa-pa-gei", count: 3, hint: "💡 Tipp: Pa - pa - gei (3 Klatscher)", correct: "3", wrong: "2", file: "papagei_silben", speechText: "Pa pa gei hat drei Silben" },
+      { baseWord: "Krokodil", gapText: "🐊", fullWord: "Kro-ko-dil", count: 3, hint: "💡 Tipp: Kro - ko - dil (3 Klatscher)", correct: "3", wrong: "2", file: "krokodil_silben", speechText: "Kro ko dil hat drei Silben" },
+      { baseWord: "Pinguin", gapText: "🐧", fullWord: "Pin-gu-in", count: 3, hint: "💡 Tipp: Pin - gu - in (3 Klatscher)", correct: "3", wrong: "2", file: "pinguin_silben", speechText: "Pin gu in hat drei Silben" },
+
+      { baseWord: "Schokolade", gapText: "🍫", fullWord: "Scho-ko-la-de", count: 4, hint: "💡 Tipp: Scho - ko - la - de (4 Klatscher)", correct: "4", wrong: "3", file: "schokolade_silben", speechText: "Scho ko la de hat vier Silben" },
+      { baseWord: "Marienkäfer", gapText: "🐞", fullWord: "Ma-ri-en-kä-fer", count: 5, hint: "💡 Tipp: Ma - ri - en - kä - fer (5 Klatscher)", correct: "5", wrong: "4", file: "marienkaefer_silben", speechText: "Ma ri en kä fer hat fünf Silben" },
+      { baseWord: "Schneemann", gapText: "☃️", fullWord: "Schnee-mann", count: 2, hint: "💡 Tipp: Schnee - mann (2 Klatscher)", correct: "2", wrong: "3", file: "schneemann_silben", speechText: "Schnee mann hat zwei Silben" },
+      { baseWord: "Regenbogen", gapText: "🌈", fullWord: "Re-gen-bo-gen", count: 4, hint: "💡 Tipp: Re - gen - bo - gen (4 Klatscher)", correct: "4", wrong: "3", file: "regenbogen_silben", speechText: "Re gen bo gen hat vier Silben" }
+    ];
+
     const rawAnlaute50 = [
       { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", hint: "💡 Tipp: A wie Apfel", correct: "A", wrong: "H", file: "apfel" },
       { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", hint: "💡 Tipp: B wie Bär", correct: "B", wrong: "P", file: "baer" },
@@ -587,7 +634,7 @@
       { baseWord: "Pinguin", gapText: "🐧", fullWord: "Pinguin", hint: "💡 Tipp: P wie Pinguin", correct: "P", wrong: "B", file: "pinguin" },
       { baseWord: "Qualle", gapText: "🪼", fullWord: "Qualle", hint: "💡 Tipp: Q wie Qualle", correct: "Q", wrong: "K", file: "qualle" },
       { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", hint: "💡 Tipp: R wie Robbe", correct: "R", wrong: "L", file: "robbe" },
-      { baseWord: "Sonne", gapText: "☀️", fullWord: "Sonne", hint: "💡 Tipp: S wie Sonne", correct: "S", wrong: "Z", file: "sonne" },
+      { baseWord: "Sonne", gapText: "☀️️", fullWord: "Sonne", hint: "💡 Tipp: S wie Sonne", correct: "S", wrong: "Z", file: "sonne" },
       { baseWord: "Tiger", gapText: "🐯", fullWord: "Tiger", hint: "💡 Tipp: T wie Tiger", correct: "T", wrong: "D", file: "tiger" },
       { baseWord: "Uhr", gapText: "⏰", fullWord: "Uhr", hint: "💡 Tipp: U wie Uhr", correct: "U", wrong: "O", file: "uhr" },
       { baseWord: "Vogel", gapText: "🐦", fullWord: "Vogel", hint: "💡 Tipp: V wie Vogel", correct: "V", wrong: "F", file: "vogel" },
@@ -621,12 +668,6 @@
       { baseWord: "Zitrone", gapText: "🍋", fullWord: "Zitrone", hint: "💡 Tipp: Z wie Zitrone", correct: "Z", wrong: "S", file: "zitrone" }
     ];
 
-    const rawSilben = [
-      { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", correct: "3", wrong: "2", audioFile: "audio/tomate_silben.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
-      { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", correct: "1", wrong: "2", audioFile: "audio/hund_silben.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" },
-      { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Kat - ze (2 Klatscher)", correct: "2", wrong: "3", audioFile: "audio/katze_silben.mp3", speechPrompt: "Wie viele Silben hat Katze?", speechText: "Kat ze hat zwei Silben" }
-    ];
-
     const rawWortarten = [
       { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, der Hund", correct: "Nomen", wrong: "Verb", audioFile: "audio/hund_nomen.mp3", speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
       { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", correct: "Verb", wrong: "Nomen", audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
@@ -652,7 +693,17 @@
         speechPrompt: `${item.correct} wie ${item.baseWord}`,
         speechText: `${item.correct} wie ${item.baseWord}`
       }, item.correct, item.wrong)),
-      silben: rawSilben.map(item => createTaskWithBalancedOptions(item, item.correct, item.wrong)),
+      silben: rawSilben40.map(item => createTaskWithBalancedOptions({
+        baseWord: item.baseWord,
+        gapText: item.gapText,
+        fullWord: item.fullWord,
+        count: item.count,
+        instruction: "Wie viele Silben hörst du?",
+        hint: item.hint,
+        audioFile: `audio/${item.file}.mp3`,
+        speechPrompt: `Wie viele Silben hat ${item.baseWord}?`,
+        speechText: item.speechText
+      }, item.correct, item.wrong)),
       zehnerfeld: generateZehnerfeldTasks(),
       halbschriftlich: [
         createTaskWithBalancedOptions({ baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich: (100+200) + (45+30)", hint: "💡 Tipp: 100+200=300, 45+30=75", audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }, "375", "385"),
@@ -662,7 +713,7 @@
       rechtschreibung: rawRechtschreibung.map(item => createTaskWithBalancedOptions(item, item.correct, item.wrong))
     };
 
-    let currentModule = "anlaute";
+    let currentModule = "silben";
     let currentTaskIndex = 0;
     let score = parseInt(localStorage.getItem('schulapp_score') || '0', 10);
     let stars = parseInt(localStorage.getItem('schulapp_stars') || '0', 10);

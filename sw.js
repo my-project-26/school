@@ -1,28 +1,19 @@
-const CACHE_NAME = 'schulapp-v3';
+const CACHE_NAME = 'schulapp-v4';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  './audio/apfel.mp3',
-  './audio/baer.mp3',
-  './audio/fisch.mp3',
-  './audio/loewe.mp3',
-  './audio/robbe.mp3',
-  './audio/eichhoernchen.mp3',
-  './audio/ente.mp3',
-  './audio/sonne.mp3',
-  './audio/tomate_silben.mp3',
-  './audio/hund_silben.mp3',
-  './audio/katze_silben.mp3',
-  './audio/hund_nomen.mp3',
-  './audio/laufen.mp3',
-  './audio/schnell_adj.mp3',
-  './audio/haende.mp3',
-  './audio/haeuser.mp3',
-  './audio/baeume.mp3',
-  './audio/maeuse.mp3',
-  './audio/halbschriftlich1.mp3'
+  './manifest.json'
 ];
+
+// Dynamische Generierung aller Silben, Anlaute, 1x1 & Zehnerfeld Audio-Pfade
+const silbenFiles = [
+  "hund_silben", "haus_silben", "frosch_silben", "ball_silben", "baum_silben", "fisch_silben", "maus_silben", "uhr_silben", "brot_silben", "stern_silben",
+  "katze_silben", "blume_silben", "sonne_silben", "vogel_silben", "wolke_silben", "lampe_silben", "apfel_silben", "kerze_silben", "schule_silben", "tafel_silben",
+  "tasche_silben", "puppe_silben", "biene_silben", "eule_silben", "kirsche_silben", "tomate_silben", "banane_silben", "schmetterling_silben", "elefant_silben", "rakete_silben",
+  "gitarre_silben", "zitrone", "delfin_silben", "papagei_silben", "krokodil_silben", "pinguin_silben", "schokolade_silben", "marienkaefer_silben", "schneemann_silben", "regenbogen_silben"
+];
+
+silbenFiles.forEach(file => ASSETS.push(`./audio/${file}.mp3`));
 
 for (let a = 1; a <= 10; a++) {
   for (let b = 1; b <= 10; b++) {
@@ -30,10 +21,14 @@ for (let a = 1; a <= 10; a++) {
   }
 }
 
+for (let n = 1; n <= 20; n++) {
+  ASSETS.push(`./audio/zehnerfeld${n}.mp3`);
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('📦 PWA ServiceWorker: Alle Assets & 50 Anlaute offline gecacht.');
+      console.log('📦 PWA ServiceWorker: Alle Assets & 40 Silben-Audios offline gecacht.');
       return cache.addAll(ASSETS);
     })
   );
