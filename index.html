@@ -386,6 +386,7 @@
     <button class="nav-item" data-module="halbschriftlich">➕ Halbschriftlich</button>
     <button class="nav-item" data-module="wortarten">📝 Wortarten bestimmen</button>
     <button class="nav-item" data-module="rechtschreibung">✍️ Rechtschreibung</button>
+    <button class="nav-item" data-module="englisch">🇬🇧 Englisch Vocab</button>
   </nav>
 
   <!-- MAIN APP CONTAINER -->
@@ -415,18 +416,17 @@
   </main>
 
   <script>
-    // SERVICE WORKER REGISTRIERUNG FÜR 100% OFFLINE-PWA
+    // SERVICE WORKER REGISTRIERUNG
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('✅ ServiceWorker erfolgreich registriert:', reg.scope);
+          console.log('✅ ServiceWorker registriert:', reg.scope);
         }).catch((err) => {
           console.warn('⚠️ ServiceWorker Registrierung fehlgeschlagen:', err);
         });
       });
     }
 
-    // --- NUMBERS TO GERMAN WORDS ---
     const germanNumbers = {
       1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn",
       12: "zwölf", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 18: "achtzehn", 20: "zwanzig",
@@ -440,7 +440,6 @@
       return germanNumbers[n] || n.toString();
     }
 
-    // --- GENERATE ALL 100 TASKS FOR 1x1 BLITZRECHNEN ---
     function generateAll1x1Tasks() {
       const tasks = [];
       for (let a = 1; a <= 10; a++) {
@@ -482,7 +481,7 @@
       return tasks;
     }
 
-    // --- MODULE DATENBANK ---
+    // --- MODULE DATENBANK INKLUSIVE ENGLISCH (KLASSE 3) ---
     const modulesData = {
       einmaleins: generateAll1x1Tasks(),
       anlaute: [
@@ -508,6 +507,11 @@
       rechtschreibung: [
         { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände" },
         { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser" }
+      ],
+      englisch: [
+        { baseWord: "Red", gapText: "🔴", fullWord: "red", instruction: "What colour is this?", hint: "💡 Tipp: Rot heißt auf Englisch...", options: ["red", "blue"], correctIndex: 0, lang: "en-GB", speechPrompt: "What colour is this?", speechText: "Red" },
+        { baseWord: "Dog", gapText: "🐶", fullWord: "dog", instruction: "What animal is this?", hint: "💡 Tipp: Hund heißt auf Englisch...", options: ["cat", "dog"], correctIndex: 1, lang: "en-GB", speechPrompt: "What animal is this?", speechText: "Dog" },
+        { baseWord: "Apple", gapText: "🍎", fullWord: "apple", instruction: "What word is this?", hint: "💡 Tipp: Apfel heißt auf Englisch...", options: ["apple", "banana"], correctIndex: 0, lang: "en-GB", speechPrompt: "What fruit is this?", speechText: "Apple" }
       ]
     };
 
@@ -546,33 +550,33 @@
       localStorage.setItem('schulapp_stars', stars);
     }
 
-    // --- HIGH QUALITY VOICE SELECTION FOR TTS FALLBACK ---
-    function initBestVoice() {
+    function initBestVoice(lang = 'de-DE') {
       if ('speechSynthesis' in window) {
         const voices = window.speechSynthesis.getVoices();
-        preferredVoice = voices.find(v => v.lang.startsWith('de') && (
+        preferredVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]) && (
           v.name.includes('Google') || 
           v.name.includes('Anna') || 
           v.name.includes('Helena') || 
-          v.name.includes('Enhanced') ||
-          v.name.includes('Natural')
-        )) || voices.find(v => v.lang.startsWith('de')) || null;
+          v.name.includes('Natural') ||
+          v.name.includes('Daniel')
+        )) || voices.find(v => v.lang.startsWith(lang.split('-')[0])) || null;
       }
     }
 
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = initBestVoice;
-      initBestVoice();
+      window.speechSynthesis.onvoiceschanged = () => initBestVoice('de-DE');
+      initBestVoice('de-DE');
     }
 
-    function speakTextFallback(text) {
+    function speakTextFallback(text, lang = 'de-DE') {
       if (!isAudioFeedbackEnabled) return;
 
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
+        initBestVoice(lang);
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'de-DE';
+        utterance.lang = lang;
         utterance.rate = 0.86;
         utterance.pitch = 1.0;
 
@@ -587,19 +591,20 @@
     function playTaskAudio(task, isSolution = false) {
       if (!isAudioFeedbackEnabled) return;
 
-      if (task.audioFile) {
+      const lang = task.lang || 'de-DE';
+
+      if (task.audioFile && lang === 'de-DE') {
         const audio = new Audio(task.audioFile);
         audio.play().catch(err => {
-          console.warn("Audio MP3 nicht gefunden, nutze TTS Fallback:", err);
-          speakTextFallback(isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction));
+          console.warn("Audio MP3 nicht gefunden, nutze Fallback:", err);
+          speakTextFallback(isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction), lang);
         });
       } else {
         const textToSpeak = isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction);
-        speakTextFallback(textToSpeak);
+        speakTextFallback(textToSpeak, lang);
       }
     }
 
-    // --- NAVI LOGIK ---
     function openDrawer() { navDrawer.classList.add('open'); drawerOverlay.classList.add('active'); }
     function closeDrawer() { navDrawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
 
@@ -623,7 +628,6 @@
       });
     });
 
-    // --- RENDERUNG ---
     function renderTask() {
       const activeTasks = modulesData[currentModule];
       if (!activeTasks || activeTasks.length === 0) return;
@@ -683,7 +687,6 @@
       }
     }
 
-    // --- EVENT LISTENER ---
     listenBtn.addEventListener('click', () => {
       const activeTasks = modulesData[currentModule];
       if (activeTasks && activeTasks.length > 0) {
