@@ -5,54 +5,50 @@ import urllib.parse
 AUDIO_DIR = "audio"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-AUDIO_TASKS = [
-    # KLASSE 1: Anlaute
-    {"filename": "apfel.mp3", "text": "A wie Apfel"},
-    {"filename": "baer.mp3", "text": "B wie Bär"},
-    {"filename": "fisch.mp3", "text": "F wie Fisch"},
-    {"filename": "loewe.mp3", "text": "L wie Löwe"},
-    {"filename": "robbe.mp3", "text": "R wie Robbe"},
-    {"filename": "eichhoernchen.mp3", "text": "E wie Eichhörnchen"},
-    {"filename": "ente.mp3", "text": "E wie Ente"},
-    {"filename": "sonne.mp3", "text": "S wie Sonne"},
+# 50 ANLAUT WÖRTER FÜR DIE 1. KLASSE
+ANLAUTE_50 = [
+    ("apfel", "A wie Apfel"), ("baer", "B wie Bär"), ("clown", "C wie Clown"), ("drache", "D wie Drache"),
+    ("elefant", "E wie Elefant"), ("fisch", "F wie Fisch"), ("giraffe", "G wie Giraffe"), ("haus", "H wie Haus"),
+    ("igel", "I wie Igel"), ("jacke", "J wie Jacke"), ("krokodil", "K wie Krokodil"), ("loewe", "L wie Löwe"),
+    ("maus", "M wie Maus"), ("nadel", "N wie Nadel"), ("oma", "O wie Oma"), ("pinguin", "P wie Pinguin"),
+    ("qualle", "Q wie Qualle"), ("robbe", "R wie Robbe"), ("sonne", "S wie Sonne"), ("tiger", "T wie Tiger"),
+    ("uhr", "U wie Uhr"), ("vogel", "V wie Vogel"), ("wal", "W wie Wal"), ("xylophon", "X wie Xylophon"),
+    ("yoga", "Y wie Yoga"), ("zebra", "Z wie Zebra"), ("ente", "E wie Ente"), ("eichhoernchen", "E wie Eichhörnchen"),
+    ("insel", "I wie Igel"), ("otter", "O wie Otter"), ("uhustufe", "U wie Uhu"), ("ampel", "A wie Apfel"),
+    ("ball", "B wie Bär"), ("delfin", "D wie Drache"), ("eule", "E wie Ente"), ("frosch", "F wie Fisch"),
+    ("gitarre", "G wie Giraffe"), ("hund", "H wie Haus"), ("indianer", "I wie Igel"), ("kaefer", "K wie Krokodil"),
+    ("lampe", "L wie Löwe"), ("mond", "M wie Maus"), ("nuss", "N wie Nadel"), ("papagei", "P wie Pinguin"),
+    ("rakete", "R wie Robbe"), ("schaf", "S wie Sonne"), ("tomate", "T wie Tiger"), ("vulkan", "V wie Vogel"),
+    ("wolke", "W wie Wal"), ("zitrone", "Z wie Zebra")
+]
 
-    # KLASSE 1: Silben Wortschatz
-    {"filename": "tomate.mp3", "text": "To ma te hat drei Silben"},
-    {"filename": "hund.mp3", "text": "Hund hat eine Silbe"},
-    {"filename": "katze.mp3", "text": "Kat ze hat zwei Silben"},
-    {"filename": "schokolade.mp3", "text": "Scho ko la de hat vier Silben"},
-    {"filename": "schmetterling.mp3", "text": "Schmet ter ling hat drei Silben"},
-    {"filename": "elefant.mp3", "text": "E le fant hat drei Silben"},
-    {"filename": "haus.mp3", "text": "Haus hat eine Silbe"},
-    {"filename": "blume.mp3", "text": "Blu me hat zwei Silben"},
-    {"filename": "banane.mp3", "text": "Ba na ne hat drei Silben"},
-    {"filename": "frosch.mp3", "text": "Frosch hat eine Silbe"},
+AUDIO_TASKS = [{"filename": f"{item[0]}.mp3", "text": item[1]} for item in ANLAUTE_50]
 
-    # KLASSE 3: Wortarten & Rechtschreibung
+# Weitere Standard-Audios hinzufügen
+AUDIO_TASKS.extend([
+    {"filename": "tomate_silben.mp3", "text": "To ma te hat drei Silben"},
+    {"filename": "hund_silben.mp3", "text": "Hund hat eine Silbe"},
+    {"filename": "katze_silben.mp3", "text": "Kat ze hat zwei Silben"},
     {"filename": "hund_nomen.mp3", "text": "Hund ist ein Nomen"},
     {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
     {"filename": "schnell_adj.mp3", "text": "Schnell ist ein Adjektiv"},
-    {"filename": "katze_nomen.mp3", "text": "Katze ist ein Nomen"},
-    {"filename": "spielen_verb.mp3", "text": "Spielen ist ein Verb"},
-    {"filename": "schoen_adj.mp3", "text": "Schön ist ein Adjektiv"},
     {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä"},
     {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U"},
     {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U"},
-    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U"}
-]
+    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U"},
+    {"filename": "halbschriftlich1.mp3", "text": "Dreihundertfünfundsiebzig"}
+])
 
-# Zehnerfeld Audio bis 20
 for n in range(1, 21):
     AUDIO_TASKS.append({"filename": f"zehnerfeld{n}.mp3", "text": f"Das sind {n} Punkte"})
 
-# 1x1 Aufgaben von 1x1 bis 10x10
 for a in range(1, 11):
     for b in range(1, 11):
         res = a * b
         AUDIO_TASKS.append({"filename": f"{a}x{b}.mp3", "text": f"{a} mal {b} ist gleich {res}"})
 
 def download_hd_audio():
-    print("🎙 Generiere lückenlose HD-Studio-Audiodateien...")
+    print("🎙 Generiere 50 Anlaut-Audios & gesamte Wörterbuch-Pipeline...")
     for item in AUDIO_TASKS:
         filepath = os.path.join(AUDIO_DIR, item["filename"])
         encoded_text = urllib.parse.quote(item["text"])
