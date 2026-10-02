@@ -1,16 +1,15 @@
-const CACHE_NAME = 'schulapp-v4';
+const CACHE_NAME = 'schulapp-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json'
 ];
 
-// Dynamische Generierung aller Silben, Anlaute, 1x1 & Zehnerfeld Audio-Pfade
 const silbenFiles = [
   "hund_silben", "haus_silben", "frosch_silben", "ball_silben", "baum_silben", "fisch_silben", "maus_silben", "uhr_silben", "brot_silben", "stern_silben",
   "katze_silben", "blume_silben", "sonne_silben", "vogel_silben", "wolke_silben", "lampe_silben", "apfel_silben", "kerze_silben", "schule_silben", "tafel_silben",
   "tasche_silben", "puppe_silben", "biene_silben", "eule_silben", "kirsche_silben", "tomate_silben", "banane_silben", "schmetterling_silben", "elefant_silben", "rakete_silben",
-  "gitarre_silben", "zitrone", "delfin_silben", "papagei_silben", "krokodil_silben", "pinguin_silben", "schokolade_silben", "marienkaefer_silben", "schneemann_silben", "regenbogen_silben"
+  "gitarre_silben", "zitrone_silben", "delfin_silben", "papagei_silben", "krokodil_silben", "pinguin_silben", "schokolade_silben", "marienkaefer_silben", "schneemann_silben", "regenbogen_silben"
 ];
 
 silbenFiles.forEach(file => ASSETS.push(`./audio/${file}.mp3`));
