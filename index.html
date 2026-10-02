@@ -396,13 +396,14 @@
   </main>
 
   <script>
-    // --- MODULE DATENBANK (ANLAUTE MIT SCHUL-PHRASIERUNG "X wie Y") ---
+    // --- MODULE DATENBANK WITH LOCAL MP3 AUDIO FALLBACKS ---
     const modulesData = {
       anlaute: [
-        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, speechText: "A wie Apfel" },
-        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, speechText: "B wie Bär" },
-        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, speechText: "F wie Fisch" },
-        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, speechText: "L wie Löwe" }
+        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, audioFile: "audio/apfel.mp3", speechText: "A wie Apfel" },
+        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechText: "B wie Bär" },
+        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, audioFile: "audio/fisch.mp3", speechText: "F wie Fisch" },
+        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, audioFile: "audio/loewe.mp3", speechText: "L wie Löwe" },
+        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechText: "R wie Robbe" }
       ],
       silben: [
         { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, speechText: "To ma te" },
@@ -412,8 +413,7 @@
         { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, speechText: "Sieben" }
       ],
       einmaleins: [
-        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, speechText: "Drei mal vier ist gleich zwölf" },
-        { baseWord: "6 x 7", gapText: "6 × 7 = ?", fullWord: "42", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 6 mal 7 ist gleich 42", options: ["42", "48"], correctIndex: 0, speechText: "Sechs mal sieben ist gleich zweiundvierzig" }
+        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, speechText: "Drei mal vier ist gleich zwölf" }
       ],
       halbschriftlich: [
         { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, speechText: "Dreihundertfünfundsiebzig" }
@@ -422,8 +422,8 @@
         { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, speechText: "Laufen ist ein Verb" }
       ],
       rechtschreibung: [
-        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, speechText: "Hände" },
-        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, speechText: "Häuser" }
+        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechText: "Hände" },
+        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechText: "Häuser" }
       ]
     };
 
@@ -432,7 +432,6 @@
     let score = 0;
     let isAudioFeedbackEnabled = true;
     let isEvaluating = false;
-    let preferredVoice = null;
 
     // --- DOM ELEMENTE ---
     const menuToggleBtn = document.getElementById('menuToggleBtn');
@@ -453,56 +452,35 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const displayBox = document.getElementById('displayBox');
 
-    // --- HD-SPRACHAUSGABE (WEICHER KLANG & HOHE QUALITÄT) ---
-    function initBestVoice() {
-      if ('speechSynthesis' in window) {
-        const voices = window.speechSynthesis.getVoices();
-        // Suche nach den hochwertigsten natürlichen deutschen Stimmen
-        preferredVoice = voices.find(v => v.lang.startsWith('de') && (
-          v.name.includes('Google') || 
-          v.name.includes('Anna') || 
-          v.name.includes('Helena') || 
-          v.name.includes('Enhanced') ||
-          v.name.includes('Premium') ||
-          v.name.includes('Natural')
-        )) || voices.find(v => v.lang.startsWith('de')) || null;
+    // --- HYBRID AUDIO ENGINE (Echte MP3s mit Fallback) ---
+    function playAudio(task) {
+      if (!isAudioFeedbackEnabled) return;
+
+      if (task.audioFile) {
+        const audio = new Audio(task.audioFile);
+        audio.play().catch(err => {
+          console.warn("Audiodatei nicht gefunden/blockiert, nutze TTS Fallback:", err);
+          speakTextFallback(task.speechText || task.fullWord);
+        });
+      } else {
+        speakTextFallback(task.speechText || task.fullWord);
       }
     }
 
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = initBestVoice;
-      initBestVoice();
-    }
-
-    function speakText(text) {
+    function speakTextFallback(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'de-DE';
-        
-        // Optimierte Parameter für weiches Einschwingen von Konsonanten
-        utterance.rate = 0.88; // Natürliches Sprechtempo
-        utterance.pitch = 1.0;  // Ausgewogene Tonhöhe
-
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
-        }
-
+        utterance.rate = 0.88;
+        utterance.pitch = 1.0;
         window.speechSynthesis.speak(utterance);
       }
     }
 
-    // --- NAVI & DRAWER LOGIK ---
-    function openDrawer() {
-      navDrawer.classList.add('open');
-      drawerOverlay.classList.add('active');
-    }
-
-    function closeDrawer() {
-      navDrawer.classList.remove('open');
-      drawerOverlay.classList.remove('active');
-    }
+    // --- NAVI LOGIK ---
+    function openDrawer() { navDrawer.classList.add('open'); drawerOverlay.classList.add('active'); }
+    function closeDrawer() { navDrawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
 
     menuToggleBtn.addEventListener('click', openDrawer);
     closeDrawerBtn.addEventListener('click', closeDrawer);
@@ -564,9 +542,7 @@
         score += 10;
         scoreDisplay.textContent = `Punkte: ${score}`;
 
-        if (isAudioFeedbackEnabled) {
-          speakText(task.speechText || task.fullWord);
-        }
+        playAudio(task);
 
         setTimeout(() => {
           currentTaskIndex = (currentTaskIndex + 1) % activeTasks.length;
@@ -585,8 +561,7 @@
     listenBtn.addEventListener('click', () => {
       const activeTasks = modulesData[currentModule];
       if (activeTasks && activeTasks.length > 0) {
-        const task = activeTasks[currentTaskIndex];
-        speakText(task.speechText || task.fullWord);
+        playAudio(activeTasks[currentTaskIndex]);
       }
     });
 

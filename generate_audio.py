@@ -1,76 +1,43 @@
 import os
-import sys
+import urllib.request
+import urllib.parse
 
-try:
-    from gtts import gTTS
-except ImportError:
-    print("gTTS nicht gefunden. Installiere gTTS...")
-    os.system(f"{sys.executable} -m pip install gtts")
-    from gtts import gTTS
+# Zielordner für glasklare Audio-Dateien
+AUDIO_DIR = "audio"
+os.makedirs(AUDIO_DIR, exist_ok=True)
 
-# Vollständige Wortliste für deine App (Tiere, Obst, Gemüse, Begriffe)
-word_catalog = {
-    "Adler": "Adler",
-    "Affe": "Affe",
-    "Alligator": "Alligator",
-    "Alpaka": "Alpaka",
-    "Ameise": "Ameise",
-    "Ananas": "Ananas",
-    "Apfel": "Apfel",
-    "Aepfel": "Aepfel",
-    "Äpfel": "Aepfel",
-    "Aubergine": "Aubergine",
-    "Avocado": "Avocado",
-    "Baer": "Baer",
-    "Bär": "Baer",
-    "Baeren": "Baeren",
-    "Bären": "Baeren",
-    "Ball": "Ball",
-    "Banane": "Banane",
-    "Baum": "Baum",
-    "Baeume": "Baeume",
-    "Bäume": "Baeume",
-    "Biber": "Biber",
-    "Biene": "Biene",
-    "Birne": "Birne",
-    "Bohne": "Bohne",
-    "Brokkoli": "Brokkoli",
-    "Brot": "Brot",
-    "Brote": "Brote",
-    "Bueffel": "Bueffel",
-    "Büffel": "Bueffel",
-    "Chili": "Chili",
-    "Chinchilla": "Chinchilla",
-    "Dachs": "Dachs",
-    "Dattel": "Dattel",
-    "Delfin": "Delfin",
-    "Dinosaurier": "Dinosaurier",
-    "Eichhoernchen": "Eichhoernchen",
-    "Eichhörnchen": "Eichhoernchen",
-    "Eidechse": "Eidechse",
-    "Elefant": "Elefant",
-    "Erbse": "Erbse",
-    "Erdbeere": "Erdbeere",
-    "Esel": "Esel",
-    "Eule": "Eule",
-    "Feige": "Feige",
-    "Haende": "Haende",
-    "Hände": "Haende",
-    "Haeuser": "Haeuser",
-    "Häuser": "Haeuser"
-}
+# Wortschatz-Liste für 1. und 3. Klasse (Anlaute & Rechtschreibung)
+WORDS_TO_GENERATE = [
+    {"filename": "apfel.mp3", "text": "A wie Apfel"},
+    {"filename": "baer.mp3", "text": "B wie Bär"},
+    {"filename": "fisch.mp3", "text": "F wie Fisch"},
+    {"filename": "loewe.mp3", "text": "L wie Löwe"},
+    {"filename": "robbe.mp3", "text": "R wie Robbe"},
+    {"filename": "eichhoernchen.mp3", "text": "Eichhörnchen"},
+    {"filename": "haende.mp3", "text": "Hände"},
+    {"filename": "haeuser.mp3", "text": "Häuser"},
+    {"filename": "baeume.mp3", "text": "Bäume"},
+    {"filename": "maeuse.mp3", "text": "Mäuse"}
+]
 
-os.makedirs("audio", exist_ok=True)
+def download_hd_audio():
+    print("🎙️️ Generiere HD-Audiodateien (Gemini-Qualitätslevel)...")
+    for item in WORDS_TO_GENERATE:
+        filepath = os.path.join(AUDIO_DIR, item["filename"])
+        encoded_text = urllib.parse.quote(item["text"])
+        # Nutzung der Google-Translate-TTS-Engine mit hoher Sprachqualität (de-DE)
+        url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded_text}&tl=de&client=tw-ob"
+        
+        try:
+            req = urllib.request.Request(
+                url, 
+                headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
+            )
+            with urllib.request.urlopen(req) as response, open(filepath, 'wb') as out_file:
+                out_file.write(response.read())
+            print(f"✅ Gespeichert: {filepath} ('{item['text']}')")
+        except Exception as e:
+            print(f"❌ Fehler bei {item['filename']}: {e}")
 
-print("--- STARTE AUDIO-GENERIERUNG IN HOCHAUFLÖSENDER BAER-QUALITÄT ---")
-for file_key, speak_text in word_catalog.items():
-    file_path = f"audio/{file_key}.mp3"
-    try:
-        # Generierung mit der klaren Google TTS Engine (Aussprache auf Deutsch)
-        tts = gTTS(text=speak_text, lang='de', slow=False)
-        tts.save(file_path)
-        print(f"[OK] Generiert: {file_path} (Text: '{speak_text}')")
-    except Exception as e:
-        print(f"[ERROR] Fehler bei {file_key}: {e}")
-
-print("--- ALLE TONSPUREN ERFOLGREICH NEU ERSTELLT UND ÜBERSCHRIEBEN ---")
+if __name__ == "__main__":
+    download_hd_audio()
