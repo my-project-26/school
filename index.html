@@ -413,7 +413,7 @@
   </main>
 
   <script>
-    // --- NUMBERS TO GERMAN WORDS (PHONETIC AUDIO CONVERSION) ---
+    // --- NUMBERS TO GERMAN WORDS ---
     const germanNumbers = {
       1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn",
       12: "zwölf", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 18: "achtzehn", 20: "zwanzig",
@@ -437,7 +437,6 @@
           const wordB = numberToWord(b);
           const wordRes = numberToWord(result);
 
-          // Didaktischer Distraktor (+/- Nachbaraufgabe)
           let wrongResult = result + (Math.random() < 0.5 ? a : -a);
           if (wrongResult <= 0 || wrongResult === result) wrongResult = result + b;
           if (wrongResult === result) wrongResult = result + 2;
@@ -457,12 +456,12 @@
             hint: `💡 Tipp: ${a} mal ${b} ist gleich ${result}`,
             options: options,
             correctIndex: correctIndex,
+            audioFile: `audio/${a}x${b}.mp3`,
             speechPrompt: `${wordA} mal ${wordB} ist gleich wie viel?`,
             speechText: `${wordA} mal ${wordB} ist gleich ${wordRes}`
           });
         }
       }
-      // Fisher-Yates Shuffle für bunten Mix
       for (let i = tasks.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [tasks[i], tasks[j]] = [tasks[j], tasks[i]];
@@ -488,7 +487,7 @@
         { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" }
       ],
       halbschriftlich: [
-        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
+        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
       ],
       wortarten: [
         { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" }
@@ -575,7 +574,7 @@
     function playTaskAudio(task, isSolution = false) {
       if (!isAudioFeedbackEnabled) return;
 
-      if (!isSolution && task.audioFile) {
+      if (task.audioFile) {
         const audio = new Audio(task.audioFile);
         audio.play().catch(err => {
           console.warn("Audio MP3 nicht gefunden, nutze TTS Fallback:", err);
