@@ -568,7 +568,7 @@
       return tasks;
     }
 
-    // 40 SILBEN WÖRTER DATENBANK (KLASSE 1)
+    // EXAKT 40 SILBEN WÖRTER VOLLSTÄNDIGE DATENBANK (KLASSE 1)
     const rawSilben40 = [
       { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, hint: "💡 Tipp: Hund (1 Klatscher)", correct: "1", wrong: "2", file: "hund_silben", speechText: "Hund hat eine Silbe" },
       { baseWord: "Haus", gapText: "🏠", fullWord: "Haus", count: 1, hint: "💡 Tipp: Haus (1 Klatscher)", correct: "1", wrong: "2", file: "haus_silben", speechText: "Haus hat eine Silbe" },
@@ -596,6 +596,8 @@
       { baseWord: "Biene", gapText: "🐝", fullWord: "Bie-ne", count: 2, hint: "💡 Tipp: Bie - ne (2 Klatscher)", correct: "2", wrong: "1", file: "biene_silben", speechText: "Bie ne hat zwei Silben" },
       { baseWord: "Eule", gapText: "🦉", fullWord: "Eu-le", count: 2, hint: "💡 Tipp: Eu - le (2 Klatscher)", correct: "2", wrong: "3", file: "eule_silben", speechText: "Eu le hat zwei Silben" },
       { baseWord: "Kirsche", gapText: "🍒", fullWord: "Kir-sche", count: 2, hint: "💡 Tipp: Kir - sche (2 Klatscher)", correct: "2", wrong: "1", file: "kirsche_silben", speechText: "Kir sche hat zwei Silben" },
+      { baseWord: "Delfin", gapText: "🐬", fullWord: "Del-fin", count: 2, hint: "💡 Tipp: Del - fin (2 Klatscher)", correct: "2", wrong: "3", file: "delfin_silben", speechText: "Del fin hat zwei Silben" },
+      { baseWord: "Schneemann", gapText: "☃️", fullWord: "Schnee-mann", count: 2, hint: "💡 Tipp: Schnee - mann (2 Klatscher)", correct: "2", wrong: "3", file: "schneemann_silben", speechText: "Schnee mann hat zwei Silben" },
 
       { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, hint: "💡 Tipp: To - ma - te (3 Klatscher)", correct: "3", wrong: "2", file: "tomate_silben", speechText: "To ma te hat drei Silben" },
       { baseWord: "Banane", gapText: "🍌", fullWord: "Ba-na-ne", count: 3, hint: "💡 Tipp: Ba - na - ne (3 Klatscher)", correct: "3", wrong: "2", file: "banane_silben", speechText: "Ba na ne hat drei Silben" },
@@ -604,15 +606,13 @@
       { baseWord: "Rakete", gapText: "🚀", fullWord: "Ra-ke-te", count: 3, hint: "💡 Tipp: Ra - ke - te (3 Klatscher)", correct: "3", wrong: "2", file: "rakete_silben", speechText: "Ra ke te hat drei Silben" },
       { baseWord: "Gitarre", gapText: "🎸", fullWord: "Gi-tar-re", count: 3, hint: "💡 Tipp: Gi - tar - re (3 Klatscher)", correct: "3", wrong: "2", file: "gitarre_silben", speechText: "Gi tar re hat drei Silben" },
       { baseWord: "Zitrone", gapText: "🍋", fullWord: "Zi-tro-ne", count: 3, hint: "💡 Tipp: Zi - tro - ne (3 Klatscher)", correct: "3", wrong: "2", file: "zitrone_silben", speechText: "Zi tro ne hat drei Silben" },
-      { baseWord: "Delfin", gapText: "🐬", fullWord: "Del-fin", count: 2, hint: "💡 Tipp: Del - fin (2 Klatscher)", correct: "2", wrong: "3", file: "delfin_silben", speechText: "Del fin hat zwei Silben" },
       { baseWord: "Papagei", gapText: "🦜", fullWord: "Pa-pa-gei", count: 3, hint: "💡 Tipp: Pa - pa - gei (3 Klatscher)", correct: "3", wrong: "2", file: "papagei_silben", speechText: "Pa pa gei hat drei Silben" },
       { baseWord: "Krokodil", gapText: "🐊", fullWord: "Kro-ko-dil", count: 3, hint: "💡 Tipp: Kro - ko - dil (3 Klatscher)", correct: "3", wrong: "2", file: "krokodil_silben", speechText: "Kro ko dil hat drei Silben" },
       { baseWord: "Pinguin", gapText: "🐧", fullWord: "Pin-gu-in", count: 3, hint: "💡 Tipp: Pin - gu - in (3 Klatscher)", correct: "3", wrong: "2", file: "pinguin_silben", speechText: "Pin gu in hat drei Silben" },
 
       { baseWord: "Schokolade", gapText: "🍫", fullWord: "Scho-ko-la-de", count: 4, hint: "💡 Tipp: Scho - ko - la - de (4 Klatscher)", correct: "4", wrong: "3", file: "schokolade_silben", speechText: "Scho ko la de hat vier Silben" },
-      { baseWord: "Marienkäfer", gapText: "🐞", fullWord: "Ma-ri-en-kä-fer", count: 5, hint: "💡 Tipp: Ma - ri - en - kä - fer (5 Klatscher)", correct: "5", wrong: "4", file: "marienkaefer_silben", speechText: "Ma ri en kä fer hat fünf Silben" },
-      { baseWord: "Schneemann", gapText: "☃️", fullWord: "Schnee-mann", count: 2, hint: "💡 Tipp: Schnee - mann (2 Klatscher)", correct: "2", wrong: "3", file: "schneemann_silben", speechText: "Schnee mann hat zwei Silben" },
-      { baseWord: "Regenbogen", gapText: "🌈", fullWord: "Re-gen-bo-gen", count: 4, hint: "💡 Tipp: Re - gen - bo - gen (4 Klatscher)", correct: "4", wrong: "3", file: "regenbogen_silben", speechText: "Re gen bo gen hat vier Silben" }
+      { baseWord: "Regenbogen", gapText: "🌈", fullWord: "Re-gen-bo-gen", count: 4, hint: "💡 Tipp: Re - gen - bo - gen (4 Klatscher)", correct: "4", wrong: "3", file: "regenbogen_silben", speechText: "Re gen bo gen hat vier Silben" },
+      { baseWord: "Marienkäfer", gapText: "🐞", fullWord: "Ma-ri-en-kä-fer", count: 5, hint: "💡 Tipp: Ma - ri - en - kä - fer (5 Klatscher)", correct: "5", wrong: "4", file: "marienkaefer_silben", speechText: "Ma ri en kä fer hat fünf Silben" }
     ];
 
     const rawAnlaute50 = [
@@ -932,4 +932,3 @@
   </script>
 </body>
 </html>
-EOF

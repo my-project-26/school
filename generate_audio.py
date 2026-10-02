@@ -5,14 +5,14 @@ import urllib.parse
 AUDIO_DIR = "audio"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-# 40 SILBEN WÖRTER FÜR DIE 1. KLASSE
+# 40 SILBEN-WÖRTER FÜR DIE 1. KLASSE
 SILBEN_40 = [
-    ("hund_silben", "Hund hat eine Silbe"),
-    ("haus_silben", "Haus hat eine Silbe"),
-    ("frosch_silben", "Frosch hat eine Silbe"),
-    ("ball_silben", "Ball hat eine Silbe"),
-    ("baum_silben", "Baum hat eine Silbe"),
-    ("fisch_silben", "Fisch hat eine Silbe"),
+    {"filename": "hund_silben.mp3", "text": "Hund hat eine Silbe"},
+    {"filename": "haus_silben.mp3", "text": "Haus hat eine Silbe"},
+    {"filename": "frosch_silben.mp3", "text": "Frosch hat eine Silbe"},
+    {"filename": "ball_silben.mp3", "text": "Ball hat eine Silbe"},
+    {"filename": "baum_silben.mp3", "text": "Baum hat eine Silbe"},
+    {"filename": "fisch_silben.mp3", "text": "Fisch hat eine Silbe"},
     {"filename": "maus_silben.mp3", "text": "Maus hat eine Silbe"},
     {"filename": "uhr_silben.mp3", "text": "Uhr hat eine Silbe"},
     {"filename": "brot_silben.mp3", "text": "Brot hat eine Silbe"},
@@ -33,6 +33,8 @@ SILBEN_40 = [
     {"filename": "biene_silben.mp3", "text": "Bie ne hat zwei Silben"},
     {"filename": "eule_silben.mp3", "text": "Eu le hat zwei Silben"},
     {"filename": "kirsche_silben.mp3", "text": "Kir sche hat zwei Silben"},
+    {"filename": "delfin_silben.mp3", "text": "Del fin hat zwei Silben"},
+    {"filename": "schneemann_silben.mp3", "text": "Schnee mann hat zwei Silben"},
 
     {"filename": "tomate_silben.mp3", "text": "To ma te hat drei Silben"},
     {"filename": "banane_silben.mp3", "text": "Ba na ne hat drei Silben"},
@@ -40,19 +42,16 @@ SILBEN_40 = [
     {"filename": "elefant_silben.mp3", "text": "E le fant hat drei Silben"},
     {"filename": "rakete_silben.mp3", "text": "Ra ke te hat drei Silben"},
     {"filename": "gitarre_silben.mp3", "text": "Gi tar re hat drei Silben"},
-    {"filename": "zitrone.mp3", "text": "Zi tro ne hat drei Silben"},
-    {"filename": "delfin_silben.mp3", "text": "Del fin hat zwei Silben"},
+    {"filename": "zitrone_silben.mp3", "text": "Zi tro ne hat drei Silben"},
     {"filename": "papagei_silben.mp3", "text": "Pa pa gei hat drei Silben"},
     {"filename": "krokodil_silben.mp3", "text": "Kro ko dil hat drei Silben"},
     {"filename": "pinguin_silben.mp3", "text": "Pin gu in hat drei Silben"},
 
     {"filename": "schokolade_silben.mp3", "text": "Scho ko la de hat vier Silben"},
-    {"filename": "marienkaefer_silben.mp3", "text": "Ma ri en kä fer hat vier Silben"},
-    {"filename": "schneemann_silben.mp3", "text": "Schnee mann hat zwei Silben"},
-    {"filename": "regenbogen_silben.mp3", "text": "Re gen bo gen hat vier Silben"}
+    {"filename": "regenbogen_silben.mp3", "text": "Re gen bo gen hat vier Silben"},
+    {"filename": "marienkaefer_silben.mp3", "text": "Ma ri en kä fer hat fünf Silben"}
 ]
 
-# Ergänzungs-Pipeline für 50 Anlaute
 ANLAUTE_50 = [
     ("apfel", "A wie Apfel"), ("baer", "B wie Bär"), ("clown", "C wie Clown"), ("drache", "D wie Drache"),
     ("elefant", "E wie Elefant"), ("fisch", "F wie Fisch"), ("giraffe", "G wie Giraffe"), ("haus", "H wie Haus"),
@@ -69,15 +68,11 @@ ANLAUTE_50 = [
     ("wolke", "W wie Wolke"), ("zitrone_anlaut", "Z wie Zitrone")
 ]
 
-AUDIO_TASKS = [{"filename": f"{item[0]}.mp3", "text": item[1]} for item in SILBEN_40 if isinstance(item, tuple)]
-for item in SILBEN_40:
-    if isinstance(item, dict):
-        AUDIO_TASKS.append(item)
+AUDIO_TASKS = list(SILBEN_40)
 
 for item in ANLAUTE_50:
     AUDIO_TASKS.append({"filename": f"{item[0]}.mp3", "text": item[1]})
 
-# Wortarten & Rechtschreibung
 AUDIO_TASKS.extend([
     {"filename": "hund_nomen.mp3", "text": "Hund ist ein Nomen"},
     {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
@@ -98,7 +93,7 @@ for a in range(1, 11):
         AUDIO_TASKS.append({"filename": f"{a}x{b}.mp3", "text": f"{a} mal {b} ist gleich {res}"})
 
 def download_hd_audio():
-    print("🎙 Generiere HD-Audio für 40 Silben-Wörter & Gesamtsystem...")
+    print("🎙 Generiere HD-Audio für alle 40 Silben-Wörter...")
     for item in AUDIO_TASKS:
         filepath = os.path.join(AUDIO_DIR, item["filename"])
         encoded_text = urllib.parse.quote(item["text"])
