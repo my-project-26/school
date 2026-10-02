@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schul App - Lernstudio BW</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
   <style>
     :root {
       --primary-color: #3b82f6;
@@ -413,6 +415,17 @@
   </main>
 
   <script>
+    // SERVICE WORKER REGISTRIERUNG FÜR 100% OFFLINE-PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('✅ ServiceWorker erfolgreich registriert:', reg.scope);
+        }).catch((err) => {
+          console.warn('⚠️ ServiceWorker Registrierung fehlgeschlagen:', err);
+        });
+      });
+    }
+
     // --- NUMBERS TO GERMAN WORDS ---
     const germanNumbers = {
       1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn",
