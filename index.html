@@ -401,27 +401,78 @@
       </div>
 
       <div class="word-display-box" id="displayBox">
-        <div class="word-target" id="wordDisplay">3 × 4 = ?</div>
-        <div class="hint-text" id="hintText">💡 Tipp: 3 mal 4 ist gleich 12</div>
+        <div class="word-target" id="wordDisplay">...</div>
+        <div class="hint-text" id="hintText">...</div>
       </div>
 
       <div class="options-row" id="optionsContainer">
-        <button class="btn-option" id="btnOpt1" data-index="0">12</button>
-        <button class="btn-option" id="btnOpt2" data-index="1">14</button>
+        <button class="btn-option" id="btnOpt1" data-index="0">-</button>
+        <button class="btn-option" id="btnOpt2" data-index="1">-</button>
       </div>
     </div>
   </main>
 
   <script>
-    // --- EINHEITLICHE MODULE DATENBANK (AUDIO-FIRST FÜR KLASSE 1 & 3) ---
+    // --- NUMBERS TO GERMAN WORDS (PHONETIC AUDIO CONVERSION) ---
+    const germanNumbers = {
+      1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn",
+      12: "zwölf", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 18: "achtzehn", 20: "zwanzig",
+      21: "einundzwanzig", 24: "vierundzwanzig", 25: "fünfundzwanzig", 27: "siebenundzwanzig", 28: "achtundzwanzig", 30: "dreißig",
+      32: "zweiunddreißig", 35: "fünfunddreißig", 36: "sechsunddreißig", 40: "vierzig", 42: "zweiundvierzig", 45: "fünfundvierzig",
+      48: "achtundvierzig", 49: "neunundvierzig", 50: "fünfzig", 54: "vierundfünfzig", 56: "sechsundfünfzig", 60: "sechzig",
+      63: "dreiundsechzig", 64: "vierundsechzig", 70: "siebzig", 72: "zweiundsiebzig", 80: "achtzig", 81: "einundachtzig", 90: "neunzig", 100: "hundert"
+    };
+
+    function numberToWord(n) {
+      return germanNumbers[n] || n.toString();
+    }
+
+    // --- GENERATE ALL 100 TASKS FOR 1x1 BLITZRECHNEN ---
+    function generateAll1x1Tasks() {
+      const tasks = [];
+      for (let a = 1; a <= 10; a++) {
+        for (let b = 1; b <= 10; b++) {
+          const result = a * b;
+          const wordA = numberToWord(a);
+          const wordB = numberToWord(b);
+          const wordRes = numberToWord(result);
+
+          // Didaktischer Distraktor (+/- Nachbaraufgabe)
+          let wrongResult = result + (Math.random() < 0.5 ? a : -a);
+          if (wrongResult <= 0 || wrongResult === result) wrongResult = result + b;
+          if (wrongResult === result) wrongResult = result + 2;
+
+          const options = [result.toString(), wrongResult.toString()];
+          let correctIndex = 0;
+          if (Math.random() < 0.5) {
+            options.reverse();
+            correctIndex = 1;
+          }
+
+          tasks.push({
+            baseWord: `${a} x ${b}`,
+            gapText: `${a} × ${b} = ?`,
+            fullWord: `${result}`,
+            instruction: "1x1 Blitzrechnen",
+            hint: `💡 Tipp: ${a} mal ${b} ist gleich ${result}`,
+            options: options,
+            correctIndex: correctIndex,
+            speechPrompt: `${wordA} mal ${wordB} ist gleich wie viel?`,
+            speechText: `${wordA} mal ${wordB} ist gleich ${wordRes}`
+          });
+        }
+      }
+      // Fisher-Yates Shuffle für bunten Mix
+      for (let i = tasks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tasks[i], tasks[j]] = [tasks[j], tasks[i]];
+      }
+      return tasks;
+    }
+
+    // --- MODULE DATENBANK ---
     const modulesData = {
-      einmaleins: [
-        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, audioFile: "audio/3x4.mp3", speechPrompt: "Drei mal vier ist gleich wie viel?", speechText: "Drei mal vier ist gleich zwölf" },
-        { baseWord: "5 x 5", gapText: "5 × 5 = ?", fullWord: "25", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 5 mal 5 ist gleich 25", options: ["20", "25"], correctIndex: 1, audioFile: "audio/5x5.mp3", speechPrompt: "Fünf mal fünf ist gleich wie viel?", speechText: "Fünf mal fünf ist gleich fünfundzwanzig" },
-        { baseWord: "6 x 7", gapText: "6 × 7 = ?", fullWord: "42", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 6 mal 7 ist gleich 42", options: ["42", "48"], correctIndex: 0, audioFile: "audio/6x7.mp3", speechPrompt: "Sechs mal sieben ist gleich wie viel?", speechText: "Sechs mal sieben ist gleich zweiundvierzig" },
-        { baseWord: "8 x 9", gapText: "8 × 9 = ?", fullWord: "72", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 8 mal 9 ist gleich 72", options: ["72", "64"], correctIndex: 0, audioFile: "audio/8x9.mp3", speechPrompt: "Acht mal neun ist gleich wie viel?", speechText: "Acht mal neun ist gleich zweiundsiebzig" },
-        { baseWord: "4 x 8", gapText: "4 × 8 = ?", fullWord: "32", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 4 mal 8 ist gleich 32", options: ["36", "32"], correctIndex: 1, audioFile: "audio/4x8.mp3", speechPrompt: "Vier mal acht ist gleich wie viel?", speechText: "Vier mal acht ist gleich zweiunddreißig" }
-      ],
+      einmaleins: generateAll1x1Tasks(),
       anlaute: [
         { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, audioFile: "audio/apfel.mp3", speechPrompt: "A wie Apfel", speechText: "A wie Apfel" },
         { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechPrompt: "B wie Bär", speechText: "B wie Bär" },
@@ -437,7 +488,7 @@
         { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" }
       ],
       halbschriftlich: [
-        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundert-fünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
+        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
       ],
       wortarten: [
         { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" }
@@ -521,11 +572,10 @@
       }
     }
 
-    // UNIFIED HYBRID AUDIO ENGINE (MP3 STUDIO FIRST)
     function playTaskAudio(task, isSolution = false) {
       if (!isAudioFeedbackEnabled) return;
 
-      if (task.audioFile) {
+      if (!isSolution && task.audioFile) {
         const audio = new Audio(task.audioFile);
         audio.play().catch(err => {
           console.warn("Audio MP3 nicht gefunden, nutze TTS Fallback:", err);
@@ -606,7 +656,6 @@
         }
         updateScoreUI();
 
-        // Audio ausgeben
         playTaskAudio(task, true);
 
         setTimeout(() => {
