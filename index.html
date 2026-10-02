@@ -34,7 +34,7 @@
       align-items: center;
     }
 
-    /* BLAUER TOP-HEADER */
+    /* TOP HEADER */
     .top-header {
       width: 100%;
       background-color: var(--primary-color);
@@ -66,6 +66,24 @@
 
     .btn-menu:active {
       background-color: #e2e8f0;
+    }
+
+    .header-score-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stars-badge {
+      background: #fef08a;
+      color: #854d0e;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .header-score {
@@ -172,10 +190,6 @@
       border-color: var(--primary-color);
       background-color: #eff6ff;
       color: var(--primary-color);
-    }
-
-    .nav-item:active {
-      transform: scale(0.98);
     }
 
     /* MAIN CONTAINER / CARD */
@@ -342,9 +356,12 @@
   <!-- BLAUER HEADER -->
   <header class="top-header">
     <button class="btn-menu" id="menuToggleBtn">
-      ≡ <span id="currentModuleLabel">Anlaute hören</span>
+      ≡ <span id="currentModuleLabel">1x1 Blitzrechnen</span>
     </button>
-    <div class="header-score" id="scoreDisplay">Punkte: 0</div>
+    <div class="header-score-container">
+      <div class="stars-badge" id="starsDisplay">⭐ 0</div>
+      <div class="header-score" id="scoreDisplay">Punkte: 0</div>
+    </div>
   </header>
 
   <!-- OVERLAY & SIDEBAR NAVI -->
@@ -357,13 +374,13 @@
 
     <!-- 1. KLASSE -->
     <div class="section-label">1. Klasse</div>
-    <button class="nav-item active" data-module="anlaute">🔊 Anlaute hören</button>
+    <button class="nav-item" data-module="anlaute">🔊 Anlaute hören</button>
     <button class="nav-item" data-module="silben">🌊 Silben schwingen</button>
     <button class="nav-item" data-module="zehnerfeld">🔴 Zehnerfeld</button>
 
     <!-- 3. KLASSE -->
     <div class="section-label">3. Klasse</div>
-    <button class="nav-item" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
+    <button class="nav-item active" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
     <button class="nav-item" data-module="halbschriftlich">➕ Halbschriftlich</button>
     <button class="nav-item" data-module="wortarten">📝 Wortarten bestimmen</button>
     <button class="nav-item" data-module="rechtschreibung">✍️ Rechtschreibung</button>
@@ -372,11 +389,11 @@
   <!-- MAIN APP CONTAINER -->
   <main class="main-content">
     <div class="app-card">
-      <div class="instruction" id="instructionText">Lade Modul...</div>
+      <div class="instruction" id="instructionText">1x1 Blitzrechnen</div>
 
       <div class="controls-row">
         <button class="btn-control btn-listen" id="listenBtn">
-          🔊 Wort anhören
+          🔊 Aufgabe anhören
         </button>
         <button class="btn-control btn-sound-toggle active" id="soundToggleBtn">
           🔔 Ton: AN
@@ -384,54 +401,60 @@
       </div>
 
       <div class="word-display-box" id="displayBox">
-        <div class="word-target" id="wordDisplay">...</div>
-        <div class="hint-text" id="hintText">...</div>
+        <div class="word-target" id="wordDisplay">3 × 4 = ?</div>
+        <div class="hint-text" id="hintText">💡 Tipp: 3 mal 4 ist gleich 12</div>
       </div>
 
       <div class="options-row" id="optionsContainer">
-        <button class="btn-option" id="btnOpt1" data-index="0">-</button>
-        <button class="btn-option" id="btnOpt2" data-index="1">-</button>
+        <button class="btn-option" id="btnOpt1" data-index="0">12</button>
+        <button class="btn-option" id="btnOpt2" data-index="1">14</button>
       </div>
     </div>
   </main>
 
   <script>
-    // --- MODULE DATENBANK WITH LOCAL MP3 AUDIO FALLBACKS ---
+    // --- EINHEITLICHE MODULE DATENBANK (AUDIO-FIRST FÜR KLASSE 1 & 3) ---
     const modulesData = {
+      einmaleins: [
+        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, audioFile: "audio/3x4.mp3", speechPrompt: "Drei mal vier ist gleich wie viel?", speechText: "Drei mal vier ist gleich zwölf" },
+        { baseWord: "5 x 5", gapText: "5 × 5 = ?", fullWord: "25", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 5 mal 5 ist gleich 25", options: ["20", "25"], correctIndex: 1, audioFile: "audio/5x5.mp3", speechPrompt: "Fünf mal fünf ist gleich wie viel?", speechText: "Fünf mal fünf ist gleich fünfundzwanzig" },
+        { baseWord: "6 x 7", gapText: "6 × 7 = ?", fullWord: "42", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 6 mal 7 ist gleich 42", options: ["42", "48"], correctIndex: 0, audioFile: "audio/6x7.mp3", speechPrompt: "Sechs mal sieben ist gleich wie viel?", speechText: "Sechs mal sieben ist gleich zweiundvierzig" },
+        { baseWord: "8 x 9", gapText: "8 × 9 = ?", fullWord: "72", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 8 mal 9 ist gleich 72", options: ["72", "64"], correctIndex: 0, audioFile: "audio/8x9.mp3", speechPrompt: "Acht mal neun ist gleich wie viel?", speechText: "Acht mal neun ist gleich zweiundsiebzig" },
+        { baseWord: "4 x 8", gapText: "4 × 8 = ?", fullWord: "32", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 4 mal 8 ist gleich 32", options: ["36", "32"], correctIndex: 1, audioFile: "audio/4x8.mp3", speechPrompt: "Vier mal acht ist gleich wie viel?", speechText: "Vier mal acht ist gleich zweiunddreißig" }
+      ],
       anlaute: [
-        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, audioFile: "audio/apfel.mp3", speechText: "A wie Apfel" },
-        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechText: "B wie Bär" },
-        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, audioFile: "audio/fisch.mp3", speechText: "F wie Fisch" },
-        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, audioFile: "audio/loewe.mp3", speechText: "L wie Löwe" },
-        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechText: "R wie Robbe" }
+        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, audioFile: "audio/apfel.mp3", speechPrompt: "A wie Apfel", speechText: "A wie Apfel" },
+        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechPrompt: "B wie Bär", speechText: "B wie Bär" },
+        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, audioFile: "audio/fisch.mp3", speechPrompt: "F wie Fisch", speechText: "F wie Fisch" },
+        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, audioFile: "audio/loewe.mp3", speechPrompt: "L wie Löwe", speechText: "L wie Löwe" },
+        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechPrompt: "R wie Robbe", speechText: "R wie Robbe" }
       ],
       silben: [
-        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, speechText: "To ma te" },
-        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, speechText: "Hund" }
+        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, audioFile: "audio/tomate.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
+        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, audioFile: "audio/hund.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" }
       ],
       zehnerfeld: [
-        { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, speechText: "Sieben" }
-      ],
-      einmaleins: [
-        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, speechText: "Drei mal vier ist gleich zwölf" }
+        { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" }
       ],
       halbschriftlich: [
-        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, speechText: "Dreihundertfünfundsiebzig" }
+        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundert-fünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
       ],
       wortarten: [
-        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, speechText: "Laufen ist ein Verb" }
+        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" }
       ],
       rechtschreibung: [
-        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechText: "Hände" },
-        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechText: "Häuser" }
+        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände" },
+        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser" }
       ]
     };
 
-    let currentModule = "anlaute";
+    let currentModule = "einmaleins";
     let currentTaskIndex = 0;
-    let score = 0;
+    let score = parseInt(localStorage.getItem('schulapp_score') || '0', 10);
+    let stars = parseInt(localStorage.getItem('schulapp_stars') || '0', 10);
     let isAudioFeedbackEnabled = true;
     let isEvaluating = false;
+    let preferredVoice = null;
 
     // --- DOM ELEMENTE ---
     const menuToggleBtn = document.getElementById('menuToggleBtn');
@@ -450,31 +473,67 @@
     const btnOpt1 = document.getElementById('btnOpt1');
     const btnOpt2 = document.getElementById('btnOpt2');
     const scoreDisplay = document.getElementById('scoreDisplay');
+    const starsDisplay = document.getElementById('starsDisplay');
     const displayBox = document.getElementById('displayBox');
 
-    // --- HYBRID AUDIO ENGINE (Echte MP3s mit Fallback) ---
-    function playAudio(task) {
+    function updateScoreUI() {
+      scoreDisplay.textContent = `Punkte: ${score}`;
+      starsDisplay.textContent = `⭐ ${stars}`;
+      localStorage.setItem('schulapp_score', score);
+      localStorage.setItem('schulapp_stars', stars);
+    }
+
+    // --- HIGH QUALITY VOICE SELECTION FOR TTS FALLBACK ---
+    function initBestVoice() {
+      if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        preferredVoice = voices.find(v => v.lang.startsWith('de') && (
+          v.name.includes('Google') || 
+          v.name.includes('Anna') || 
+          v.name.includes('Helena') || 
+          v.name.includes('Enhanced') ||
+          v.name.includes('Natural')
+        )) || voices.find(v => v.lang.startsWith('de')) || null;
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initBestVoice;
+      initBestVoice();
+    }
+
+    function speakTextFallback(text) {
+      if (!isAudioFeedbackEnabled) return;
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        utterance.rate = 0.86;
+        utterance.pitch = 1.0;
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // UNIFIED HYBRID AUDIO ENGINE (MP3 STUDIO FIRST)
+    function playTaskAudio(task, isSolution = false) {
       if (!isAudioFeedbackEnabled) return;
 
       if (task.audioFile) {
         const audio = new Audio(task.audioFile);
         audio.play().catch(err => {
-          console.warn("Audiodatei nicht gefunden/blockiert, nutze TTS Fallback:", err);
-          speakTextFallback(task.speechText || task.fullWord);
+          console.warn("Audio MP3 nicht gefunden, nutze TTS Fallback:", err);
+          speakTextFallback(isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction));
         });
       } else {
-        speakTextFallback(task.speechText || task.fullWord);
-      }
-    }
-
-    function speakTextFallback(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'de-DE';
-        utterance.rate = 0.88;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
+        const textToSpeak = isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction);
+        speakTextFallback(textToSpeak);
       }
     }
 
@@ -523,6 +582,8 @@
       hintText.textContent = task.hint;
       btnOpt1.textContent = task.options[0];
       btnOpt2.textContent = task.options[1];
+
+      listenBtn.textContent = currentModule === "einmaleins" ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
     }
 
     function handleOptionClick(selectedIndex, clickedBtn) {
@@ -540,9 +601,13 @@
         clickedBtn.classList.add('btn-correct');
 
         score += 10;
-        scoreDisplay.textContent = `Punkte: ${score}`;
+        if (score % 50 === 0) {
+          stars += 1;
+        }
+        updateScoreUI();
 
-        playAudio(task);
+        // Audio ausgeben
+        playTaskAudio(task, true);
 
         setTimeout(() => {
           currentTaskIndex = (currentTaskIndex + 1) % activeTasks.length;
@@ -561,7 +626,7 @@
     listenBtn.addEventListener('click', () => {
       const activeTasks = modulesData[currentModule];
       if (activeTasks && activeTasks.length > 0) {
-        playAudio(activeTasks[currentTaskIndex]);
+        playTaskAudio(activeTasks[currentTaskIndex], false);
       }
     });
 
@@ -580,6 +645,7 @@
     btnOpt1.addEventListener('click', () => handleOptionClick(0, btnOpt1));
     btnOpt2.addEventListener('click', () => handleOptionClick(1, btnOpt2));
 
+    updateScoreUI();
     renderTask();
   </script>
 </body>
