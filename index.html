@@ -20,10 +20,10 @@
       --text-muted: #64748b;
       --border-radius: 16px;
 
-      /* Wortarten Farben (Montessori/Duden Standard) */
-      --nomen-blue: #2563eb;
-      --verb-red: #dc2626;
-      --adjektiv-green: #16a34a;
+      /* Wortarten Farben nach Bildungsplan / Montessori */
+      --nomen-color: #2563eb;
+      --verb-color: #dc2626;
+      --adjektiv-color: #16a34a;
     }
 
     * {
@@ -276,17 +276,21 @@
       background-color: #f8fafc;
       border: 2px solid #e2e8f0;
       border-radius: var(--border-radius);
-      padding: 32px 16px 20px 16px;
+      padding: 24px 16px 20px 16px;
       margin-bottom: 24px;
       transition: border-color 0.3s ease;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .word-target {
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: 800;
       color: var(--primary-color);
       letter-spacing: 2px;
-      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -296,6 +300,53 @@
     .word-target.correct {
       color: var(--success-color);
       transform: scale(1.05);
+    }
+
+    /* SILBENBÖGEN VISUALISIERUNG */
+    .syllable-arcs-container {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .syllable-arc {
+      width: 40px;
+      height: 20px;
+      border: 4px solid var(--primary-color);
+      border-top: none;
+      border-radius: 0 0 25px 25px;
+      transition: all 0.3s ease;
+    }
+
+    /* 20er FELD GRID VISUALISIERUNG */
+    .twenty-field-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      background: #e2e8f0;
+      padding: 10px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .field-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      margin: 0 auto;
+    }
+
+    .field-dot.red {
+      background: #ef4444;
+      border-color: #b91c1c;
+    }
+
+    .field-dot.blue {
+      background: #3b82f6;
+      border-color: #1d4ed8;
     }
 
     .hint-text {
@@ -321,7 +372,7 @@
       background: #ffffff;
       border: 2px solid #93c5fd;
       border-radius: var(--border-radius);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--primary-color);
       cursor: pointer;
@@ -351,6 +402,11 @@
       border-color: var(--error-color) !important;
       color: #b91c1c !important;
     }
+
+    /* MONTESSORI FARBEN FÜR WORTARTEN */
+    .btn-option[data-type="nomen"] { color: var(--nomen-color); border-color: #93c5fd; }
+    .btn-option[data-type="verb"] { color: var(--verb-color); border-color: #fca5a5; }
+    .btn-option[data-type="adjektiv"] { color: var(--adjektiv-color); border-color: #86efac; }
 
     .disabled {
       pointer-events: none;
@@ -409,6 +465,7 @@
 
       <div class="word-display-box" id="displayBox">
         <div class="word-target" id="wordDisplay">...</div>
+        <div id="visualContainer"></div>
         <div class="hint-text" id="hintText">...</div>
       </div>
 
@@ -420,6 +477,7 @@
   </main>
 
   <script>
+    // SERVICE WORKER REGISTRIERUNG
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
@@ -484,7 +542,7 @@
       return tasks;
     }
 
-    // --- MODULE DATENBANK INKLUSIVE WORTARTEN (3. KLASSE) ---
+    // --- MODULE DATENBANK VOLLSTÄNDIG FÜR MEILENSTEIN 1 & 2 ---
     const modulesData = {
       einmaleins: generateAll1x1Tasks(),
       anlaute: [
@@ -492,27 +550,34 @@
         { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechPrompt: "B wie Bär", speechText: "B wie Bär" },
         { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, audioFile: "audio/fisch.mp3", speechPrompt: "F wie Fisch", speechText: "F wie Fisch" },
         { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, audioFile: "audio/loewe.mp3", speechPrompt: "L wie Löwe", speechText: "L wie Löwe" },
-        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechPrompt: "R wie Robbe", speechText: "R wie Robbe" }
+        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechPrompt: "R wie Robbe", speechText: "R wie Robbe" },
+        { baseWord: "Eichhörnchen", gapText: "🐿️", fullWord: "Eichhörnchen", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Eichhörnchen", options: ["E", "I"], correctIndex: 0, audioFile: "audio/eichhoernchen.mp3", speechPrompt: "E wie Eichhörnchen", speechText: "E wie Eichhörnchen" },
+        { baseWord: "Ente", gapText: "🦆", fullWord: "Ente", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Ente", options: ["E", "A"], correctIndex: 0, audioFile: "audio/ente.mp3", speechPrompt: "E wie Ente", speechText: "E wie Ente" },
+        { baseWord: "Sonne", gapText: "☀️", fullWord: "Sonne", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: S wie Sonne", options: ["S", "Z"], correctIndex: 0, audioFile: "audio/sonne.mp3", speechPrompt: "S wie Sonne", speechText: "S wie Sonne" }
       ],
       silben: [
-        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, audioFile: "audio/tomate.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
-        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, audioFile: "audio/hund.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" }
+        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, audioFile: "audio/tomate.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
+        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, audioFile: "audio/hund.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" },
+        { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Kat - ze (2 Klatscher)", options: ["2", "3"], correctIndex: 0, audioFile: "audio/katze.mp3", speechPrompt: "Wie viele Silben hat Katze?", speechText: "Kat ze hat zwei Silben" }
       ],
       zehnerfeld: [
-        { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" }
+        { baseWord: "Zehnerfeld 7", gapText: "Zehnerfeld", count: 7, fullWord: "7 Punkte", instruction: "Wie viele Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" },
+        { baseWord: "20er-Feld 12", gapText: "20er-Feld", count: 12, fullWord: "12 Punkte", instruction: "Wie viele Punkte siehst du?", hint: "💡 Tipp: 10 voll und 2 unten", options: ["12", "14"], correctIndex: 0, audioFile: "audio/zehnerfeld12.mp3", speechPrompt: "Wie viele Punkte siehst du?", speechText: "Das sind zwölf Punkte" }
       ],
       halbschriftlich: [
-        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }
+        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich: (100+200) + (45+30)", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" },
+        { baseWord: "240 + 150", gapText: "240 + 150", fullWord: "390", instruction: "Rechne halbschriftlich: (200+100) + (40+50)", hint: "💡 Tipp: 200+100=300, 40+50=90", options: ["390", "380"], correctIndex: 0, speechPrompt: "Zweihundertvierzig plus einhundertfünfzig", speechText: "Dreihundertneunzig" }
       ],
       wortarten: [
-        { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, man kann 'der' davor setzen", options: ["Nomen", "Verb"], correctIndex: 0, speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
+        { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, man kann 'der' davor setzen", options: ["Nomen", "Verb"], correctIndex: 0, audioFile: "audio/hund_nomen.mp3", speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
         { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
-        { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", options: ["Adjektiv", "Nomen"], correctIndex: 0, speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" },
-        { baseWord: "Haus", gapText: "Haus", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Das Haus...", options: ["Verb", "Nomen"], correctIndex: 1, speechPrompt: "Welche Wortart ist Haus?", speechText: "Haus ist ein Nomen" }
+        { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", options: ["Adjektiv", "Nomen"], correctIndex: 0, audioFile: "audio/schnell_adj.mp3", speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" }
       ],
       rechtschreibung: [
-        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände" },
-        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser" }
+        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand (a -> ä)", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände schreibt man mit Ä" },
+        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus (au -> äu)", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser schreibt man mit Ä U" },
+        { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum (au -> äu)", hint: "💡 Tipp: Ableiten von Baum", options: ["äume", "eume"], correctIndex: 0, audioFile: "audio/baeume.mp3", speechPrompt: "Leite ab von Baum", speechText: "Bäume schreibt man mit Ä U" },
+        { baseWord: "Maus", gapText: "M?", fullWord: "Mäuse", instruction: "Leite ab von Maus (au -> äu)", hint: "💡 Tipp: Ableiten von Maus", options: ["euse", "äuse"], correctIndex: 1, audioFile: "audio/maeuse.mp3", speechPrompt: "Leite ab von Maus", speechText: "Mäuse schreibt man mit Ä U" }
       ]
     };
 
@@ -536,6 +601,7 @@
     const listenBtn = document.getElementById('listenBtn');
     const soundToggleBtn = document.getElementById('soundToggleBtn');
     const wordDisplay = document.getElementById('wordDisplay');
+    const visualContainer = document.getElementById('visualContainer');
     const hintText = document.getElementById('hintText');
     const optionsContainer = document.getElementById('optionsContainer');
     const btnOpt1 = document.getElementById('btnOpt1');
@@ -637,6 +703,29 @@
       wordDisplay.classList.remove('correct');
       displayBox.style.borderColor = '#e2e8f0';
 
+      visualContainer.innerHTML = "";
+
+      // VISUELLE SONDERELEMENTE RENDERN (SILBEN BÖGEN & ZEHNERFELD GRID)
+      if (currentModule === "silben" && task.count) {
+        const arcBox = document.createElement("div");
+        arcBox.className = "syllable-arcs-container";
+        for (let i = 0; i < task.count; i++) {
+          const arc = document.createElement("div");
+          arc.className = "syllable-arc";
+          arcBox.appendChild(arc);
+        }
+        visualContainer.appendChild(arcBox);
+      } else if (currentModule === "zehnerfeld" && task.count) {
+        const grid = document.createElement("div");
+        grid.className = "twenty-field-grid";
+        for (let i = 0; i < 10; i++) {
+          const dot = document.createElement("div");
+          dot.className = "field-dot" + (i < task.count ? " red" : "");
+          grid.appendChild(dot);
+        }
+        visualContainer.appendChild(grid);
+      }
+
       [btnOpt1, btnOpt2].forEach(btn => {
         btn.classList.remove('btn-correct', 'btn-wrong');
       });
@@ -647,7 +736,7 @@
       btnOpt1.textContent = task.options[0];
       btnOpt2.textContent = task.options[1];
 
-      listenBtn.textContent = (currentModule === "einmaleins" || currentModule === "wortarten") ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
+      listenBtn.textContent = (currentModule === "einmaleins" || currentModule === "wortarten" || currentModule === "halbschriftlich") ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
     }
 
     function handleOptionClick(selectedIndex, clickedBtn) {

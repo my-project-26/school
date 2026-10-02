@@ -5,7 +5,6 @@ import urllib.parse
 AUDIO_DIR = "audio"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-# Sämtliche Audios für Klasse 1 und Klasse 3 im gleichen HD-Standard
 AUDIO_TASKS = [
     # KLASSE 1: Anlaute
     {"filename": "apfel.mp3", "text": "A wie Apfel"},
@@ -13,21 +12,26 @@ AUDIO_TASKS = [
     {"filename": "fisch.mp3", "text": "F wie Fisch"},
     {"filename": "loewe.mp3", "text": "L wie Löwe"},
     {"filename": "robbe.mp3", "text": "R wie Robbe"},
-    
+    {"filename": "eichhoernchen.mp3", "text": "E wie Eichhörnchen"},
+    {"filename": "ente.mp3", "text": "E wie Ente"},
+    {"filename": "sonne.mp3", "text": "S wie Sonne"},
+
     # KLASSE 1: Silben & Zehnerfeld
     {"filename": "tomate.mp3", "text": "To ma te hat drei Silben"},
     {"filename": "hund.mp3", "text": "Hund hat eine Silbe"},
+    {"filename": "katze.mp3", "text": "Kat ze hat zwei Silben"},
     {"filename": "zehnerfeld7.mp3", "text": "Das sind sieben Punkte"},
+    {"filename": "zehnerfeld12.mp3", "text": "Das sind zwölf Punkte"},
 
-    # KLASSE 3: Rechtschreibung & Wortarten
-    {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä"},
-    {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U"},
-    {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U"},
-    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U"},
+    # KLASSE 3: Deutsch & Mathe
+    {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä, abgeleitet von Hand"},
+    {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U, abgeleitet von Haus"},
+    {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U, abgeleitet von Baum"},
+    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U, abgeleitet von Maus"},
     {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
-
-    # KLASSE 3: Halbschriftlich
-    {"filename": "halbschriftlich1.mp3", "text": "Dreihundertfünfundsiebzig"}
+    {"filename": "hund_nomen.mp3", "text": "Hund ist ein Nomen"},
+    {"filename": "schnell_adj.mp3", "text": "Schnell ist ein Adjektiv"},
+    {"filename": "halbschriftlich1.mp3", "text": "Hundertfünfundvierzig plus zweihundertdreißig ist gleich dreihundertfünfundsiebzig"}
 ]
 
 # 1x1 Aufgaben von 1x1 bis 10x10 dynamisch hinzufügen
