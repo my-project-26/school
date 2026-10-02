@@ -16,34 +16,43 @@ AUDIO_TASKS = [
     {"filename": "ente.mp3", "text": "E wie Ente"},
     {"filename": "sonne.mp3", "text": "S wie Sonne"},
 
-    # KLASSE 1: Silben & Zehnerfeld
+    # KLASSE 1: Silben Wortschatz
     {"filename": "tomate.mp3", "text": "To ma te hat drei Silben"},
     {"filename": "hund.mp3", "text": "Hund hat eine Silbe"},
     {"filename": "katze.mp3", "text": "Kat ze hat zwei Silben"},
-    {"filename": "zehnerfeld7.mp3", "text": "Das sind sieben Punkte"},
-    {"filename": "zehnerfeld12.mp3", "text": "Das sind zwölf Punkte"},
+    {"filename": "schokolade.mp3", "text": "Scho ko la de hat vier Silben"},
+    {"filename": "schmetterling.mp3", "text": "Schmet ter ling hat drei Silben"},
+    {"filename": "elefant.mp3", "text": "E le fant hat drei Silben"},
+    {"filename": "haus.mp3", "text": "Haus hat eine Silbe"},
+    {"filename": "blume.mp3", "text": "Blu me hat zwei Silben"},
+    {"filename": "banane.mp3", "text": "Ba na ne hat drei Silben"},
+    {"filename": "frosch.mp3", "text": "Frosch hat eine Silbe"},
 
-    # KLASSE 3: Deutsch & Mathe
-    {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä, abgeleitet von Hand"},
-    {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U, abgeleitet von Haus"},
-    {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U, abgeleitet von Baum"},
-    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U, abgeleitet von Maus"},
-    {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
+    # KLASSE 3: Wortarten & Rechtschreibung
     {"filename": "hund_nomen.mp3", "text": "Hund ist ein Nomen"},
+    {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
     {"filename": "schnell_adj.mp3", "text": "Schnell ist ein Adjektiv"},
-    {"filename": "halbschriftlich1.mp3", "text": "Hundertfünfundvierzig plus zweihundertdreißig ist gleich dreihundertfünfundsiebzig"}
+    {"filename": "katze_nomen.mp3", "text": "Katze ist ein Nomen"},
+    {"filename": "spielen_verb.mp3", "text": "Spielen ist ein Verb"},
+    {"filename": "schoen_adj.mp3", "text": "Schön ist ein Adjektiv"},
+    {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä"},
+    {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U"},
+    {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U"},
+    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U"}
 ]
 
-# 1x1 Aufgaben von 1x1 bis 10x10 dynamisch hinzufügen
+# Zehnerfeld Audio bis 20
+for n in range(1, 21):
+    AUDIO_TASKS.append({"filename": f"zehnerfeld{n}.mp3", "text": f"Das sind {n} Punkte"})
+
+# 1x1 Aufgaben von 1x1 bis 10x10
 for a in range(1, 11):
     for b in range(1, 11):
         res = a * b
-        filename = f"{a}x{b}.mp3"
-        text = f"{a} mal {b} ist gleich {res}"
-        AUDIO_TASKS.append({"filename": filename, "text": text})
+        AUDIO_TASKS.append({"filename": f"{a}x{b}.mp3", "text": f"{a} mal {b} ist gleich {res}"})
 
 def download_hd_audio():
-    print("🎙 Generiere 100% einheitliche Studio-Audiodateien für Klasse 1 & 3...")
+    print("🎙 Generiere lückenlose HD-Studio-Audiodateien...")
     for item in AUDIO_TASKS:
         filepath = os.path.join(AUDIO_DIR, item["filename"])
         encoded_text = urllib.parse.quote(item["text"])

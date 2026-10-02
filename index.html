@@ -20,7 +20,6 @@
       --text-muted: #64748b;
       --border-radius: 16px;
 
-      /* Wortarten Farben nach Bildungsplan / Montessori */
       --nomen-color: #2563eb;
       --verb-color: #dc2626;
       --adjektiv-color: #16a34a;
@@ -102,7 +101,7 @@
       font-size: 1rem;
     }
 
-    /* SIDEBAR NAVI DRAWER */
+    /* SIDEBAR NAVI DRAWER EXAKT BILD-REFERENZ */
     .drawer-overlay {
       position: fixed;
       top: 0;
@@ -306,28 +305,30 @@
     .syllable-arcs-container {
       display: flex;
       gap: 12px;
-      margin-top: 10px;
+      margin-top: 12px;
       justify-content: center;
     }
 
     .syllable-arc {
-      width: 40px;
-      height: 20px;
+      width: 44px;
+      height: 22px;
       border: 4px solid var(--primary-color);
       border-top: none;
       border-radius: 0 0 25px 25px;
       transition: all 0.3s ease;
     }
 
-    /* 20er FELD GRID VISUALISIERUNG */
+    /* ZEHNERFELD / 20er FELD GRID */
     .twenty-field-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       background: #e2e8f0;
-      padding: 10px;
+      padding: 12px;
       border-radius: 12px;
       margin-top: 10px;
+      width: 100%;
+      max-width: 260px;
     }
 
     .field-dot {
@@ -342,11 +343,6 @@
     .field-dot.red {
       background: #ef4444;
       border-color: #b91c1c;
-    }
-
-    .field-dot.blue {
-      background: #3b82f6;
-      border-color: #1d4ed8;
     }
 
     .hint-text {
@@ -402,11 +398,6 @@
       border-color: var(--error-color) !important;
       color: #b91c1c !important;
     }
-
-    /* MONTESSORI FARBEN FÜR WORTARTEN */
-    .btn-option[data-type="nomen"] { color: var(--nomen-color); border-color: #93c5fd; }
-    .btn-option[data-type="verb"] { color: var(--verb-color); border-color: #fca5a5; }
-    .btn-option[data-type="adjektiv"] { color: var(--adjektiv-color); border-color: #86efac; }
 
     .disabled {
       pointer-events: none;
@@ -477,7 +468,6 @@
   </main>
 
   <script>
-    // SERVICE WORKER REGISTRIERUNG
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
@@ -501,6 +491,16 @@
       return germanNumbers[n] || n.toString();
     }
 
+    // HELPER FÜR ZUFÄLLIGE ANORDNUNG DER OPTIONS-BUTTONS (LINKS/RECHTS)
+    function createTaskWithOptions(baseTask, correctOpt, wrongOpt) {
+      const isCorrectLeft = Math.random() < 0.5;
+      return {
+        ...baseTask,
+        options: isCorrectLeft ? [correctOpt, wrongOpt] : [wrongOpt, correctOpt],
+        correctIndex: isCorrectLeft ? 0 : 1
+      };
+    }
+
     function generateAll1x1Tasks() {
       const tasks = [];
       for (let a = 1; a <= 10; a++) {
@@ -514,25 +514,18 @@
           if (wrongResult <= 0 || wrongResult === result) wrongResult = result + b;
           if (wrongResult === result) wrongResult = result + 2;
 
-          const options = [result.toString(), wrongResult.toString()];
-          let correctIndex = 0;
-          if (Math.random() < 0.5) {
-            options.reverse();
-            correctIndex = 1;
-          }
-
-          tasks.push({
+          const baseTask = {
             baseWord: `${a} x ${b}`,
             gapText: `${a} × ${b} = ?`,
             fullWord: `${result}`,
             instruction: "1x1 Blitzrechnen",
             hint: `💡 Tipp: ${a} mal ${b} ist gleich ${result}`,
-            options: options,
-            correctIndex: correctIndex,
             audioFile: `audio/${a}x${b}.mp3`,
             speechPrompt: `${wordA} mal ${wordB} ist gleich wie viel?`,
             speechText: `${wordA} mal ${wordB} ist gleich ${wordRes}`
-          });
+          };
+
+          tasks.push(createTaskWithOptions(baseTask, result.toString(), wrongResult.toString()));
         }
       }
       for (let i = tasks.length - 1; i > 0; i--) {
@@ -542,43 +535,82 @@
       return tasks;
     }
 
-    // --- MODULE DATENBANK VOLLSTÄNDIG FÜR MEILENSTEIN 1 & 2 ---
+    // DYNAMISCHE GENERIERUNG ZEHNERFELD (1 bis 20)
+    function generateZehnerfeldTasks() {
+      const tasks = [];
+      for (let n = 1; n <= 20; n++) {
+        let wrongOpt = n + (Math.random() < 0.5 ? 1 : -1);
+        if (wrongOpt <= 0) wrongOpt = n + 2;
+
+        const baseTask = {
+          baseWord: `Feld ${n}`,
+          gapText: n > 10 ? "20er-Feld" : "Zehnerfeld",
+          count: n,
+          fullWord: `${n} Punkte`,
+          instruction: "Wie viele Punkte siehst du?",
+          hint: n <= 10 ? `💡 Tipp: Zähle die roten Punkte` : `💡 Tipp: 10 oben voll + ${n - 10} unten`,
+          audioFile: `audio/zehnerfeld${n}.mp3`,
+          speechPrompt: "Wie viele Punkte siehst du?",
+          speechText: `Das sind ${n} Punkte`
+        };
+
+        tasks.push(createTaskWithOptions(baseTask, n.toString(), wrongOpt.toString()));
+      }
+      return tasks;
+    }
+
+    // --- MODULE DATENBANK ---
+    const rawAnlaute = [
+      { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", correct: "A", wrong: "H", audioFile: "audio/apfel.mp3", speechPrompt: "A wie Apfel", speechText: "A wie Apfel" },
+      { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", correct: "B", wrong: "P", audioFile: "audio/baer.mp3", speechPrompt: "B wie Bär", speechText: "B wie Bär" },
+      { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", correct: "F", wrong: "V", audioFile: "audio/fisch.mp3", speechPrompt: "F wie Fisch", speechText: "F wie Fisch" },
+      { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", correct: "L", wrong: "M", audioFile: "audio/loewe.mp3", speechPrompt: "L wie Löwe", speechText: "L wie Löwe" },
+      { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", correct: "R", wrong: "L", audioFile: "audio/robbe.mp3", speechPrompt: "R wie Robbe", speechText: "R wie Robbe" },
+      { baseWord: "Eichhörnchen", gapText: "🐿️", fullWord: "Eichhörnchen", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Eichhörnchen", correct: "E", wrong: "I", audioFile: "audio/eichhoernchen.mp3", speechPrompt: "E wie Eichhörnchen", speechText: "E wie Eichhörnchen" },
+      { baseWord: "Ente", gapText: "🦆", fullWord: "Ente", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Ente", correct: "E", wrong: "A", audioFile: "audio/ente.mp3", speechPrompt: "E wie Ente", speechText: "E wie Ente" },
+      { baseWord: "Sonne", gapText: "☀️", fullWord: "Sonne", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: S wie Sonne", correct: "S", wrong: "Z", audioFile: "audio/sonne.mp3", speechPrompt: "S wie Sonne", speechText: "S wie Sonne" }
+    ];
+
+    const rawSilben = [
+      { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", correct: "3", wrong: "2", audioFile: "audio/tomate.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
+      { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", correct: "1", wrong: "2", audioFile: "audio/hund.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" },
+      { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Kat - ze (2 Klatscher)", correct: "2", wrong: "3", audioFile: "audio/katze.mp3", speechPrompt: "Wie viele Silben hat Katze?", speechText: "Kat ze hat zwei Silben" },
+      { baseWord: "Schokolade", gapText: "🍫", fullWord: "Scho-ko-la-de", count: 4, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Scho - ko - la - de (4 Klatscher)", correct: "4", wrong: "3", audioFile: "audio/schokolade.mp3", speechPrompt: "Wie viele Silben hat Schokolade?", speechText: "Scho ko la de hat vier Silben" },
+      { baseWord: "Schmetterling", gapText: "🦋", fullWord: "Schmet-ter-ling", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Schmet - ter - ling (3 Klatscher)", correct: "3", wrong: "2", audioFile: "audio/schmetterling.mp3", speechPrompt: "Wie viele Silben hat Schmetterling?", speechText: "Schmet ter ling hat drei Silben" },
+      { baseWord: "Elefant", gapText: "🐘", fullWord: "E-le-fant", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: E - le - fant (3 Klatscher)", correct: "3", wrong: "1", audioFile: "audio/elefant.mp3", speechPrompt: "Wie viele Silben hat Elefant?", speechText: "E le fant hat drei Silben" },
+      { baseWord: "Haus", gapText: "🏠", fullWord: "Haus", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Haus (1 Klatscher)", correct: "1", wrong: "2", audioFile: "audio/haus.mp3", speechPrompt: "Wie viele Silben hat Haus?", speechText: "Haus hat eine Silbe" },
+      { baseWord: "Blume", gapText: "🌻", fullWord: "Blu-me", count: 2, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Blu - me (2 Klatscher)", correct: "2", wrong: "3", audioFile: "audio/blume.mp3", speechPrompt: "Wie viele Silben hat Blume?", speechText: "Blu me hat zwei Silben" },
+      { baseWord: "Banane", gapText: "🍌", fullWord: "Ba-na-ne", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Ba - na - ne (3 Klatscher)", correct: "3", wrong: "2", audioFile: "audio/banane.mp3", speechPrompt: "Wie viele Silben hat Banane?", speechText: "Ba na ne hat drei Silben" },
+      { baseWord: "Frosch", gapText: "🐸", fullWord: "Frosch", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Frosch (1 Klatscher)", correct: "1", wrong: "2", audioFile: "audio/frosch.mp3", speechPrompt: "Wie viele Silben hat Frosch?", speechText: "Frosch hat eine Silbe" }
+    ];
+
+    const rawWortarten = [
+      { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, der Hund", correct: "Nomen", wrong: "Verb", audioFile: "audio/hund_nomen.mp3", speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
+      { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", correct: "Verb", wrong: "Nomen", audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
+      { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", correct: "Adjektiv", wrong: "Nomen", audioFile: "audio/schnell_adj.mp3", speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" },
+      { baseWord: "Katze", gapText: "Katze", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Die Katze...", correct: "Nomen", wrong: "Verb", audioFile: "audio/katze_nomen.mp3", speechPrompt: "Welche Wortart ist Katze?", speechText: "Katze ist ein Nomen" },
+      { baseWord: "spielen", gapText: "spielen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", correct: "Verb", wrong: "Adjektiv", audioFile: "audio/spielen_verb.mp3", speechPrompt: "Welche Wortart ist spielen?", speechText: "Spielen ist ein Verb" },
+      { baseWord: "schön", gapText: "schön", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", correct: "Adjektiv", wrong: "Verb", audioFile: "audio/schoen_adj.mp3", speechPrompt: "Welche Wortart ist schön?", speechText: "Schön ist ein Adjektiv" }
+    ];
+
+    const rawRechtschreibung = [
+      { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", correct: "ände", wrong: "ende", audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände schreibt man mit Ä" },
+      { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", correct: "äuser", wrong: "euser", audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser schreibt man mit Ä U" },
+      { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum", hint: "💡 Tipp: Ableiten von Baum", correct: "äume", wrong: "eume", audioFile: "audio/baeume.mp3", speechPrompt: "Leite ab von Baum", speechText: "Bäume schreibt man mit Ä U" },
+      { baseWord: "Maus", gapText: "M?", fullWord: "Mäuse", instruction: "Leite ab von Maus", hint: "💡 Tipp: Ableiten von Maus", correct: "äuse", wrong: "euse", audioFile: "audio/maeuse.mp3", speechPrompt: "Leite ab von Maus", speechText: "Mäuse schreibt man mit Ä U" }
+    ];
+
     const modulesData = {
       einmaleins: generateAll1x1Tasks(),
-      anlaute: [
-        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: A wie Apfel", options: ["A", "H"], correctIndex: 0, audioFile: "audio/apfel.mp3", speechPrompt: "A wie Apfel", speechText: "A wie Apfel" },
-        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: B wie Bär", options: ["B", "P"], correctIndex: 0, audioFile: "audio/baer.mp3", speechPrompt: "B wie Bär", speechText: "B wie Bär" },
-        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: F wie Fisch", options: ["F", "V"], correctIndex: 0, audioFile: "audio/fisch.mp3", speechPrompt: "F wie Fisch", speechText: "F wie Fisch" },
-        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: L wie Löwe", options: ["L", "M"], correctIndex: 0, audioFile: "audio/loewe.mp3", speechPrompt: "L wie Löwe", speechText: "L wie Löwe" },
-        { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: R wie Robbe", options: ["R", "L"], correctIndex: 0, audioFile: "audio/robbe.mp3", speechPrompt: "R wie Robbe", speechText: "R wie Robbe" },
-        { baseWord: "Eichhörnchen", gapText: "🐿️", fullWord: "Eichhörnchen", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Eichhörnchen", options: ["E", "I"], correctIndex: 0, audioFile: "audio/eichhoernchen.mp3", speechPrompt: "E wie Eichhörnchen", speechText: "E wie Eichhörnchen" },
-        { baseWord: "Ente", gapText: "🦆", fullWord: "Ente", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: E wie Ente", options: ["E", "A"], correctIndex: 0, audioFile: "audio/ente.mp3", speechPrompt: "E wie Ente", speechText: "E wie Ente" },
-        { baseWord: "Sonne", gapText: "☀️", fullWord: "Sonne", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: S wie Sonne", options: ["S", "Z"], correctIndex: 0, audioFile: "audio/sonne.mp3", speechPrompt: "S wie Sonne", speechText: "S wie Sonne" }
-      ],
-      silben: [
-        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, audioFile: "audio/tomate.mp3", speechPrompt: "Wie viele Silben hat Tomate?", speechText: "To ma te hat drei Silben" },
-        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, audioFile: "audio/hund.mp3", speechPrompt: "Wie viele Silben hat Hund?", speechText: "Hund hat eine Silbe" },
-        { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Kat - ze (2 Klatscher)", options: ["2", "3"], correctIndex: 0, audioFile: "audio/katze.mp3", speechPrompt: "Wie viele Silben hat Katze?", speechText: "Kat ze hat zwei Silben" }
-      ],
-      zehnerfeld: [
-        { baseWord: "Zehnerfeld 7", gapText: "Zehnerfeld", count: 7, fullWord: "7 Punkte", instruction: "Wie viele Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, audioFile: "audio/zehnerfeld7.mp3", speechPrompt: "Wie viele rote Punkte siehst du?", speechText: "Das sind sieben Punkte" },
-        { baseWord: "20er-Feld 12", gapText: "20er-Feld", count: 12, fullWord: "12 Punkte", instruction: "Wie viele Punkte siehst du?", hint: "💡 Tipp: 10 voll und 2 unten", options: ["12", "14"], correctIndex: 0, audioFile: "audio/zehnerfeld12.mp3", speechPrompt: "Wie viele Punkte siehst du?", speechText: "Das sind zwölf Punkte" }
-      ],
+      anlaute: rawAnlaute.map(item => createTaskWithOptions(item, item.correct, item.wrong)),
+      silben: rawSilben.map(item => createTaskWithOptions(item, item.correct, item.wrong)),
+      zehnerfeld: generateZehnerfeldTasks(),
       halbschriftlich: [
-        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich: (100+200) + (45+30)", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" },
-        { baseWord: "240 + 150", gapText: "240 + 150", fullWord: "390", instruction: "Rechne halbschriftlich: (200+100) + (40+50)", hint: "💡 Tipp: 200+100=300, 40+50=90", options: ["390", "380"], correctIndex: 0, speechPrompt: "Zweihundertvierzig plus einhundertfünfzig", speechText: "Dreihundertneunzig" }
+        createTaskWithOptions({ baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich: (100+200) + (45+30)", hint: "💡 Tipp: 100+200=300, 45+30=75", audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }, "375", "385"),
+        createTaskWithOptions({ baseWord: "240 + 150", gapText: "240 + 150", fullWord: "390", instruction: "Rechne halbschriftlich: (200+100) + (40+50)", hint: "💡 Tipp: 200+100=300, 40+50=90", speechPrompt: "Zweihundertvierzig plus einhundertfünfzig", speechText: "Dreihundertneunzig" }, "390", "380")
       ],
-      wortarten: [
-        { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, man kann 'der' davor setzen", options: ["Nomen", "Verb"], correctIndex: 0, audioFile: "audio/hund_nomen.mp3", speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
-        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
-        { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", options: ["Adjektiv", "Nomen"], correctIndex: 0, audioFile: "audio/schnell_adj.mp3", speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" }
-      ],
-      rechtschreibung: [
-        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand (a -> ä)", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände schreibt man mit Ä" },
-        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus (au -> äu)", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser schreibt man mit Ä U" },
-        { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum (au -> äu)", hint: "💡 Tipp: Ableiten von Baum", options: ["äume", "eume"], correctIndex: 0, audioFile: "audio/baeume.mp3", speechPrompt: "Leite ab von Baum", speechText: "Bäume schreibt man mit Ä U" },
-        { baseWord: "Maus", gapText: "M?", fullWord: "Mäuse", instruction: "Leite ab von Maus (au -> äu)", hint: "💡 Tipp: Ableiten von Maus", options: ["euse", "äuse"], correctIndex: 1, audioFile: "audio/maeuse.mp3", speechPrompt: "Leite ab von Maus", speechText: "Mäuse schreibt man mit Ä U" }
-      ]
+      wortarten: rawWortarten.map(item => createTaskWithOptions(item, item.correct, item.wrong)),
+      rechtschreibung: rawRechtschreibung.map(item => createTaskWithOptions(item, item.correct, item.wrong))
     };
 
     let currentModule = "einmaleins";
@@ -718,7 +750,9 @@
       } else if (currentModule === "zehnerfeld" && task.count) {
         const grid = document.createElement("div");
         grid.className = "twenty-field-grid";
-        for (let i = 0; i < 10; i++) {
+        // Bündelung in 5er und 10er Reihen (bis 20 Punkte)
+        const totalDots = task.count > 10 ? 20 : 10;
+        for (let i = 0; i < totalDots; i++) {
           const dot = document.createElement("div");
           dot.className = "field-dot" + (i < task.count ? " red" : "");
           grid.appendChild(dot);
@@ -801,3 +835,4 @@
   </script>
 </body>
 </html>
+EOF
