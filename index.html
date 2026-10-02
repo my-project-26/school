@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schul App - Lernportal BW</title>
+  <title>Schul App - Lernstudio BW</title>
   <style>
     :root {
       --primary-color: #3b82f6;
+      --primary-dark: #1d4ed8;
       --bg-color: #f1f5f9;
       --card-bg: #ffffff;
       --accent-yellow: #fde047;
@@ -14,6 +15,7 @@
       --success-color: #22c55e;
       --error-color: #ef4444;
       --text-dark: #1e293b;
+      --text-muted: #64748b;
       --border-radius: 16px;
     }
 
@@ -21,7 +23,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
@@ -32,7 +34,7 @@
       align-items: center;
     }
 
-    /* BLAUER TOP-HEADER MIT MENÜ-BUTTON */
+    /* BLAUER TOP-HEADER */
     .top-header {
       width: 100%;
       background-color: var(--primary-color);
@@ -75,27 +77,7 @@
       font-size: 1rem;
     }
 
-    /* SIDEBAR NAVI */
-    .nav-drawer {
-      position: fixed;
-      top: 0;
-      left: -100%;
-      width: 280px;
-      height: 100%;
-      background: #ffffff;
-      z-index: 200;
-      box-shadow: 4px 0 25px rgba(0,0,0,0.15);
-      transition: left 0.3s ease;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .nav-drawer.open {
-      left: 0;
-    }
-
+    /* SIDEBAR NAVI DRAWER (EXAKT WIE IN BILD 1) */
     .drawer-overlay {
       position: fixed;
       top: 0;
@@ -105,38 +87,95 @@
       background: rgba(0,0,0,0.4);
       z-index: 150;
       display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .drawer-overlay.active {
       display: block;
+      opacity: 1;
+    }
+
+    .nav-drawer {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 300px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 200;
+      box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+      transition: left 0.3s ease;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .nav-drawer.open {
+      left: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .drawer-title {
       font-size: 1.3rem;
       color: var(--primary-color);
       font-weight: 800;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .btn-close-drawer {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 16px 0 8px 4px;
     }
 
     .nav-item {
       background: #f8fafc;
       border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 1.1rem;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--text-dark);
       cursor: pointer;
       text-align: left;
       transition: all 0.2s;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .nav-item.active {
       border-color: var(--primary-color);
       background-color: #eff6ff;
       color: var(--primary-color);
+    }
+
+    .nav-item:active {
+      transform: scale(0.98);
     }
 
     /* MAIN CONTAINER / CARD */
@@ -165,7 +204,7 @@
       min-height: 1.5em;
     }
 
-    /* OBERE BUTTON-ZEILE: Halbiert */
+    /* OBERE BUTTON-ZEILE: HALBIERT */
     .controls-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -211,7 +250,7 @@
       color: #14532d;
     }
 
-    /* DISPLAY BOX FÜR WORT/LÜCKE/EMOJI */
+    /* DISPLAY BOX FÜR INHALTE */
     .word-display-box {
       background-color: #f8fafc;
       border: 2px solid #e2e8f0;
@@ -240,7 +279,7 @@
 
     .hint-text {
       font-size: 0.95rem;
-      color: #64748b;
+      color: var(--text-muted);
       margin-top: 12px;
       display: flex;
       align-items: center;
@@ -249,7 +288,7 @@
       min-height: 1.2em;
     }
 
-    /* ANTWORT BUTTONS (GRID) */
+    /* ANTWORT BUTTONS */
     .options-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -300,24 +339,37 @@
 </head>
 <body>
 
-  <!-- BLAUER TOP-HEADER -->
+  <!-- BLAUER HEADER -->
   <header class="top-header">
     <button class="btn-menu" id="menuToggleBtn">
-      ≡ <span id="currentModuleLabel">Rechtschreibung</span>
+      ≡ <span id="currentModuleLabel">Anlaute hören</span>
     </button>
     <div class="header-score" id="scoreDisplay">Punkte: 0</div>
   </header>
 
-  <!-- OVERLAY & SIDEBAR NAVI -->
+  <!-- OVERLAY & SIDEBAR NAVI (GENAU NACH VORLAGE BILD 1) -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <nav class="nav-drawer" id="navDrawer">
-    <div class="drawer-title">Module Auswählen</div>
-    <button class="nav-item active" data-module="rechtschreibung">✏️ Rechtschreibung (Kl. 3)</button>
-    <button class="nav-item" data-module="anlaute">🍎 Anlaute Hören (Kl. 1)</button>
-    <button class="nav-item" data-module="einmaleins">🔢 1x1 Trainer (Kl. 3)</button>
+    <div class="drawer-header">
+      <div class="drawer-title">Modul wählen</div>
+      <button class="btn-close-drawer" id="closeDrawerBtn">✕</button>
+    </div>
+
+    <!-- 1. KLASSE -->
+    <div class="section-label">1. Klasse</div>
+    <button class="nav-item active" data-module="anlaute">🔊 Anlaute hören</button>
+    <button class="nav-item" data-module="silben">🌊 Silben schwingen</button>
+    <button class="nav-item" data-module="zehnerfeld">🔴 Zehnerfeld</button>
+
+    <!-- 3. KLASSE -->
+    <div class="section-label">3. Klasse</div>
+    <button class="nav-item" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
+    <button class="nav-item" data-module="halbschriftlich">➕ Halbschriftlich</button>
+    <button class="nav-item" data-module="wortarten">📝 Wortarten bestimmen</button>
+    <button class="nav-item" data-module="rechtschreibung">✍️ Rechtschreibung</button>
   </nav>
 
-  <!-- MAIN CONTENT CARD -->
+  <!-- MAIN APP CONTAINER -->
   <main class="main-content">
     <div class="app-card">
       <div class="instruction" id="instructionText">Lade Modul...</div>
@@ -344,33 +396,47 @@
   </main>
 
   <script>
-    // --- MODULE DATENBANKEN ---
+    // --- MODULE DATENBANK (1. & 3. KLASSE) ---
     const modulesData = {
-      rechtschreibung: [
-        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0 },
-        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1 },
-        { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum", hint: "💡 Tipp: Ableiten von Baum", options: ["äume", "eume"], correctIndex: 0 }
-      ],
       anlaute: [
-        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Apfel fängt mit A an", options: ["A", "H"], correctIndex: 0 },
-        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Bär fängt mit B an", options: ["B", "P"], correctIndex: 0 },
-        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Fisch fängt mit F an", options: ["F", "V"], correctIndex: 0 },
-        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Löwe fängt mit L an", options: ["L", "M"], correctIndex: 0 }
+        { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Apfel fängt mit A an", options: ["A", "H"], correctIndex: 0, speechText: "Der Anlaut von Apfel ist A." },
+        { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Bär fängt mit B an", options: ["B", "P"], correctIndex: 0, speechText: "Der Anlaut von Bär ist B." },
+        { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Fisch fängt mit F an", options: ["F", "V"], correctIndex: 0, speechText: "Der Anlaut von Fisch ist F." },
+        { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", instruction: "Welcher Anlaut gehört zum Bild?", hint: "💡 Tipp: Löwe fängt mit L an", options: ["L", "M"], correctIndex: 0, speechText: "Der Anlaut von Löwe ist L." }
+      ],
+      silben: [
+        { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: To - ma - te (3 Klatscher)", options: ["2", "3"], correctIndex: 1, speechText: "To-ma-te hat drei Silben." },
+        { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", instruction: "Wie viele Silben hörst du?", hint: "💡 Tipp: Hund (1 Klatscher)", options: ["1", "2"], correctIndex: 0, speechText: "Hund hat eine Silbe." }
+      ],
+      zehnerfeld: [
+        { baseWord: "Zehnerfeld 7", gapText: "🔴🔴🔴🔴🔴<br>🔴🔴⚪⚪⚪", fullWord: "7", instruction: "Wie viele rote Punkte siehst du?", hint: "💡 Tipp: 5 oben und 2 unten", options: ["7", "8"], correctIndex: 0, speechText: "Das sind sieben Punkte." }
       ],
       einmaleins: [
-        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "Berechne das Ergebnis", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0 },
-        { baseWord: "5 x 5", gapText: "5 × 5 = ?", fullWord: "25", instruction: "Berechne das Ergebnis", hint: "💡 Tipp: 5 mal 5 ist gleich 25", options: ["20", "25"], correctIndex: 1 }
+        { baseWord: "3 x 4", gapText: "3 × 4 = ?", fullWord: "12", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 3 mal 4 ist gleich 12", options: ["12", "14"], correctIndex: 0, speechText: "Drei mal vier ist gleich zwölf." },
+        { baseWord: "6 x 7", gapText: "6 × 7 = ?", fullWord: "42", instruction: "1x1 Blitzrechnen", hint: "💡 Tipp: 6 mal 7 ist gleich 42", options: ["42", "48"], correctIndex: 0, speechText: "Sechs mal sieben ist gleich zweiundvierzig." }
+      ],
+      halbschriftlich: [
+        { baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich", hint: "💡 Tipp: 100+200=300, 45+30=75", options: ["375", "385"], correctIndex: 0, speechText: "Das Ergebnis ist dreihundertfünfundsiebzig." }
+      ],
+      wortarten: [
+        { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", options: ["Nomen", "Verb"], correctIndex: 1, speechText: "Laufen ist ein Verb." }
+      ],
+      rechtschreibung: [
+        { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", options: ["ände", "ende"], correctIndex: 0, speechText: "Hände schreibt man mit Ä." },
+        { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", options: ["euser", "äuser"], correctIndex: 1, speechText: "Häuser schreibt man mit Ä U." }
       ]
     };
 
-    let currentModule = "rechtschreibung";
+    let currentModule = "anlaute";
     let currentTaskIndex = 0;
     let score = 0;
     let isAudioFeedbackEnabled = true;
     let isEvaluating = false;
+    let preferredVoice = null;
 
     // --- DOM ELEMENTE ---
     const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const currentModuleLabel = document.getElementById('currentModuleLabel');
     const navDrawer = document.getElementById('navDrawer');
     const drawerOverlay = document.getElementById('drawerOverlay');
@@ -387,23 +453,37 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const displayBox = document.getElementById('displayBox');
 
-    // --- WEICHE STIMMAUSGABE (OPTIMIERT FÜR KLASSE 1 & 3) ---
+    // --- OPTIMIERTE STIMMAUSGABE (GEMINI-NIVEAU / HIGH QUALITY HD) ---
+    function initBestVoice() {
+      if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        // Priorisierung von Premium/Natural Stimmen in iOS Safari / Chrome
+        preferredVoice = voices.find(v => v.lang.startsWith('de') && (
+          v.name.includes('Google') || 
+          v.name.includes('Anna') || 
+          v.name.includes('Helena') || 
+          v.name.includes('Natural') ||
+          v.name.includes('Premium')
+        )) || voices.find(v => v.lang.startsWith('de')) || null;
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initBestVoice;
+      initBestVoice();
+    }
+
     function speakText(text) {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        window.speechSynthesis.cancel(); // Abbrechen laufender Audio-Queues
         
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'de-DE';
-        
-        // Sanftere Sprechgeschwindigkeit & veränderte Tonhöhe für weiche Konsonanten
-        utterance.rate = 0.82;
-        utterance.pitch = 1.05;
+        utterance.rate = 0.84;  // Sanft verlangsamtes Tempo für klare Artikulation
+        utterance.pitch = 1.02; // Leicht angehobener Pitch für weichen Klang
 
-        // Versuche eine qualitativ hochwertige deutsche Stimme auszuwählen
-        const voices = window.speechSynthesis.getVoices();
-        const germanVoice = voices.find(v => v.lang.startsWith('de') && (v.name.includes('Anna') || v.name.includes('Helena') || v.name.includes('Google')));
-        if (germanVoice) {
-          utterance.voice = germanVoice;
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
         }
 
         window.speechSynthesis.speak(utterance);
@@ -411,24 +491,33 @@
     }
 
     // --- NAVI & DRAWER LOGIK ---
-    function toggleDrawer() {
-      navDrawer.classList.toggle('open');
-      drawerOverlay.classList.toggle('active');
+    function openDrawer() {
+      navDrawer.classList.add('open');
+      drawerOverlay.classList.add('active');
     }
 
-    menuToggleBtn.addEventListener('click', toggleDrawer);
-    drawerOverlay.addEventListener('click', toggleDrawer);
+    function closeDrawer() {
+      navDrawer.classList.remove('open');
+      drawerOverlay.classList.remove('active');
+    }
+
+    menuToggleBtn.addEventListener('click', openDrawer);
+    closeDrawerBtn.addEventListener('click', closeDrawer);
+    drawerOverlay.addEventListener('click', closeDrawer);
 
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
         navItems.forEach(i => i.classList.remove('active'));
-        e.target.classList.add('active');
+        const targetBtn = e.currentTarget;
+        targetBtn.classList.add('active');
         
-        currentModule = e.target.getAttribute('data-module');
-        currentModuleLabel.textContent = e.target.textContent.split('(')[0].trim();
+        currentModule = targetBtn.getAttribute('data-module');
+        // Clean Icon aus Label entfernen
+        const rawLabel = targetBtn.textContent.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+        currentModuleLabel.textContent = rawLabel;
         
         currentTaskIndex = 0;
-        toggleDrawer();
+        closeDrawer();
         renderTask();
       });
     });
@@ -450,7 +539,7 @@
       });
 
       instructionText.textContent = task.instruction;
-      wordDisplay.textContent = task.gapText;
+      wordDisplay.innerHTML = task.gapText;
       hintText.textContent = task.hint;
       btnOpt1.textContent = task.options[0];
       btnOpt2.textContent = task.options[1];
@@ -466,7 +555,7 @@
         isEvaluating = true;
         optionsContainer.classList.add('disabled');
 
-        wordDisplay.textContent = currentModule === "anlaute" ? `${task.gapText} (${task.fullWord})` : task.fullWord;
+        wordDisplay.textContent = task.fullWord;
         wordDisplay.classList.add('correct');
         clickedBtn.classList.add('btn-correct');
 
@@ -474,7 +563,7 @@
         scoreDisplay.textContent = `Punkte: ${score}`;
 
         if (isAudioFeedbackEnabled) {
-          speakText(task.fullWord);
+          speakText(task.speechText || task.fullWord);
         }
 
         setTimeout(() => {
@@ -494,7 +583,8 @@
     listenBtn.addEventListener('click', () => {
       const activeTasks = modulesData[currentModule];
       if (activeTasks && activeTasks.length > 0) {
-        speakText(activeTasks[currentTaskIndex].fullWord);
+        const task = activeTasks[currentTaskIndex];
+        speakText(task.speechText || task.fullWord);
       }
     });
 
@@ -513,13 +603,7 @@
     btnOpt1.addEventListener('click', () => handleOptionClick(0, btnOpt1));
     btnOpt2.addEventListener('click', () => handleOptionClick(1, btnOpt2));
 
-    // Stimmen initialisieren (wichtig für Chrome/Safari Async Load)
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
-    }
-
+    // Initialisierung
     renderTask();
   </script>
 </body>
