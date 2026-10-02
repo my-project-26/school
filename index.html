@@ -407,7 +407,7 @@
 
   <header class="top-header">
     <button class="btn-menu" id="menuToggleBtn">
-      ≡ <span id="currentModuleLabel">1x1 Blitzrechnen</span>
+      ≡ <span id="currentModuleLabel">Anlaute hören</span>
     </button>
     <div class="header-score-container">
       <div class="stars-badge" id="starsDisplay">⭐ 0</div>
@@ -423,12 +423,12 @@
     </div>
 
     <div class="section-label">1. Klasse</div>
-    <button class="nav-item" data-module="anlaute">🔊 Anlaute hören</button>
+    <button class="nav-item active" data-module="anlaute">🔊 Anlaute hören</button>
     <button class="nav-item" data-module="silben">🌊 Silben schwingen</button>
     <button class="nav-item" data-module="zehnerfeld">🔴 Zehnerfeld</button>
 
     <div class="section-label">3. Klasse</div>
-    <button class="nav-item active" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
+    <button class="nav-item" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
     <button class="nav-item" data-module="halbschriftlich">➕ Halbschriftlich</button>
     <button class="nav-item" data-module="wortarten">📝 Wortarten bestimmen</button>
     <button class="nav-item" data-module="rechtschreibung">✍️ Rechtschreibung</button>
@@ -436,11 +436,11 @@
 
   <main class="main-content">
     <div class="app-card">
-      <div class="instruction" id="instructionText">1x1 Blitzrechnen</div>
+      <div class="instruction" id="instructionText">Anlaute hören</div>
 
       <div class="controls-row">
         <button class="btn-control btn-listen" id="listenBtn">
-          🔊 Aufgabe anhören
+          🔊 Wort anhören
         </button>
         <button class="btn-control btn-sound-toggle active" id="soundToggleBtn">
           🔔 Ton: AN
@@ -484,15 +484,13 @@
       return germanNumbers[n] || n.toString();
     }
 
-    // STATE TRACKER GEGEN MEHR ALS 3x GLEICHE SEITE IN FOLGE
-    let lastCorrectSide = null; // 'left' oder 'right'
+    let lastCorrectSide = null;
     let consecutiveSideCount = 0;
 
     function createTaskWithBalancedOptions(baseTask, correctOpt, wrongOpt) {
       let isCorrectLeft;
 
       if (consecutiveSideCount >= 3) {
-        // Erzwinge Seite-Wechsel nach 3x gleicher Folge
         isCorrectLeft = (lastCorrectSide !== 'left');
       } else {
         isCorrectLeft = Math.random() < 0.5;
@@ -570,7 +568,6 @@
       return tasks;
     }
 
-    // --- 50 ANLAUTE VOLLSTÄNDIGER WORTSCHATZ (KLASSE 1) ---
     const rawAnlaute50 = [
       { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", hint: "💡 Tipp: A wie Apfel", correct: "A", wrong: "H", file: "apfel" },
       { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", hint: "💡 Tipp: B wie Bär", correct: "B", wrong: "P", file: "baer" },
@@ -665,7 +662,7 @@
       rechtschreibung: rawRechtschreibung.map(item => createTaskWithBalancedOptions(item, item.correct, item.wrong))
     };
 
-    let currentModule = "einmaleins";
+    let currentModule = "anlaute";
     let currentTaskIndex = 0;
     let score = parseInt(localStorage.getItem('schulapp_score') || '0', 10);
     let stars = parseInt(localStorage.getItem('schulapp_stars') || '0', 10);
@@ -884,4 +881,3 @@
   </script>
 </body>
 </html>
-EOF
