@@ -1,114 +1,62 @@
+import asyncio
 import os
-import urllib.request
-import urllib.parse
+import edge_tts
 
-AUDIO_DIR = "audio"
-os.makedirs(AUDIO_DIR, exist_ok=True)
+VOICE = "de-DE-KatjaNeural"
+RATE = "-15%"
+PITCH = "+5Hz"
 
-# 40 SILBEN-WÖRTER FÜR DIE 1. KLASSE
-SILBEN_40 = [
-    {"filename": "hund_silben.mp3", "text": "Hund hat eine Silbe"},
-    {"filename": "haus_silben.mp3", "text": "Haus hat eine Silbe"},
-    {"filename": "frosch_silben.mp3", "text": "Frosch hat eine Silbe"},
-    {"filename": "ball_silben.mp3", "text": "Ball hat eine Silbe"},
-    {"filename": "baum_silben.mp3", "text": "Baum hat eine Silbe"},
-    {"filename": "fisch_silben.mp3", "text": "Fisch hat eine Silbe"},
-    {"filename": "maus_silben.mp3", "text": "Maus hat eine Silbe"},
-    {"filename": "uhr_silben.mp3", "text": "Uhr hat eine Silbe"},
-    {"filename": "brot_silben.mp3", "text": "Brot hat eine Silbe"},
-    {"filename": "stern_silben.mp3", "text": "Stern hat eine Silbe"},
-    
-    {"filename": "katze_silben.mp3", "text": "Kat ze hat zwei Silben"},
-    {"filename": "blume_silben.mp3", "text": "Blu me hat zwei Silben"},
-    {"filename": "sonne_silben.mp3", "text": "Son ne hat zwei Silben"},
-    {"filename": "vogel_silben.mp3", "text": "Vo gel hat zwei Silben"},
-    {"filename": "wolke_silben.mp3", "text": "Wol ke hat zwei Silben"},
-    {"filename": "lampe_silben.mp3", "text": "Lam pe hat zwei Silben"},
-    {"filename": "apfel_silben.mp3", "text": "Ap fel hat zwei Silben"},
-    {"filename": "kerze_silben.mp3", "text": "Ker ze hat zwei Silben"},
-    {"filename": "schule_silben.mp3", "text": "Schu le hat zwei Silben"},
-    {"filename": "tafel_silben.mp3", "text": "Ta fel hat zwei Silben"},
-    {"filename": "tasche_silben.mp3", "text": "Ta sche hat zwei Silben"},
-    {"filename": "puppe_silben.mp3", "text": "Pup pe hat zwei Silben"},
-    {"filename": "biene_silben.mp3", "text": "Bie ne hat zwei Silben"},
-    {"filename": "eule_silben.mp3", "text": "Eu le hat zwei Silben"},
-    {"filename": "kirsche_silben.mp3", "text": "Kir sche hat zwei Silben"},
-    {"filename": "delfin_silben.mp3", "text": "Del fin hat zwei Silben"},
-    {"filename": "schneemann_silben.mp3", "text": "Schnee mann hat zwei Silben"},
+audio_targets = {
+    # System & Modul-Ankündigungen
+    "modul_anlaute": "Anlaute hören",
+    "modul_silben": "Silben schwingen",
+    "modul_zehnerfeld": "Zehnerfeld bis 10",
+    "modul_1x1": "Ein mal Ein Blitzrechnen",
+    "modul_zehnermulti": "Zehner Multiplikation",
+    "modul_halbschriftlich_mul": "Halbschriftlich multiplizieren",
+    "modul_wortarten": "Wortarten bestimmen",
+    "modul_rechtschreibung": "Rechtschreibung üben",
+    "feedback_falsch": "Versuche es noch einmal!",
 
-    {"filename": "tomate_silben.mp3", "text": "To ma te hat drei Silben"},
-    {"filename": "banane_silben.mp3", "text": "Ba na ne hat drei Silben"},
-    {"filename": "schmetterling_silben.mp3", "text": "Schmet ter ling hat drei Silben"},
-    {"filename": "elefant_silben.mp3", "text": "E le fant hat drei Silben"},
-    {"filename": "rakete_silben.mp3", "text": "Ra ke te hat drei Silben"},
-    {"filename": "gitarre_silben.mp3", "text": "Gi tar re hat drei Silben"},
-    {"filename": "zitrone_silben.mp3", "text": "Zi tro ne hat drei Silben"},
-    {"filename": "papagei_silben.mp3", "text": "Pa pa gei hat drei Silben"},
-    {"filename": "krokodil_silben.mp3", "text": "Kro ko dil hat drei Silben"},
-    {"filename": "pinguin_silben.mp3", "text": "Pin gu in hat drei Silben"},
+    # Wortschatz 30 Silben-Wörter (Klasse 1)
+    "silbe_hund": "Hund", "silbe_baer": "Bär", "silbe_fisch": "Fisch", "silbe_maus": "Maus", 
+    "silbe_baum": "Baum", "silbe_haus": "Haus", "silbe_katze": "Katze", "silbe_sonne": "Sonne", 
+    "silbe_blume": "Blume", "silbe_affe": "Affe", "silbe_ente": "Ente", "silbe_apfel": "Apfel", 
+    "silbe_vogel": "Vogel", "silbe_auto": "Auto", "silbe_schule": "Schule", "silbe_aepfel": "Äpfel", 
+    "silbe_schiff": "Schiff", "silbe_wolke": "Wolke", "silbe_tomate": "Tomate", "silbe_elefant": "Elefant", 
+    "silbe_banane": "Banane", "silbe_kamel": "Kamel", "silbe_rakete": "Rakete", "silbe_giraffe": "Giraffe", 
+    "silbe_aubergine": "Aubergine", "silbe_pinguin": "Pinguin", "silbe_anemone": "Anemone", 
+    "silbe_marienkaefer": "Marienkäfer", "silbe_schmetterling": "Schmetterling", "silbe_schildkroete": "Schildkröte",
 
-    {"filename": "schokolade_silben.mp3", "text": "Scho ko la de hat vier Silben"},
-    {"filename": "regenbogen_silben.mp3", "text": "Re gen bo gen hat vier Silben"},
-    {"filename": "marienkaefer_silben.mp3", "text": "Ma ri en kä fer hat fünf Silben"}
-]
+    # Wortarten-Begriffe (Klasse 3)
+    "wort_haus": "Haus", "wort_baum": "Baum", "wort_kind": "Kind", "wort_schule": "Schule",
+    "wort_katze": "Katze", "wort_hund": "Hund", "wort_blume": "Blume", "wort_sonne": "Sonne",
+    "wort_laufen": "laufen", "wort_springen": "springen", "wort_singen": "singen", "wort_tanzen": "tanzen",
+    "wort_schnell": "schnell", "wort_laut": "laut", "wort_schoen": "schön", "wort_klein": "klein",
 
-ANLAUTE_50 = [
-    ("apfel", "A wie Apfel"), ("baer", "B wie Bär"), ("clown", "C wie Clown"), ("drache", "D wie Drache"),
-    ("elefant", "E wie Elefant"), ("fisch", "F wie Fisch"), ("giraffe", "G wie Giraffe"), ("haus", "H wie Haus"),
-    ("igel", "I wie Igel"), ("jacke", "J wie Jacke"), ("krokodil", "K wie Krokodil"), ("loewe", "L wie Löwe"),
-    ("maus", "M wie Maus"), ("nadel", "N wie Nadel"), ("oma", "O wie Oma"), ("pinguin", "P wie Pinguin"),
-    ("qualle", "Q wie Qualle"), ("robbe", "R wie Robbe"), ("sonne", "S wie Sonne"), ("tiger", "T wie Tiger"),
-    ("uhr", "U wie Uhr"), ("vogel", "V wie Vogel"), ("wal", "W wie Wal"), ("xylophon", "X wie Xylophon"),
-    ("yoga", "Y wie Yoga"), ("zebra", "Z wie Zebra"), ("ente", "E wie Ente"), ("eichhoernchen", "E wie Eichhörnchen"),
-    ("insel", "I wie Insel"), ("otter", "O wie Otter"), ("uhustufe", "U wie Uhu"), ("ampel", "A wie Ampel"),
-    ("ball", "B wie Ball"), ("delfin", "D wie Delfin"), ("eule", "E wie Eule"), ("frosch", "F wie Frosch"),
-    ("gitarre", "G wie Gitarre"), ("hund", "H wie Hund"), ("indianer", "I wie Indianer"), ("kaefer", "K wie Käfer"),
-    ("lampe", "L wie Lampe"), ("mond", "M wie Mond"), ("nuss", "N wie Nuss"), ("papagei", "P wie Papagei"),
-    ("rakete", "R wie Rakete"), ("schaf", "S wie Schaf"), ("tomate", "T wie Tomate"), ("vulkan", "V wie Vulkan"),
-    ("wolke", "W wie Wolke"), ("zitrone_anlaut", "Z wie Zitrone")
-]
+    # Rechtschreib-Begriffe (Klasse 3)
+    "rs_hund": "Hund", "rs_hand": "Hand", "rs_wald": "Wald", "rs_brod": "Brot", 
+    "rs_berg": "Berg", "rs_zug": "Zug", "rs_sieb": "Sieb", "rs_korb": "Korb"
+}
 
-AUDIO_TASKS = list(SILBEN_40)
+os.makedirs("audio", exist_ok=True)
 
-for item in ANLAUTE_50:
-    AUDIO_TASKS.append({"filename": f"{item[0]}.mp3", "text": item[1]})
+async def generate_all():
+    print(f"Starte Prüfung und Generierung aller Audio-Assets ({len(audio_targets)} Ziele)...\n")
+    generated, skipped = 0, 0
 
-AUDIO_TASKS.extend([
-    {"filename": "hund_nomen.mp3", "text": "Hund ist ein Nomen"},
-    {"filename": "laufen.mp3", "text": "Laufen ist ein Verb"},
-    {"filename": "schnell_adj.mp3", "text": "Schnell ist ein Adjektiv"},
-    {"filename": "haende.mp3", "text": "Hände schreibt man mit Ä"},
-    {"filename": "haeuser.mp3", "text": "Häuser schreibt man mit Ä U"},
-    {"filename": "baeume.mp3", "text": "Bäume schreibt man mit Ä U"},
-    {"filename": "maeuse.mp3", "text": "Mäuse schreibt man mit Ä U"},
-    {"filename": "halbschriftlich1.mp3", "text": "Dreihundertfünfundsiebzig"}
-])
+    for filename, text in audio_targets.items():
+        output_path = f"audio/{filename}.mp3"
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 1000:
+            skipped += 1
+            continue
 
-for n in range(1, 21):
-    AUDIO_TASKS.append({"filename": f"zehnerfeld{n}.mp3", "text": f"Das sind {n} Punkte"})
+        print(f"Erstelle: {filename}.mp3 -> '{text}'...")
+        communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
+        await communicate.save(output_path)
+        generated += 1
 
-for a in range(1, 11):
-    for b in range(1, 11):
-        res = a * b
-        AUDIO_TASKS.append({"filename": f"{a}x{b}.mp3", "text": f"{a} mal {b} ist gleich {res}"})
-
-def download_hd_audio():
-    print("🎙 Generiere HD-Audio für alle 40 Silben-Wörter...")
-    for item in AUDIO_TASKS:
-        filepath = os.path.join(AUDIO_DIR, item["filename"])
-        encoded_text = urllib.parse.quote(item["text"])
-        url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded_text}&tl=de&client=tw-ob"
-        
-        try:
-            req = urllib.request.Request(
-                url, 
-                headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
-            )
-            with urllib.request.urlopen(req) as response, open(filepath, 'wb') as out_file:
-                out_file.write(response.read())
-            print(f"✅ Gespeichert: {filepath}")
-        except Exception as e:
-            print(f"❌ Fehler bei {item['filename']}: {e}")
+    print(f"\nFertig! {generated} neue Audio-Dateien erzeugt, {skipped} beibehalten.")
 
 if __name__ == "__main__":
-    download_hd_audio()
+    asyncio.run(generate_all())

@@ -1,934 +1,482 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schul App - Lernstudio BW</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3b82f6">
-  <style>
-    :root {
-      --primary-color: #3b82f6;
-      --primary-dark: #1d4ed8;
-      --bg-color: #f1f5f9;
-      --card-bg: #ffffff;
-      --accent-yellow: #fde047;
-      --accent-yellow-border: #eab308;
-      --success-color: #22c55e;
-      --error-color: #ef4444;
-      --text-dark: #1e293b;
-      --text-muted: #64748b;
-      --border-radius: 16px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Schul App – Grundschule BW</title>
+    <style>
+        :root {
+            --primary-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-color: #4a90e2;
+            --text-color: #2c3e50;
+            --border-radius: 20px;
+        }
 
-      --nomen-color: #2563eb;
-      --verb-color: #dc2626;
-      --adjektiv-color: #16a34a;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
+        h1 { font-size: 2rem; margin-bottom: 8px; text-align: center; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #4a5568; margin: 24px 0 12px 0; width: 100%; text-align: left; }
 
-    body {
-      background-color: var(--bg-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
 
-    /* TOP HEADER */
-    .top-header {
-      width: 100%;
-      background-color: var(--primary-color);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+        .card {
+            background-color: var(--card-bg);
+            border: 2px solid #e0e6ed;
+            border-radius: var(--border-radius);
+            padding: 20px 12px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.15s ease;
+        }
 
-    .btn-menu {
-      background: #ffffff;
-      color: var(--primary-color);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 44px;
-      transition: background-color 0.2s;
-    }
+        .card:active { transform: scale(0.95); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .card-title { font-size: 1rem; font-weight: 700; text-align: center; }
 
-    .btn-menu:active {
-      background-color: #e2e8f0;
-    }
+        .module-view {
+            display: none;
+            width: 100%;
+            max-width: 720px;
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+            text-align: center;
+        }
 
-    .header-score-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        .btn-back {
+            background-color: #e2e8f0;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
 
-    .stars-badge {
-      background: #fef08a;
-      color: #854d0e;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+        .interactive-display { font-size: 4rem; margin: 20px 0; cursor: pointer; }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 24px; }
+        .btn-opt { background: #edf2f7; border: 2px solid #cbd5e0; border-radius: 16px; font-size: 1.2rem; font-weight: bold; padding: 18px 12px; cursor: pointer; min-height: 64px; }
+        .btn-opt:active { background: var(--accent-color); color: white; }
 
-    .header-score {
-      background: rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 1rem;
-    }
+        .zehnerfeld-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; background: #f7fafc; border: 3px solid #cbd5e0; border-radius: 16px; padding: 16px; max-width: 360px; margin: 20px auto; }
+        .field-dot { width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; margin: auto; }
+        .field-dot.active { background: #e53e3e; }
 
-    /* SIDEBAR NAVI DRAWER */
-    .drawer-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.4);
-      z-index: 150;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .drawer-overlay.active {
-      display: block;
-      opacity: 1;
-    }
-
-    .nav-drawer {
-      position: fixed;
-      top: 0;
-      left: -320px;
-      width: 300px;
-      height: 100%;
-      background: #ffffff;
-      z-index: 200;
-      box-shadow: 4px 0 25px rgba(0,0,0,0.15);
-      transition: left 0.3s ease;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .nav-drawer.open {
-      left: 0;
-    }
-
-    .drawer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .drawer-title {
-      font-size: 1.3rem;
-      color: var(--primary-color);
-      font-weight: 800;
-    }
-
-    .btn-close-drawer {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-
-    .section-label {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: #94a3b8;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin: 16px 0 8px 4px;
-    }
-
-    .nav-item {
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-dark);
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-height: 52px;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .nav-item.active {
-      border-color: var(--primary-color);
-      background-color: #eff6ff;
-      color: var(--primary-color);
-    }
-
-    /* MAIN CONTAINER / CARD */
-    .main-content {
-      width: 100%;
-      max-width: 500px;
-      padding: 20px 16px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .app-card {
-      background: var(--card-bg);
-      width: 100%;
-      border-radius: var(--border-radius);
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      text-align: center;
-    }
-
-    .instruction {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-dark);
-      margin-bottom: 20px;
-      min-height: 1.5em;
-    }
-
-    /* OBERE BUTTON-ZEILE: HALBIERT */
-    .controls-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .btn-control {
-      min-height: 52px;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.1s, background-color 0.2s;
-      border: 2px solid transparent;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn-control:active {
-      transform: scale(0.97);
-    }
-
-    .btn-listen {
-      background-color: var(--accent-yellow);
-      border-color: var(--accent-yellow-border);
-      color: #713f12;
-    }
-
-    .btn-sound-toggle {
-      background-color: #e2e8f0;
-      border-color: #cbd5e1;
-      color: var(--text-dark);
-    }
-
-    .btn-sound-toggle.active {
-      background-color: #dcfce7;
-      border-color: #86efac;
-      color: #14532d;
-    }
-
-    /* DISPLAY BOX FÜR INHALTE */
-    .word-display-box {
-      background-color: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: var(--border-radius);
-      padding: 24px 16px 20px 16px;
-      margin-bottom: 24px;
-      transition: border-color 0.3s ease;
-      min-height: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .word-target {
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--primary-color);
-      letter-spacing: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.3s ease, transform 0.2s ease;
-    }
-
-    .word-target.correct {
-      color: var(--success-color);
-      transform: scale(1.05);
-    }
-
-    .syllable-arcs-container {
-      display: flex;
-      gap: 12px;
-      margin-top: 12px;
-      justify-content: center;
-    }
-
-    .syllable-arc {
-      width: 44px;
-      height: 22px;
-      border: 4px solid var(--primary-color);
-      border-top: none;
-      border-radius: 0 0 25px 25px;
-      transition: all 0.3s ease;
-    }
-
-    .twenty-field-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      background: #e2e8f0;
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 260px;
-    }
-
-    .field-dot {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      margin: 0 auto;
-    }
-
-    .field-dot.red {
-      background: #ef4444;
-      border-color: #b91c1c;
-    }
-
-    .hint-text {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-top: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      min-height: 1.2em;
-    }
-
-    /* ANTWORT BUTTONS */
-    .options-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .btn-option {
-      min-height: 60px;
-      background: #ffffff;
-      border: 2px solid #93c5fd;
-      border-radius: var(--border-radius);
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.03);
-      transition: all 0.2s ease;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn-option:hover {
-      border-color: var(--primary-color);
-      background-color: #eff6ff;
-    }
-
-    .btn-option:active {
-      transform: scale(0.96);
-    }
-
-    .btn-option.btn-correct {
-      background-color: #dcfce7 !important;
-      border-color: var(--success-color) !important;
-      color: #15803d !important;
-    }
-
-    .btn-option.btn-wrong {
-      background-color: #fee2e2 !important;
-      border-color: var(--error-color) !important;
-      color: #b91c1c !important;
-    }
-
-    .disabled {
-      pointer-events: none;
-      opacity: 0.8;
-    }
-  </style>
+        .step-box { background: #edf2f7; padding: 16px; border-radius: 12px; margin: 12px 0; font-size: 1.4rem; font-weight: 600; }
+    </style>
 </head>
 <body>
 
-  <header class="top-header">
-    <button class="btn-menu" id="menuToggleBtn">
-      ≡ <span id="currentModuleLabel">Silben schwingen</span>
-    </button>
-    <div class="header-score-container">
-      <div class="stars-badge" id="starsDisplay">⭐ 0</div>
-      <div class="header-score" id="scoreDisplay">Punkte: 0</div>
+    <!-- HAUPTMENÜ -->
+    <div id="main-menu" style="width: 100%; max-width: 720px;">
+        <h1>Schul App</h1>
+
+        <!-- KLASSE 1 -->
+        <div class="section-title">🎒 Klasse 1 (Schuleingangsphase)</div>
+        <div class="grid-container">
+            <div class="card" onclick="startAnlauteModul()">
+                <div class="card-icon">🔤</div>
+                <div class="card-title">Anlaute hören</div>
+            </div>
+            <div class="card" onclick="startSilbenModul()">
+                <div class="card-icon">🌊</div>
+                <div class="card-title">Silben schwingen</div>
+            </div>
+            <div class="card" onclick="startZehnerfeldModul()">
+                <div class="card-icon">🔢</div>
+                <div class="card-title">Zehnerfeld bis 10</div>
+            </div>
+        </div>
+
+        <!-- KLASSE 3 -->
+        <div class="section-title">📘 Klasse 3 (Orientierungsstufe)</div>
+        <div class="grid-container">
+            <div class="card" onclick="start1x1Modul()">
+                <div class="card-icon">⚡</div>
+                <div class="card-title">1x1 Blitzrechnen</div>
+            </div>
+            <div class="card" onclick="startZehnerMultiModul()">
+                <div class="card-icon">🔢</div>
+                <div class="card-title">Zehner-Multiplikation</div>
+            </div>
+            <div class="card" onclick="startHalbschriftlichMulModul()">
+                <div class="card-icon">🧮</div>
+                <div class="card-title">Halbschriftlich Mal</div>
+            </div>
+            <div class="card" onclick="startWortartenModul()">
+                <div class="card-icon">🏷️</div>
+                <div class="card-title">Wortarten bestimmen</div>
+            </div>
+            <div class="card" onclick="startRechtschreibungModul()">
+                <div class="card-icon">✏️</div>
+                <div class="card-title">Rechtschreibung üben</div>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <div class="drawer-overlay" id="drawerOverlay"></div>
-  <nav class="nav-drawer" id="navDrawer">
-    <div class="drawer-header">
-      <div class="drawer-title">Modul wählen</div>
-      <button class="btn-close-drawer" id="closeDrawerBtn">✕</button>
+    <!-- MODUL CONTAINER -->
+    <div id="module-container" class="module-view">
+        <button class="btn-back" onclick="closeModule()">⬅️ Zurück zum Menü</button>
+        <h2 id="module-title">Modul</h2>
+        <div id="module-content"></div>
     </div>
 
-    <div class="section-label">1. Klasse</div>
-    <button class="nav-item" data-module="anlaute">🔊 Anlaute hören</button>
-    <button class="nav-item active" data-module="silben">🌊 Silben schwingen</button>
-    <button class="nav-item" data-module="zehnerfeld">🔴 Zehnerfeld</button>
+    <script>
+        let audioUnlocked = false;
+        const currentAudio = new Audio();
 
-    <div class="section-label">3. Klasse</div>
-    <button class="nav-item" data-module="einmaleins">🧮 1x1 Blitzrechnen</button>
-    <button class="nav-item" data-module="halbschriftlich">➕ Halbschriftlich</button>
-    <button class="nav-item" data-module="wortarten">📝 Wortarten bestimmen</button>
-    <button class="nav-item" data-module="rechtschreibung">✍️ Rechtschreibung</button>
-  </nav>
-
-  <main class="main-content">
-    <div class="app-card">
-      <div class="instruction" id="instructionText">Silben schwingen</div>
-
-      <div class="controls-row">
-        <button class="btn-control btn-listen" id="listenBtn">
-          🔊 Wort anhören
-        </button>
-        <button class="btn-control btn-sound-toggle active" id="soundToggleBtn">
-          🔔 Ton: AN
-        </button>
-      </div>
-
-      <div class="word-display-box" id="displayBox">
-        <div class="word-target" id="wordDisplay">...</div>
-        <div id="visualContainer"></div>
-        <div class="hint-text" id="hintText">...</div>
-      </div>
-
-      <div class="options-row" id="optionsContainer">
-        <button class="btn-option" id="btnOpt1" data-index="0">-</button>
-        <button class="btn-option" id="btnOpt2" data-index="1">-</button>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('✅ ServiceWorker registriert:', reg.scope);
-        }).catch((err) => {
-          console.warn('⚠️ ServiceWorker Registrierung fehlgeschlagen:', err);
-        });
-      });
-    }
-
-    const germanNumbers = {
-      1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn",
-      12: "zwölf", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 18: "achtzehn", 20: "zwanzig",
-      21: "einundzwanzig", 24: "vierundzwanzig", 25: "fünfundzwanzig", 27: "siebenundzwanzig", 28: "achtundzwanzig", 30: "dreißig",
-      32: "zweiunddreißig", 35: "fünfunddreißig", 36: "sechsunddreißig", 40: "vierzig", 42: "zweiundvierzig", 45: "fünfundvierzig",
-      48: "achtundvierzig", 49: "neunundvierzig", 50: "fünfzig", 54: "vierundfünfzig", 56: "sechsundfünfzig", 60: "sechzig",
-      63: "dreiundsechzig", 64: "vierundsechzig", 70: "siebzig", 72: "zweiundsiebzig", 80: "achtzig", 81: "einundachtzig", 90: "neunzig", 100: "hundert"
-    };
-
-    function numberToWord(n) {
-      return germanNumbers[n] || n.toString();
-    }
-
-    let lastCorrectSide = null;
-    let consecutiveSideCount = 0;
-
-    function createTaskWithBalancedOptions(baseTask, correctOpt, wrongOpt) {
-      let isCorrectLeft;
-
-      if (consecutiveSideCount >= 3) {
-        isCorrectLeft = (lastCorrectSide !== 'left');
-      } else {
-        isCorrectLeft = Math.random() < 0.5;
-      }
-
-      const currentSide = isCorrectLeft ? 'left' : 'right';
-      if (currentSide === lastCorrectSide) {
-        consecutiveSideCount++;
-      } else {
-        lastCorrectSide = currentSide;
-        consecutiveSideCount = 1;
-      }
-
-      return {
-        ...baseTask,
-        options: isCorrectLeft ? [correctOpt, wrongOpt] : [wrongOpt, correctOpt],
-        correctIndex: isCorrectLeft ? 0 : 1
-      };
-    }
-
-    function generateAll1x1Tasks() {
-      const tasks = [];
-      for (let a = 1; a <= 10; a++) {
-        for (let b = 1; b <= 10; b++) {
-          const result = a * b;
-          const wordA = numberToWord(a);
-          const wordB = numberToWord(b);
-          const wordRes = numberToWord(result);
-
-          let wrongResult = result + (Math.random() < 0.5 ? a : -a);
-          if (wrongResult <= 0 || wrongResult === result) wrongResult = result + b;
-          if (wrongResult === result) wrongResult = result + 2;
-
-          const baseTask = {
-            baseWord: `${a} x ${b}`,
-            gapText: `${a} × ${b} = ?`,
-            fullWord: `${result}`,
-            instruction: "1x1 Blitzrechnen",
-            hint: `💡 Tipp: ${a} mal ${b} ist gleich ${result}`,
-            audioFile: `audio/${a}x${b}.mp3`,
-            speechPrompt: `${wordA} mal ${wordB} ist gleich wie viel?`,
-            speechText: `${wordA} mal ${wordB} ist gleich ${wordRes}`
-          };
-
-          tasks.push(createTaskWithBalancedOptions(baseTask, result.toString(), wrongResult.toString()));
+        function unlockAudioContext() {
+            if (!audioUnlocked) {
+                currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+                currentAudio.play().then(() => { audioUnlocked = true; }).catch(() => {});
+            }
         }
-      }
-      for (let i = tasks.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tasks[i], tasks[j]] = [tasks[j], tasks[i]];
-      }
-      return tasks;
-    }
+        document.body.addEventListener('touchstart', unlockAudioContext, { once: true });
+        document.body.addEventListener('click', unlockAudioContext, { once: true });
 
-    function generateZehnerfeldTasks() {
-      const tasks = [];
-      for (let n = 1; n <= 20; n++) {
-        let wrongOpt = n + (Math.random() < 0.5 ? 1 : -1);
-        if (wrongOpt <= 0) wrongOpt = n + 2;
-
-        const baseTask = {
-          baseWord: `Feld ${n}`,
-          gapText: n > 10 ? "20er-Feld" : "Zehnerfeld",
-          count: n,
-          fullWord: `${n} Punkte`,
-          instruction: "Wie viele Punkte siehst du?",
-          hint: n <= 10 ? `💡 Tipp: Zähle die roten Punkte` : `💡 Tipp: 10 oben voll + ${n - 10} unten`,
-          audioFile: `audio/zehnerfeld${n}.mp3`,
-          speechPrompt: "Wie viele Punkte siehst du?",
-          speechText: `Das sind ${n} Punkte`
-        };
-
-        tasks.push(createTaskWithBalancedOptions(baseTask, n.toString(), wrongOpt.toString()));
-      }
-      return tasks;
-    }
-
-    // EXAKT 40 SILBEN WÖRTER VOLLSTÄNDIGE DATENBANK (KLASSE 1)
-    const rawSilben40 = [
-      { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", count: 1, hint: "💡 Tipp: Hund (1 Klatscher)", correct: "1", wrong: "2", file: "hund_silben", speechText: "Hund hat eine Silbe" },
-      { baseWord: "Haus", gapText: "🏠", fullWord: "Haus", count: 1, hint: "💡 Tipp: Haus (1 Klatscher)", correct: "1", wrong: "2", file: "haus_silben", speechText: "Haus hat eine Silbe" },
-      { baseWord: "Frosch", gapText: "🐸", fullWord: "Frosch", count: 1, hint: "💡 Tipp: Frosch (1 Klatscher)", correct: "1", wrong: "2", file: "frosch_silben", speechText: "Frosch hat eine Silbe" },
-      { baseWord: "Ball", gapText: "⚽", fullWord: "Ball", count: 1, hint: "💡 Tipp: Ball (1 Klatscher)", correct: "1", wrong: "2", file: "ball_silben", speechText: "Ball hat eine Silbe" },
-      { baseWord: "Baum", gapText: "🌳", fullWord: "Baum", count: 1, hint: "💡 Tipp: Baum (1 Klatscher)", correct: "1", wrong: "2", file: "baum_silben", speechText: "Baum hat eine Silbe" },
-      { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", count: 1, hint: "💡 Tipp: Fisch (1 Klatscher)", correct: "1", wrong: "2", file: "fisch_silben", speechText: "Fisch hat eine Silbe" },
-      { baseWord: "Maus", gapText: "🐭", fullWord: "Maus", count: 1, hint: "💡 Tipp: Maus (1 Klatscher)", correct: "1", wrong: "2", file: "maus_silben", speechText: "Maus hat eine Silbe" },
-      { baseWord: "Uhr", gapText: "⏰", fullWord: "Uhr", count: 1, hint: "💡 Tipp: Uhr (1 Klatscher)", correct: "1", wrong: "2", file: "uhr_silben", speechText: "Uhr hat eine Silbe" },
-      { baseWord: "Brot", gapText: "🍞", fullWord: "Brot", count: 1, hint: "💡 Tipp: Brot (1 Klatscher)", correct: "1", wrong: "2", file: "brot_silben", speechText: "Brot hat eine Silbe" },
-      { baseWord: "Stern", gapText: "⭐", fullWord: "Stern", count: 1, hint: "💡 Tipp: Stern (1 Klatscher)", correct: "1", wrong: "2", file: "stern_silben", speechText: "Stern hat eine Silbe" },
-
-      { baseWord: "Katze", gapText: "🐱", fullWord: "Kat-ze", count: 2, hint: "💡 Tipp: Kat - ze (2 Klatscher)", correct: "2", wrong: "3", file: "katze_silben", speechText: "Kat ze hat zwei Silben" },
-      { baseWord: "Blume", gapText: "🌻", fullWord: "Blu-me", count: 2, hint: "💡 Tipp: Blu - me (2 Klatscher)", correct: "2", wrong: "3", file: "blume_silben", speechText: "Blu me hat zwei Silben" },
-      { baseWord: "Sonne", gapText: "☀️", fullWord: "Son-ne", count: 2, hint: "💡 Tipp: Son - ne (2 Klatscher)", correct: "2", wrong: "1", file: "sonne_silben", speechText: "Son ne hat zwei Silben" },
-      { baseWord: "Vogel", gapText: "🐦", fullWord: "Vo-gel", count: 2, hint: "💡 Tipp: Vo - gel (2 Klatscher)", correct: "2", wrong: "3", file: "vogel_silben", speechText: "Vo gel hat zwei Silben" },
-      { baseWord: "Wolke", gapText: "☁️", fullWord: "Wol-ke", count: 2, hint: "💡 Tipp: Wol - ke (2 Klatscher)", correct: "2", wrong: "1", file: "wolke_silben", speechText: "Wol ke hat zwei Silben" },
-      { baseWord: "Lampe", gapText: "💡", fullWord: "Lam-pe", count: 2, hint: "💡 Tipp: Lam - pe (2 Klatscher)", correct: "2", wrong: "3", file: "lampe_silben", speechText: "Lam pe hat zwei Silben" },
-      { baseWord: "Apfel", gapText: "🍎", fullWord: "Ap-fel", count: 2, hint: "💡 Tipp: Ap - fel (2 Klatscher)", correct: "2", wrong: "1", file: "apfel_silben", speechText: "Ap fel hat zwei Silben" },
-      { baseWord: "Kerze", gapText: "🕯️", fullWord: "Ker-ze", count: 2, hint: "💡 Tipp: Ker - ze (2 Klatscher)", correct: "2", wrong: "3", file: "kerze_silben", speechText: "Ker ze hat zwei Silben" },
-      { baseWord: "Schule", gapText: "🏫", fullWord: "Schu-le", count: 2, hint: "💡 Tipp: Schu - le (2 Klatscher)", correct: "2", wrong: "1", file: "schule_silben", speechText: "Schu le hat zwei Silben" },
-      { baseWord: "Tafel", gapText: "⬛", fullWord: "Ta-fel", count: 2, hint: "💡 Tipp: Ta - fel (2 Klatscher)", correct: "2", wrong: "3", file: "tafel_silben", speechText: "Ta fel hat zwei Silben" },
-      { baseWord: "Tasche", gapText: "🎒", fullWord: "Ta-sche", count: 2, hint: "💡 Tipp: Ta - sche (2 Klatscher)", correct: "2", wrong: "1", file: "tasche_silben", speechText: "Ta sche hat zwei Silben" },
-      { baseWord: "Puppe", gapText: "🪆", fullWord: "Pup-pe", count: 2, hint: "💡 Tipp: Pup - pe (2 Klatscher)", correct: "2", wrong: "3", file: "puppe_silben", speechText: "Pup pe hat zwei Silben" },
-      { baseWord: "Biene", gapText: "🐝", fullWord: "Bie-ne", count: 2, hint: "💡 Tipp: Bie - ne (2 Klatscher)", correct: "2", wrong: "1", file: "biene_silben", speechText: "Bie ne hat zwei Silben" },
-      { baseWord: "Eule", gapText: "🦉", fullWord: "Eu-le", count: 2, hint: "💡 Tipp: Eu - le (2 Klatscher)", correct: "2", wrong: "3", file: "eule_silben", speechText: "Eu le hat zwei Silben" },
-      { baseWord: "Kirsche", gapText: "🍒", fullWord: "Kir-sche", count: 2, hint: "💡 Tipp: Kir - sche (2 Klatscher)", correct: "2", wrong: "1", file: "kirsche_silben", speechText: "Kir sche hat zwei Silben" },
-      { baseWord: "Delfin", gapText: "🐬", fullWord: "Del-fin", count: 2, hint: "💡 Tipp: Del - fin (2 Klatscher)", correct: "2", wrong: "3", file: "delfin_silben", speechText: "Del fin hat zwei Silben" },
-      { baseWord: "Schneemann", gapText: "☃️", fullWord: "Schnee-mann", count: 2, hint: "💡 Tipp: Schnee - mann (2 Klatscher)", correct: "2", wrong: "3", file: "schneemann_silben", speechText: "Schnee mann hat zwei Silben" },
-
-      { baseWord: "Tomate", gapText: "🍅", fullWord: "To-ma-te", count: 3, hint: "💡 Tipp: To - ma - te (3 Klatscher)", correct: "3", wrong: "2", file: "tomate_silben", speechText: "To ma te hat drei Silben" },
-      { baseWord: "Banane", gapText: "🍌", fullWord: "Ba-na-ne", count: 3, hint: "💡 Tipp: Ba - na - ne (3 Klatscher)", correct: "3", wrong: "2", file: "banane_silben", speechText: "Ba na ne hat drei Silben" },
-      { baseWord: "Schmetterling", gapText: "🦋", fullWord: "Schmet-ter-ling", count: 3, hint: "💡 Tipp: Schmet - ter - ling (3 Klatscher)", correct: "3", wrong: "2", file: "schmetterling_silben", speechText: "Schmet ter ling hat drei Silben" },
-      { baseWord: "Elefant", gapText: "🐘", fullWord: "E-le-fant", count: 3, hint: "💡 Tipp: E - le - fant (3 Klatscher)", correct: "3", wrong: "2", file: "elefant_silben", speechText: "E le fant hat drei Silben" },
-      { baseWord: "Rakete", gapText: "🚀", fullWord: "Ra-ke-te", count: 3, hint: "💡 Tipp: Ra - ke - te (3 Klatscher)", correct: "3", wrong: "2", file: "rakete_silben", speechText: "Ra ke te hat drei Silben" },
-      { baseWord: "Gitarre", gapText: "🎸", fullWord: "Gi-tar-re", count: 3, hint: "💡 Tipp: Gi - tar - re (3 Klatscher)", correct: "3", wrong: "2", file: "gitarre_silben", speechText: "Gi tar re hat drei Silben" },
-      { baseWord: "Zitrone", gapText: "🍋", fullWord: "Zi-tro-ne", count: 3, hint: "💡 Tipp: Zi - tro - ne (3 Klatscher)", correct: "3", wrong: "2", file: "zitrone_silben", speechText: "Zi tro ne hat drei Silben" },
-      { baseWord: "Papagei", gapText: "🦜", fullWord: "Pa-pa-gei", count: 3, hint: "💡 Tipp: Pa - pa - gei (3 Klatscher)", correct: "3", wrong: "2", file: "papagei_silben", speechText: "Pa pa gei hat drei Silben" },
-      { baseWord: "Krokodil", gapText: "🐊", fullWord: "Kro-ko-dil", count: 3, hint: "💡 Tipp: Kro - ko - dil (3 Klatscher)", correct: "3", wrong: "2", file: "krokodil_silben", speechText: "Kro ko dil hat drei Silben" },
-      { baseWord: "Pinguin", gapText: "🐧", fullWord: "Pin-gu-in", count: 3, hint: "💡 Tipp: Pin - gu - in (3 Klatscher)", correct: "3", wrong: "2", file: "pinguin_silben", speechText: "Pin gu in hat drei Silben" },
-
-      { baseWord: "Schokolade", gapText: "🍫", fullWord: "Scho-ko-la-de", count: 4, hint: "💡 Tipp: Scho - ko - la - de (4 Klatscher)", correct: "4", wrong: "3", file: "schokolade_silben", speechText: "Scho ko la de hat vier Silben" },
-      { baseWord: "Regenbogen", gapText: "🌈", fullWord: "Re-gen-bo-gen", count: 4, hint: "💡 Tipp: Re - gen - bo - gen (4 Klatscher)", correct: "4", wrong: "3", file: "regenbogen_silben", speechText: "Re gen bo gen hat vier Silben" },
-      { baseWord: "Marienkäfer", gapText: "🐞", fullWord: "Ma-ri-en-kä-fer", count: 5, hint: "💡 Tipp: Ma - ri - en - kä - fer (5 Klatscher)", correct: "5", wrong: "4", file: "marienkaefer_silben", speechText: "Ma ri en kä fer hat fünf Silben" }
-    ];
-
-    const rawAnlaute50 = [
-      { baseWord: "Apfel", gapText: "🍎", fullWord: "Apfel", hint: "💡 Tipp: A wie Apfel", correct: "A", wrong: "H", file: "apfel" },
-      { baseWord: "Bär", gapText: "🐻", fullWord: "Bär", hint: "💡 Tipp: B wie Bär", correct: "B", wrong: "P", file: "baer" },
-      { baseWord: "Clown", gapText: "🤡", fullWord: "Clown", hint: "💡 Tipp: C wie Clown", correct: "C", wrong: "K", file: "clown" },
-      { baseWord: "Drache", gapText: "🐲", fullWord: "Drache", hint: "💡 Tipp: D wie Drache", correct: "D", wrong: "T", file: "drache" },
-      { baseWord: "Elefant", gapText: "🐘", fullWord: "Elefant", hint: "💡 Tipp: E wie Elefant", correct: "E", wrong: "I", file: "elefant" },
-      { baseWord: "Fisch", gapText: "🐟", fullWord: "Fisch", hint: "💡 Tipp: F wie Fisch", correct: "F", wrong: "V", file: "fisch" },
-      { baseWord: "Giraffe", gapText: "🦒", fullWord: "Giraffe", hint: "💡 Tipp: G wie Giraffe", correct: "G", wrong: "K", file: "giraffe" },
-      { baseWord: "Haus", gapText: "🏠", fullWord: "Haus", hint: "💡 Tipp: H wie Haus", correct: "H", wrong: "A", file: "haus" },
-      { baseWord: "Igel", gapText: "🦔", fullWord: "Igel", hint: "💡 Tipp: I wie Igel", correct: "I", wrong: "E", file: "igel" },
-      { baseWord: "Jacke", gapText: "🧥", fullWord: "Jacke", hint: "💡 Tipp: J wie Jacke", correct: "J", wrong: "Y", file: "jacke" },
-      { baseWord: "Krokodil", gapText: "🐊", fullWord: "Krokodil", hint: "💡 Tipp: K wie Krokodil", correct: "K", wrong: "G", file: "krokodil" },
-      { baseWord: "Löwe", gapText: "🦁", fullWord: "Löwe", hint: "💡 Tipp: L wie Löwe", correct: "L", wrong: "M", file: "loewe" },
-      { baseWord: "Maus", gapText: "🐭", fullWord: "Maus", hint: "💡 Tipp: M wie Maus", correct: "M", wrong: "N", file: "maus" },
-      { baseWord: "Nadel", gapText: "🪡", fullWord: "Nadel", hint: "💡 Tipp: N wie Nadel", correct: "N", wrong: "M", file: "nadel" },
-      { baseWord: "Oma", gapText: "👵", fullWord: "Oma", hint: "💡 Tipp: O wie Oma", correct: "O", wrong: "U", file: "oma" },
-      { baseWord: "Pinguin", gapText: "🐧", fullWord: "Pinguin", hint: "💡 Tipp: P wie Pinguin", correct: "P", wrong: "B", file: "pinguin" },
-      { baseWord: "Qualle", gapText: "🪼", fullWord: "Qualle", hint: "💡 Tipp: Q wie Qualle", correct: "Q", wrong: "K", file: "qualle" },
-      { baseWord: "Robbe", gapText: "🦭", fullWord: "Robbe", hint: "💡 Tipp: R wie Robbe", correct: "R", wrong: "L", file: "robbe" },
-      { baseWord: "Sonne", gapText: "☀️", fullWord: "Sonne", hint: "💡 Tipp: S wie Sonne", correct: "S", wrong: "Z", file: "sonne" },
-      { baseWord: "Tiger", gapText: "🐯", fullWord: "Tiger", hint: "💡 Tipp: T wie Tiger", correct: "T", wrong: "D", file: "tiger" },
-      { baseWord: "Uhr", gapText: "⏰", fullWord: "Uhr", hint: "💡 Tipp: U wie Uhr", correct: "U", wrong: "O", file: "uhr" },
-      { baseWord: "Vogel", gapText: "🐦", fullWord: "Vogel", hint: "💡 Tipp: V wie Vogel", correct: "V", wrong: "F", file: "vogel" },
-      { baseWord: "Wal", gapText: "🐳", fullWord: "Wal", hint: "💡 Tipp: W wie Wal", correct: "W", wrong: "V", file: "wal" },
-      { baseWord: "Xylophon", gapText: "🪘", fullWord: "Xylophon", hint: "💡 Tipp: X wie Xylophon", correct: "X", wrong: "Z", file: "xylophon" },
-      { baseWord: "Yoga", gapText: "🧘", fullWord: "Yoga", hint: "💡 Tipp: Y wie Yoga", correct: "Y", wrong: "J", file: "yoga" },
-      { baseWord: "Zebra", gapText: "🦓", fullWord: "Zebra", hint: "💡 Tipp: Z wie Zebra", correct: "Z", wrong: "S", file: "zebra" },
-      { baseWord: "Ente", gapText: "🦆", fullWord: "Ente", hint: "💡 Tipp: E wie Ente", correct: "E", wrong: "A", file: "ente" },
-      { baseWord: "Eichhörnchen", gapText: "🐿️", fullWord: "Eichhörnchen", hint: "💡 Tipp: E wie Eichhörnchen", correct: "E", wrong: "I", file: "eichhoernchen" },
-      { baseWord: "Insel", gapText: "🏝️", fullWord: "Insel", hint: "💡 Tipp: I wie Insel", correct: "I", wrong: "E", file: "insel" },
-      { baseWord: "Otter", gapText: "🦦", fullWord: "Otter", hint: "💡 Tipp: O wie Otter", correct: "O", wrong: "U", file: "otter" },
-      { baseWord: "Uhu", gapText: "🦉", fullWord: "Uhu", hint: "💡 Tipp: U wie Uhu", correct: "U", wrong: "O", file: "uhustufe" },
-      { baseWord: "Ampel", gapText: "🚦", fullWord: "Ampel", hint: "💡 Tipp: A wie Ampel", correct: "A", wrong: "O", file: "ampel" },
-      { baseWord: "Ball", gapText: "⚽", fullWord: "Ball", hint: "💡 Tipp: B wie Ball", correct: "B", wrong: "P", file: "ball" },
-      { baseWord: "Delfin", gapText: "🐬", fullWord: "Delfin", hint: "💡 Tipp: D wie Delfin", correct: "D", wrong: "T", file: "delfin" },
-      { baseWord: "Eule", gapText: "🦉", fullWord: "Eule", hint: "💡 Tipp: E wie Eule", correct: "E", wrong: "A", file: "eule" },
-      { baseWord: "Frosch", gapText: "🐸", fullWord: "Frosch", hint: "💡 Tipp: F wie Frosch", correct: "F", wrong: "V", file: "frosch" },
-      { baseWord: "Gitarre", gapText: "🎸", fullWord: "Gitarre", hint: "💡 Tipp: G wie Gitarre", correct: "G", wrong: "K", file: "gitarre" },
-      { baseWord: "Hund", gapText: "🐶", fullWord: "Hund", hint: "💡 Tipp: H wie Hund", correct: "H", wrong: "A", file: "hund" },
-      { baseWord: "Indianer", gapText: "🪶", fullWord: "Indianer", hint: "💡 Tipp: I wie Indianer", correct: "I", wrong: "E", file: "indianer" },
-      { baseWord: "Käfer", gapText: "🐞", fullWord: "Käfer", hint: "💡 Tipp: K wie Käfer", correct: "K", wrong: "G", file: "kaefer" },
-      { baseWord: "Lampe", gapText: "💡", fullWord: "Lampe", hint: "💡 Tipp: L wie Lampe", correct: "L", wrong: "M", file: "lampe" },
-      { baseWord: "Mond", gapText: "🌙", fullWord: "Mond", hint: "💡 Tipp: M wie Mond", correct: "M", wrong: "N", file: "mond" },
-      { baseWord: "Nuss", gapText: "🥜", fullWord: "Nuss", hint: "💡 Tipp: N wie Nuss", correct: "N", wrong: "M", file: "nuss" },
-      { baseWord: "Papagei", gapText: "🦜", fullWord: "Papagei", hint: "💡 Tipp: P wie Papagei", correct: "P", wrong: "B", file: "papagei" },
-      { baseWord: "Rakete", gapText: "🚀", fullWord: "Rakete", hint: "💡 Tipp: R wie Rakete", correct: "R", wrong: "L", file: "rakete" },
-      { baseWord: "Schaf", gapText: "🐑", fullWord: "Schaf", hint: "💡 Tipp: S wie Schaf", correct: "S", wrong: "Z", file: "schaf" },
-      { baseWord: "Tomate", gapText: "🍅", fullWord: "Tomate", hint: "💡 Tipp: T wie Tomate", correct: "T", wrong: "D", file: "tomate" },
-      { baseWord: "Vulkan", gapText: "🌋", fullWord: "Vulkan", hint: "💡 Tipp: V wie Vulkan", correct: "V", wrong: "F", file: "vulkan" },
-      { baseWord: "Wolke", gapText: "☁️", fullWord: "Wolke", hint: "💡 Tipp: W wie Wolke", correct: "W", wrong: "V", file: "wolke" },
-      { baseWord: "Zitrone", gapText: "🍋", fullWord: "Zitrone", hint: "💡 Tipp: Z wie Zitrone", correct: "Z", wrong: "S", file: "zitrone" }
-    ];
-
-    const rawWortarten = [
-      { baseWord: "Hund", gapText: "Hund", fullWord: "Nomen (Namenwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Großgeschrieben, der Hund", correct: "Nomen", wrong: "Verb", audioFile: "audio/hund_nomen.mp3", speechPrompt: "Welche Wortart ist Hund?", speechText: "Hund ist ein Nomen" },
-      { baseWord: "laufen", gapText: "laufen", fullWord: "Verb (Tunwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Was jemand tut...", correct: "Verb", wrong: "Nomen", audioFile: "audio/laufen.mp3", speechPrompt: "Welche Wortart ist laufen?", speechText: "Laufen ist ein Verb" },
-      { baseWord: "schnell", gapText: "schnell", fullWord: "Adjektiv (Wievielwort)", instruction: "Welche Wortart ist das?", hint: "💡 Tipp: Wie etwas ist...", correct: "Adjektiv", wrong: "Nomen", audioFile: "audio/schnell_adj.mp3", speechPrompt: "Welche Wortart ist schnell?", speechText: "Schnell ist ein Adjektiv" }
-    ];
-
-    const rawRechtschreibung = [
-      { baseWord: "Hand", gapText: "H?", fullWord: "Hände", instruction: "Leite ab von Hand", hint: "💡 Tipp: Ableiten von Hand", correct: "ände", wrong: "ende", audioFile: "audio/haende.mp3", speechPrompt: "Leite ab von Hand", speechText: "Hände schreibt man mit Ä" },
-      { baseWord: "Haus", gapText: "H?", fullWord: "Häuser", instruction: "Leite ab von Haus", hint: "💡 Tipp: Ableiten von Haus", correct: "äuser", wrong: "euser", audioFile: "audio/haeuser.mp3", speechPrompt: "Leite ab von Haus", speechText: "Häuser schreibt man mit Ä U" },
-      { baseWord: "Baum", gapText: "B?", fullWord: "Bäume", instruction: "Leite ab von Baum", hint: "💡 Tipp: Ableiten von Baum", correct: "äume", wrong: "eume", audioFile: "audio/baeume.mp3", speechPrompt: "Leite ab von Baum", speechText: "Bäume schreibt man mit Ä U" },
-      { baseWord: "Maus", gapText: "M?", fullWord: "Mäuse", instruction: "Leite ab von Maus", hint: "💡 Tipp: Ableiten von Maus", correct: "äuse", wrong: "euse", audioFile: "audio/maeuse.mp3", speechPrompt: "Leite ab von Maus", speechText: "Mäuse schreibt man mit Ä U" }
-    ];
-
-    const modulesData = {
-      einmaleins: generateAll1x1Tasks(),
-      anlaute: rawAnlaute50.map(item => createTaskWithBalancedOptions({
-        baseWord: item.baseWord,
-        gapText: item.gapText,
-        fullWord: item.fullWord,
-        instruction: "Welcher Anlaut gehört zum Bild?",
-        hint: item.hint,
-        audioFile: `audio/${item.file}.mp3`,
-        speechPrompt: `${item.correct} wie ${item.baseWord}`,
-        speechText: `${item.correct} wie ${item.baseWord}`
-      }, item.correct, item.wrong)),
-      silben: rawSilben40.map(item => createTaskWithBalancedOptions({
-        baseWord: item.baseWord,
-        gapText: item.gapText,
-        fullWord: item.fullWord,
-        count: item.count,
-        instruction: "Wie viele Silben hörst du?",
-        hint: item.hint,
-        audioFile: `audio/${item.file}.mp3`,
-        speechPrompt: `Wie viele Silben hat ${item.baseWord}?`,
-        speechText: item.speechText
-      }, item.correct, item.wrong)),
-      zehnerfeld: generateZehnerfeldTasks(),
-      halbschriftlich: [
-        createTaskWithBalancedOptions({ baseWord: "145 + 230", gapText: "145 + 230", fullWord: "375", instruction: "Rechne halbschriftlich: (100+200) + (45+30)", hint: "💡 Tipp: 100+200=300, 45+30=75", audioFile: "audio/halbschriftlich1.mp3", speechPrompt: "Hundertfünfundvierzig plus zweihundertdreißig", speechText: "Dreihundertfünfundsiebzig" }, "375", "385"),
-        createTaskWithBalancedOptions({ baseWord: "240 + 150", gapText: "240 + 150", fullWord: "390", instruction: "Rechne halbschriftlich: (200+100) + (40+50)", hint: "💡 Tipp: 200+100=300, 40+50=90", speechPrompt: "Zweihundertvierzig plus einhundertfünfzig", speechText: "Dreihundertneunzig" }, "390", "380")
-      ],
-      wortarten: rawWortarten.map(item => createTaskWithBalancedOptions(item, item.correct, item.wrong)),
-      rechtschreibung: rawRechtschreibung.map(item => createTaskWithBalancedOptions(item, item.correct, item.wrong))
-    };
-
-    let currentModule = "silben";
-    let currentTaskIndex = 0;
-    let score = parseInt(localStorage.getItem('schulapp_score') || '0', 10);
-    let stars = parseInt(localStorage.getItem('schulapp_stars') || '0', 10);
-    let isAudioFeedbackEnabled = true;
-    let isEvaluating = false;
-    let preferredVoice = null;
-
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
-    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-    const currentModuleLabel = document.getElementById('currentModuleLabel');
-    const navDrawer = document.getElementById('navDrawer');
-    const drawerOverlay = document.getElementById('drawerOverlay');
-    const navItems = document.querySelectorAll('.nav-item');
-
-    const instructionText = document.getElementById('instructionText');
-    const listenBtn = document.getElementById('listenBtn');
-    const soundToggleBtn = document.getElementById('soundToggleBtn');
-    const wordDisplay = document.getElementById('wordDisplay');
-    const visualContainer = document.getElementById('visualContainer');
-    const hintText = document.getElementById('hintText');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const btnOpt1 = document.getElementById('btnOpt1');
-    const btnOpt2 = document.getElementById('btnOpt2');
-    const scoreDisplay = document.getElementById('scoreDisplay');
-    const starsDisplay = document.getElementById('starsDisplay');
-    const displayBox = document.getElementById('displayBox');
-
-    function updateScoreUI() {
-      scoreDisplay.textContent = `Punkte: ${score}`;
-      starsDisplay.textContent = `⭐ ${stars}`;
-      localStorage.setItem('schulapp_score', score);
-      localStorage.setItem('schulapp_stars', stars);
-    }
-
-    function initBestVoice() {
-      if ('speechSynthesis' in window) {
-        const voices = window.speechSynthesis.getVoices();
-        preferredVoice = voices.find(v => v.lang.startsWith('de') && (
-          v.name.includes('Google') || 
-          v.name.includes('Anna') || 
-          v.name.includes('Helena') || 
-          v.name.includes('Enhanced') ||
-          v.name.includes('Natural')
-        )) || voices.find(v => v.lang.startsWith('de')) || null;
-      }
-    }
-
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = initBestVoice;
-      initBestVoice();
-    }
-
-    function speakTextFallback(text) {
-      if (!isAudioFeedbackEnabled) return;
-
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'de-DE';
-        utterance.rate = 0.86;
-        utterance.pitch = 1.0;
-
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
+        function playAudio(audioFileName) {
+            unlockAudioContext();
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio.src = `audio/${audioFileName}.mp3`;
+            currentAudio.play().catch(() => {});
         }
 
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    function playTaskAudio(task, isSolution = false) {
-      if (!isAudioFeedbackEnabled) return;
-
-      if (task.audioFile) {
-        const audio = new Audio(task.audioFile);
-        audio.play().catch(err => {
-          console.warn("Audio MP3 nicht gefunden, nutze Fallback:", err);
-          speakTextFallback(isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction));
-        });
-      } else {
-        const textToSpeak = isSolution ? (task.speechText || task.fullWord) : (task.speechPrompt || task.instruction);
-        speakTextFallback(textToSpeak);
-      }
-    }
-
-    function openDrawer() { navDrawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-    function closeDrawer() { navDrawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
-
-    menuToggleBtn.addEventListener('click', openDrawer);
-    closeDrawerBtn.addEventListener('click', closeDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
-
-    navItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        navItems.forEach(i => i.classList.remove('active'));
-        const targetBtn = e.currentTarget;
-        targetBtn.classList.add('active');
-        
-        currentModule = targetBtn.getAttribute('data-module');
-        const rawLabel = targetBtn.textContent.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
-        currentModuleLabel.textContent = rawLabel;
-        
-        currentTaskIndex = 0;
-        closeDrawer();
-        renderTask();
-      });
-    });
-
-    function renderTask() {
-      const activeTasks = modulesData[currentModule];
-      if (!activeTasks || activeTasks.length === 0) return;
-
-      const task = activeTasks[currentTaskIndex];
-
-      isEvaluating = false;
-      optionsContainer.classList.remove('disabled');
-      wordDisplay.classList.remove('correct');
-      displayBox.style.borderColor = '#e2e8f0';
-
-      visualContainer.innerHTML = "";
-
-      if (currentModule === "silben" && task.count) {
-        const arcBox = document.createElement("div");
-        arcBox.className = "syllable-arcs-container";
-        for (let i = 0; i < task.count; i++) {
-          const arc = document.createElement("div");
-          arc.className = "syllable-arc";
-          arcBox.appendChild(arc);
+        function shuffle(array) {
+            let a = [...array];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
         }
-        visualContainer.appendChild(arcBox);
-      } else if (currentModule === "zehnerfeld" && task.count) {
-        const grid = document.createElement("div");
-        grid.className = "twenty-field-grid";
-        const totalDots = task.count > 10 ? 20 : 10;
-        for (let i = 0; i < totalDots; i++) {
-          const dot = document.createElement("div");
-          dot.className = "field-dot" + (i < task.count ? " red" : "");
-          grid.appendChild(dot);
+
+        function openContainer(titleText) {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('module-container').style.display = 'block';
+            document.getElementById('module-title').innerText = titleText;
         }
-        visualContainer.appendChild(grid);
-      }
 
-      [btnOpt1, btnOpt2].forEach(btn => {
-        btn.classList.remove('btn-correct', 'btn-wrong');
-      });
-
-      instructionText.textContent = task.instruction;
-      wordDisplay.innerHTML = task.gapText;
-      hintText.textContent = task.hint;
-      btnOpt1.textContent = task.options[0];
-      btnOpt2.textContent = task.options[1];
-
-      listenBtn.textContent = (currentModule === "einmaleins" || currentModule === "wortarten" || currentModule === "halbschriftlich") ? "🔊 Aufgabe anhören" : "🔊 Wort anhören";
-    }
-
-    function handleOptionClick(selectedIndex, clickedBtn) {
-      if (isEvaluating) return;
-
-      const activeTasks = modulesData[currentModule];
-      const task = activeTasks[currentTaskIndex];
-
-      if (selectedIndex === task.correctIndex) {
-        isEvaluating = true;
-        optionsContainer.classList.add('disabled');
-
-        wordDisplay.textContent = task.fullWord;
-        wordDisplay.classList.add('correct');
-        clickedBtn.classList.add('btn-correct');
-
-        score += 10;
-        if (score % 50 === 0) {
-          stars += 1;
+        function closeModule() {
+            currentAudio.pause();
+            document.getElementById('module-container').style.display = 'none';
+            document.getElementById('main-menu').style.display = 'block';
         }
-        updateScoreUI();
 
-        playTaskAudio(task, true);
+        // 1. ANLAUTE HÖREN
+        const anlautePool = [
+            { icon: "🍎", audio: "silbe_apfel", ans: "A", opts: ["A", "M", "S"] },
+            { icon: "🐻", audio: "silbe_baer", ans: "B", opts: ["B", "K", "F"] },
+            { icon: "🐱", audio: "silbe_katze", ans: "K", opts: ["K", "L", "R"] },
+            { icon: "🐟", audio: "silbe_fisch", ans: "F", opts: ["F", "N", "T"] },
+            { icon: "🐶", audio: "silbe_hund", ans: "H", opts: ["H", "S", "B"] }
+        ];
+        let anlauteShuffled = [], anlautIdx = 0;
 
-        setTimeout(() => {
-          currentTaskIndex = (currentTaskIndex + 1) % activeTasks.length;
-          renderTask();
-        }, 2000);
+        function startAnlauteModul() {
+            openContainer('Anlaute hören');
+            playAudio('modul_anlaute');
+            anlauteShuffled = shuffle(anlautePool);
+            anlautIdx = 0;
+            renderAnlaute();
+        }
 
-      } else {
-        clickedBtn.classList.add('btn-wrong');
-        setTimeout(() => {
-          clickedBtn.classList.remove('btn-wrong');
-        }, 800);
-      }
-    }
+        function renderAnlaute() {
+            const item = anlauteShuffled[anlautIdx];
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Welcher Anlaut passt?</p>
+                <div class="interactive-display" onclick="playAudio('${item.audio}')">${item.icon}</div>
+                <div class="options-grid">
+                    ${shuffle(item.opts).map(opt => `
+                        <button class="btn-opt" onclick="checkAnlaut('${opt}', '${item.ans}')">${opt}</button>
+                    `).join('')}
+                </div>
+            `;
+            setTimeout(() => playAudio(item.audio), 300);
+        }
 
-    listenBtn.addEventListener('click', () => {
-      const activeTasks = modulesData[currentModule];
-      if (activeTasks && activeTasks.length > 0) {
-        playTaskAudio(activeTasks[currentTaskIndex], false);
-      }
-    });
+        function checkAnlaut(selected, correct) {
+            if (selected === correct) {
+                anlautIdx = (anlautIdx + 1) % anlauteShuffled.length;
+                renderAnlaute();
+            } else { playAudio('feedback_falsch'); }
+        }
 
-    soundToggleBtn.addEventListener('click', () => {
-      isAudioFeedbackEnabled = !isAudioFeedbackEnabled;
-      
-      if (isAudioFeedbackEnabled) {
-        soundToggleBtn.textContent = '🔔 Ton: AN';
-        soundToggleBtn.classList.add('active');
-      } else {
-        soundToggleBtn.textContent = '🔕 Ton: AUS';
-        soundToggleBtn.classList.remove('active');
-      }
-    });
+        // 2. SILBEN SCHWINGEN (30 Wörter Pool)
+        const silben30Pool = [
+            { icon: "🐶", audio: "silbe_hund", count: 1 }, { icon: "🐻", audio: "silbe_baer", count: 1 },
+            { icon: "🐟", audio: "silbe_fisch", count: 1 }, { icon: "🐱", audio: "silbe_katze", count: 2 },
+            { icon: "☀️", audio: "silbe_sonne", count: 2 }, { icon: "🌸", audio: "silbe_blume", count: 2 },
+            { icon: "🍌", audio: "silbe_banane", count: 3 }, { icon: "🚀", audio: "silbe_rakete", count: 3 },
+            { icon: "🍆", audio: "silbe_aubergine", count: 4 }, { icon: "🐞", audio: "silbe_marienkaefer", count: 5 }
+        ];
+        let silbenShuffled = [], silbenIdx = 0;
 
-    btnOpt1.addEventListener('click', () => handleOptionClick(0, btnOpt1));
-    btnOpt2.addEventListener('click', () => handleOptionClick(1, btnOpt2));
+        function startSilbenModul() {
+            openContainer('Silben schwingen');
+            playAudio('modul_silben');
+            silbenShuffled = shuffle(silben30Pool);
+            silbenIdx = 0;
+            renderSilben();
+        }
 
-    updateScoreUI();
-    renderTask();
-  </script>
+        function renderSilben() {
+            const item = silbenShuffled[silbenIdx];
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Wie viele Silben hörst du?</p>
+                <div class="interactive-display" onclick="playAudio('${item.audio}')">${item.icon}</div>
+                <div class="options-grid">
+                    ${[1, 2, 3, 4, 5].map(n => `
+                        <button class="btn-opt" onclick="checkSilben(${n}, ${item.count})">${n}</button>
+                    `).join('')}
+                </div>
+            `;
+            setTimeout(() => playAudio(item.audio), 300);
+        }
+
+        function checkSilben(selected, correct) {
+            if (selected === correct) {
+                silbenIdx = (silbenIdx + 1) % silbenShuffled.length;
+                renderSilben();
+            } else { playAudio('feedback_falsch'); }
+        }
+
+        // 3. ZEHNERFELD BIS 10
+        let currentZehner = 5;
+
+        function startZehnerfeldModul() {
+            openContainer('Zehnerfeld bis 10');
+            playAudio('modul_zehnerfeld');
+            nextZehnerTask();
+        }
+
+        function nextZehnerTask() {
+            currentZehner = Math.floor(Math.random() * 10) + 1;
+            const content = document.getElementById('module-content');
+            let dotsHtml = '';
+            for (let i = 1; i <= 10; i++) {
+                dotsHtml += `<div class="field-dot ${i <= currentZehner ? 'active' : ''}"></div>`;
+            }
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Wie viele Punkte siehst du?</p>
+                <div class="zehnerfeld-grid">${dotsHtml}</div>
+                <div class="options-grid">
+                    ${[1,2,3,4,5,6,7,8,9,10].map(n => `
+                        <button class="btn-opt" onclick="checkZehner(${n})">${n}</button>
+                    `).join('')}
+                </div>
+            `;
+            setTimeout(() => playAudio(`zahl_${currentZehner}`), 300);
+        }
+
+        function checkZehner(val) {
+            if (val === currentZehner) { nextZehnerTask(); }
+            else { playAudio('feedback_falsch'); }
+        }
+
+        // 4. 1x1 BLITZRECHNEN
+        let task1x1 = {};
+
+        function start1x1Modul() {
+            openContainer('1x1 Blitzrechnen');
+            playAudio('modul_1x1');
+            next1x1();
+        }
+
+        function next1x1() {
+            const a = [2, 3, 4, 5, 10][Math.floor(Math.random() * 5)];
+            const b = Math.floor(Math.random() * 10) + 1;
+            const ans = a * b;
+            const opts = shuffle([ans, ans + 2, Math.max(1, ans - 3)]);
+            task1x1 = { ans };
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Berechne die Aufgabe:</p>
+                <div class="interactive-display" style="font-weight: bold; color: var(--accent-color);">${a} × ${b}</div>
+                <div class="options-grid">
+                    ${opts.map(o => `<button class="btn-opt" onclick="check1x1(${o})">${o}</button>`).join('')}
+                </div>
+            `;
+        }
+
+        function check1x1(val) {
+            if (val === task1x1.ans) { next1x1(); }
+            else { playAudio('feedback_falsch'); }
+        }
+
+        // 5. ZEHNER-MULTIPLIKATION BIS 1000
+        let currentZehnerTask = {};
+
+        function startZehnerMultiModul() {
+            openContainer('Zehner-Multiplikation');
+            playAudio('modul_zehnermulti');
+            nextZehnerMultiTask();
+        }
+
+        function nextZehnerMultiTask() {
+            const a = Math.floor(Math.random() * 8) + 2;
+            const b = (Math.floor(Math.random() * 9) + 1) * 10;
+            const ans = a * b;
+            const opts = shuffle([ans, ans + 20, Math.max(10, ans - 30)]);
+            currentZehnerTask = { ans };
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Berechne die Zehner-Aufgabe (bis 1000):</p>
+                <div class="interactive-display" style="font-weight: bold; color: var(--accent-color);">${a} × ${b}</div>
+                <div class="options-grid">
+                    ${opts.map(o => `<button class="btn-opt" onclick="checkZehnerMulti(${o})">${o}</button>`).join('')}
+                </div>
+            `;
+        }
+
+        function checkZehnerMulti(val) {
+            if (val === currentZehnerTask.ans) { nextZehnerMultiTask(); }
+            else { playAudio('feedback_falsch'); }
+        }
+
+        // 6. HALBSCHRIFTLICHE MULTIPLIKATION
+        let halbschrifTask = {};
+
+        function startHalbschriftlichMulModul() {
+            openContainer('Halbschriftlich Mal');
+            playAudio('modul_halbschriftlich_mul');
+            nextHalbschriftlichTask();
+        }
+
+        function nextHalbschriftlichTask() {
+            const a = Math.floor(Math.random() * 5) + 3;
+            const tens = (Math.floor(Math.random() * 4) + 1) * 10;
+            const ones = Math.floor(Math.random() * 8) + 1;
+            const b = tens + ones;
+            const step1 = a * tens;
+            const step2 = a * ones;
+            const ans = step1 + step2;
+            halbschrifTask = { ans };
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Halbschriftliche Zerlegung:</p>
+                <div class="interactive-display" style="font-weight: bold; color: var(--accent-color);">${a} × ${b}</div>
+                <div class="step-box">${a} × ${tens} = ${step1}</div>
+                <div class="step-box">${a} × ${ones} = ${step2}</div>
+                <p style="font-size: 1.1rem;">Was ist das Gesamtergebnis (${step1} + ${step2})?</p>
+                <div class="options-grid">
+                    ${shuffle([ans, ans + 10, Math.max(1, ans - 5)]).map(o => `
+                        <button class="btn-opt" onclick="checkHalbschriftlich(${o})">${o}</button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkHalbschriftlich(val) {
+            if (val === halbschrifTask.ans) { nextHalbschriftlichTask(); }
+            else { playAudio('feedback_falsch'); }
+        }
+
+        // 7. WORTARTEN BESTIMMEN (Mit erweiterten Fragestellungen)
+        const wortartenPool = [
+            { wort: "Haus", audio: "wort_haus", type: "Nomen" },
+            { wort: "laufen", audio: "wort_laufen", type: "Verb" },
+            { wort: "schnell", audio: "wort_schnell", type: "Adjektiv" },
+            { wort: "Baum", audio: "wort_baum", type: "Nomen" },
+            { wort: "springen", audio: "wort_springen", type: "Verb" },
+            { wort: "laut", audio: "wort_laut", type: "Adjektiv" }
+        ];
+        let wortartenShuffled = [], wortartenIdx = 0;
+
+        function startWortartenModul() {
+            openContainer('Wortarten bestimmen');
+            playAudio('modul_wortarten');
+            wortartenShuffled = shuffle(wortartenPool);
+            wortartenIdx = 0;
+            renderWortarten();
+        }
+
+        function renderWortarten() {
+            const item = wortartenShuffled[wortartenIdx];
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Welche Wortart ist das?</p>
+                <div class="interactive-display" style="font-size: 3rem; font-weight: bold;" onclick="playAudio('${item.audio}')">"${item.wort}"</div>
+                <div class="options-grid">
+                    <button class="btn-opt" onclick="checkWortart('Nomen')">Nomen (Wer / Was?)</button>
+                    <button class="btn-opt" onclick="checkWortart('Verb')">Verb (Was tut jemand?)</button>
+                    <button class="btn-opt" onclick="checkWortart('Adjektiv')">Adjektiv (Wie ist etwas?)</button>
+                </div>
+            `;
+            setTimeout(() => playAudio(item.audio), 300);
+        }
+
+        function checkWortart(selected) {
+            const item = wortartenShuffled[wortartenIdx];
+            if (selected === item.type) {
+                wortartenIdx = (wortartenIdx + 1) % wortartenShuffled.length;
+                renderWortarten();
+            } else { playAudio('feedback_falsch'); }
+        }
+
+        // 8. RECHTSCHREIB-TRAINER
+        const rechtschreibPool = [
+            { display: "Hun_ (Hunde)", audio: "rs_hund", correct: "d", opts: ["d", "t"] },
+            { display: "Han_ (Hände)", audio: "rs_hand", correct: "d", opts: ["d", "t"] },
+            { display: "Wal_ (Wälder)", audio: "rs_wald", correct: "d", opts: ["d", "t"] },
+            { display: "Bro_ (Brote)", audio: "rs_brod", correct: "t", opts: ["d", "t"] }
+        ];
+        let rechtschreibShuffled = [], rechtschreibIdx = 0;
+
+        function startRechtschreibungModul() {
+            openContainer('Rechtschreibung üben');
+            playAudio('modul_rechtschreibung');
+            rechtschreibShuffled = shuffle(rechtschreibPool);
+            rechtschreibIdx = 0;
+            renderRechtschreibung();
+        }
+
+        function renderRechtschreibung() {
+            const item = rechtschreibShuffled[rechtschreibIdx];
+            const content = document.getElementById('module-content');
+            content.innerHTML = `
+                <p style="font-size: 1.2rem;">Nutze die Strategie Verlängern:</p>
+                <div class="interactive-display" style="font-size: 3rem; font-weight: bold;" onclick="playAudio('${item.audio}')">${item.display}</div>
+                <div class="options-grid">
+                    ${item.opts.map(o => `<button class="btn-opt" onclick="checkRechtschreibung('${o}', '${item.correct}')">${o}</button>`).join('')}
+                </div>
+            `;
+            setTimeout(() => playAudio(item.audio), 300);
+        }
+
+        function checkRechtschreibung(selected, correct) {
+            if (selected === correct) {
+                rechtschreibIdx = (rechtschreibIdx + 1) % rechtschreibShuffled.length;
+                renderRechtschreibung();
+            } else { playAudio('feedback_falsch'); }
+        }
+    </script>
 </body>
 </html>
